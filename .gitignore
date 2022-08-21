@@ -1,0 +1,26 @@
+# Python
+*.pyc
+*~
+__pycache__
+
+# Env
+.env
+myvenv/
+venv/
+
+# Database
+db.sqlite3
+
+# Static folder at project root
+/static/
+/mysite/settings.py
+settings.py
+mysite/settings.py
+/data/
+
+# macOS
+._*
+.DS_Store
+.fseventsd
+.Spotlight-V100
+
