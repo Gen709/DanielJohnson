@@ -13,7 +13,7 @@ class Categorie(models.Model):
 class Item(models.Model):
     nom = models.CharField(max_length=200)
     categorie = models.ForeignKey(Categorie, on_delete=models.SET_NULL, null=True)
-    student = models.ManyToManyField(Student)
+    student = models.ManyToManyField(Student, null=True)
     
     def __str__(self):
         return self.nom +" (" + self.categorie.nom + ")"
