@@ -14,7 +14,6 @@ db.sqlite3
 # Static folder at project root
 /static/
 /mysite/settings.py
-settings.py
 mysite/settings.py
 /data/
 
@@ -24,3 +23,4 @@ mysite/settings.py
 .fseventsd
 .Spotlight-V100
 
+*.ipynb
