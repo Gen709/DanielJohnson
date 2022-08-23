@@ -28,11 +28,11 @@
 						{% for x in action_resp %}
 							<div class="accordion-item mb-2">
 								<h2 class="accordion-header" id="heading_{{forloop.counter}}">
-									<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{forloop.counter}}" aria-expanded="true" aria-controls="collapse_{{forloop.counter}}">
+									<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{forloop.counter}}" aria-expanded="false" aria-controls="collapse_{{forloop.counter}}">
 										dossier: {{x.problematique.eleve.nom}} {{x.problematique.eleve.prenom}} Gr. {{x.problematique.eleve.groupe_repere}} | {{x.description}} | Attitré par: {{x.createur}}
 									</button>
 								</h2>
-								<div id="collapse_{{forloop.counter}}" class="accordion-collapse collapse show" aria-labelledby="heading_{{forloop.counter}}" data-bs-parent="#accordionResposabilite">
+								<div id="collapse_{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="heading_{{forloop.counter}}" data-bs-parent="#accordionResposabilite">
 									<div class="accordion-body">
 										Pour la problematique: {{x.problematique.nom}}<br>
 										status 
@@ -70,11 +70,11 @@
 						{% for x in action_createur %}
 							<div class="accordion-item mb-2">
 								<h2 class="accordion-header" id="heading{{forloop.counter}}">
-									<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{forloop.counter}}" aria-expanded="true" aria-controls="collapse{{forloop.counter}}">
+									<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{forloop.counter}}" aria-expanded="false" aria-controls="collapse{{forloop.counter}}">
 										dossier: {{x.problematique.eleve.nom}} {{x.problematique.eleve.prenom}} Gr. {{x.problematique.eleve.grouperepere}} | {{x.description}} | Attitré à: {{x.responsable}}
 									</button>
 								</h2>
-								<div id="collapse{{forloop.counter}}" class="accordion-collapse collapse show" aria-labelledby="heading{{forloop.counter}}" data-bs-parent="#accordionAttribution">
+								<div id="collapse{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="heading{{forloop.counter}}" data-bs-parent="#accordionAttribution">
 									<div class="accordion-body">
 										Pour la problematique: {{x.problematique.nom}}<br>
 										status: {{x.status}}
