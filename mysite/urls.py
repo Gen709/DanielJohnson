@@ -26,10 +26,5 @@ urlpatterns = [
     path('etudiant/', include('student.urls')),
     path('problematiques/', include('problematiques.urls')),
     path('', include('page.urls')),
-<<<<<<< HEAD
-
-=======
-    
->>>>>>> 45f2e60f18889d5e9b4e89b22111391671354bf8
 
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
