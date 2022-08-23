@@ -26,6 +26,7 @@ class Student(models.Model):
     groupe_repere = models.CharField(max_length=4)
     code = models.ForeignKey(CodeEtudiant, on_delete=models.SET_NULL, null=True)
     fiche = models.CharField(max_length=20, null=True)
+    classification = models.CharField(max_length=5, null=True)
     
     class Meta:
         ordering = ['nom', 'prenom']
