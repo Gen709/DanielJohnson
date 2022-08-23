@@ -15,8 +15,10 @@ def index(request):
 def user_detail(request, pk):
     statusaction = StatusAction.objects.all()
     action_resp = Action.objects.filter(responsable__id=pk)
+    action_createur = Action.objects.filter(createur__id=pk)
     context = {'id': pk, 
                'action_resp': action_resp,
+               'action_createur': action_createur,
                'statusaction': statusaction}
     
     return render(request, 'page/user_detail.html', context)

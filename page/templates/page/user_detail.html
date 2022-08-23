@@ -14,36 +14,25 @@
 		<div class="row">
 			<h1> Bonjour {{user.first_name}} !</h1>
 		</div>
-		<div class="row border mt-2">
-			<form>
-			{% csrf_token %}
-				<div class="form-group mt-2">
-					<label for="studentsearchbox">Recherche Étudiant</label>
-					<input type="text" class="form-control" id="studentsearchbox">
-				</div>
-				<div name="suggestion_box" class="suggesstion-box mb-3" id="suggesstion-box"></div>
-				
-				<div class="form-group">
-					<input type="hidden" class="form-control" id="student_id">
-				</div>
-			</form>
-		</div>
 		<!--  Section propriétaire -->
 		<div class="row border mt-5">
+		
 			<div class="row mt-2">
 				<h4> Actions dans lesquelles vous avez été identifié comme propriétaire</h4>
 			</div>
-			<div class="row">
-				{% if action %}
+			
+			<div class="row mb-3">
+				{% if action_resp %}
+				
 					<div class="accordion" id="accordionResposabilite">
 						{% for x in action_resp %}
-							<div class="accordion-item">
+							<div class="accordion-item mb-2">
 								<h2 class="accordion-header" id="heading_{{forloop.counter}}">
 									<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{forloop.counter}}" aria-expanded="true" aria-controls="collapse_{{forloop.counter}}">
 										dossier: {{x.problematique.eleve.nom}} {{x.problematique.eleve.prenom}} Gr. {{x.problematique.eleve.groupe_repere}} | {{x.description}} | Attitré par: {{x.createur}}
 									</button>
 								</h2>
-								<div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="heading_{{forloop.counter}}" data-bs-parent="#accordionResposabilite">
+								<div id="collapse_{{forloop.counter}}" class="accordion-collapse collapse show" aria-labelledby="heading_{{forloop.counter}}" data-bs-parent="#accordionResposabilite">
 									<div class="accordion-body">
 										Pour la problematique: {{x.problematique.nom}}<br>
 										status 
@@ -65,36 +54,30 @@
 					<p>Aucune action !</p>
 				{% endif %}
 			</div>
+			
 		</div>
 		
 		
 		<div class="row border mt-5">
+		
 			<div class="row mt-2">
 				<h4> Actions que vous avez attribuées</h4>
 			</div>
-			<div class="row">
-				{% if action %}
-					<div class="accordion" id="accordionResposabilite">
-						{% for x in action_resp %}
-							<div class="accordion-item">
-								<h2 class="accordion-header" id="heading_{{forloop.counter}}">
-									<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{forloop.counter}}" aria-expanded="true" aria-controls="collapse_{{forloop.counter}}">
-										dossier: {{x.problematique.eleve.nom}} {{x.problematique.eleve.prenom}} Gr. {{x.problematique.eleve.groupe_repere}} | {{x.description}} | Attitré par: {{x.createur}}
+			
+			<div class="row mb-3">
+				{% if action_createur %}
+					<div class="accordion" id="accordionAttribution">
+						{% for x in action_createur %}
+							<div class="accordion-item mb-2">
+								<h2 class="accordion-header" id="heading{{forloop.counter}}">
+									<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{forloop.counter}}" aria-expanded="true" aria-controls="collapse{{forloop.counter}}">
+										dossier: {{x.problematique.eleve.nom}} {{x.problematique.eleve.prenom}} Gr. {{x.problematique.eleve.grouperepere}} | {{x.description}} | Attitré à: {{x.responsable}}
 									</button>
 								</h2>
-								<div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="heading_{{forloop.counter}}" data-bs-parent="#accordionResposabilite">
+								<div id="collapse{{forloop.counter}}" class="accordion-collapse collapse show" aria-labelledby="heading{{forloop.counter}}" data-bs-parent="#accordionAttribution">
 									<div class="accordion-body">
 										Pour la problematique: {{x.problematique.nom}}<br>
-										status 
-										<select class="form-select select-action-status">
-											{% for option in statusaction %}
-												{% if option.nom == x.status %}
-													<option selected value="{{option.id}}">{{option.nom}}</option>
-												{% else %}
-													<option value="{{option.id}}">{{option.nom}}</option>
-												{% endif %}
-											{% endfor %}
-										</select>
+										status: {{x.status}}
 									</div>
 								</div>
 							</div>
