@@ -9,14 +9,14 @@ def index(request):
     if request.user.is_authenticated:
         return redirect('home', pk=request.user.id)
     else:
-        return HttpResponse("Hello, world. You're NOT AUTHENTICATED and at the polls index.")
-        
+        # return HttpResponse("Hello, world. You're NOT AUTHENTICATED.")
+        return redirect('login')
 
 def user_detail(request, pk):
     statusaction = StatusAction.objects.all()
-    action = Action.objects.filter(responsable__id=pk)
+    action_resp = Action.objects.filter(responsable__id=pk)
     context = {'id': pk, 
-               'action': action,
+               'action_resp': action_resp,
                'statusaction': statusaction}
     
     return render(request, 'page/user_detail.html', context)

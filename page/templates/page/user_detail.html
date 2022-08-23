@@ -11,52 +11,109 @@
 <div class="container-fluid">
 	
 	{% if user.is_authenticated %}
-	<div class="row">
-		<h1> Bonjour {{user.first_name}} !</h1>
-	</div>
-	<div class="row border border-light">
-		<form>
-		{% csrf_token %}
-			<div class="form-group">
-				<label for="studentsearchbox">Recherche Étudiant</label>
-				<input type="text" class="form-control" id="studentsearchbox">
-			</div>
-			<div name="suggestion_box" class="suggesstion-box mb-3" id="suggesstion-box"></div>
-			
-			<div class="form-group">
-				<input type="hidden" class="form-control" id="student_id">
-			</div>
-		</form>
-	</div>
-	<div class="row border border-light mt-5">
 		<div class="row">
-			<h4> Actions dans lesquelles vous avez été identifié comme personne responsable</h4>
+			<h1> Bonjour {{user.first_name}} !</h1>
 		</div>
-		<div class="row">
-			{% if action %}
-				{% for x in action %}
-				<h6> Tâche {{forloop.counter}}</h6>
-					Desc: {{x.description}} <br>
-					Attitré par: {{x.createur}} <br>
-					Dans le cadre du dossier: {{x.problematique.eleve.nom}} {{x.problematique.eleve.prenom}} Gr. {{x.problematique.eleve.groupe_repere}}<br>
-					Pour la problematique: {{x.problematique.nom}}<br>
-					status <select class="form-select select-action-status">
-					{% for option in statusaction %}
-						{% if option.nom == x.status %}
-							<option selected value="{{option.id}}">{{option.nom}}</option>
-						{% else %}
-							<option value="{{option.id}}">{{option.nom}}</option>
-						{% endif %}
-						
-					{% endfor %}
-				{% endfor %}
-			{% else %}
-				Aucune action !
-			{% endif %}
+		<div class="row border mt-2">
+			<form>
+			{% csrf_token %}
+				<div class="form-group mt-2">
+					<label for="studentsearchbox">Recherche Étudiant</label>
+					<input type="text" class="form-control" id="studentsearchbox">
+				</div>
+				<div name="suggestion_box" class="suggesstion-box mb-3" id="suggesstion-box"></div>
+				
+				<div class="form-group">
+					<input type="hidden" class="form-control" id="student_id">
+				</div>
+			</form>
 		</div>
-	</div>
-{% else %}
-	Not authenticated
-{% endif %}
+		<!--  Section propriétaire -->
+		<div class="row border mt-5">
+			<div class="row mt-2">
+				<h4> Actions dans lesquelles vous avez été identifié comme propriétaire</h4>
+			</div>
+			<div class="row">
+				{% if action %}
+					<div class="accordion" id="accordionResposabilite">
+						{% for x in action_resp %}
+							<div class="accordion-item">
+								<h2 class="accordion-header" id="heading_{{forloop.counter}}">
+									<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{forloop.counter}}" aria-expanded="true" aria-controls="collapse_{{forloop.counter}}">
+										dossier: {{x.problematique.eleve.nom}} {{x.problematique.eleve.prenom}} Gr. {{x.problematique.eleve.groupe_repere}} | {{x.description}} | Attitré par: {{x.createur}}
+									</button>
+								</h2>
+								<div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="heading_{{forloop.counter}}" data-bs-parent="#accordionResposabilite">
+									<div class="accordion-body">
+										Pour la problematique: {{x.problematique.nom}}<br>
+										status 
+										<select class="form-select select-action-status">
+											{% for option in statusaction %}
+												{% if option.nom == x.status %}
+													<option selected value="{{option.id}}">{{option.nom}}</option>
+												{% else %}
+													<option value="{{option.id}}">{{option.nom}}</option>
+												{% endif %}
+											{% endfor %}
+										</select>
+									</div>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+				{% else %}
+					<p>Aucune action !</p>
+				{% endif %}
+			</div>
+		</div>
+		
+		
+		<div class="row border mt-5">
+			<div class="row mt-2">
+				<h4> Actions que vous avez attribuées</h4>
+			</div>
+			<div class="row">
+				{% if action %}
+					<div class="accordion" id="accordionResposabilite">
+						{% for x in action_resp %}
+							<div class="accordion-item">
+								<h2 class="accordion-header" id="heading_{{forloop.counter}}">
+									<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{forloop.counter}}" aria-expanded="true" aria-controls="collapse_{{forloop.counter}}">
+										dossier: {{x.problematique.eleve.nom}} {{x.problematique.eleve.prenom}} Gr. {{x.problematique.eleve.groupe_repere}} | {{x.description}} | Attitré par: {{x.createur}}
+									</button>
+								</h2>
+								<div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="heading_{{forloop.counter}}" data-bs-parent="#accordionResposabilite">
+									<div class="accordion-body">
+										Pour la problematique: {{x.problematique.nom}}<br>
+										status 
+										<select class="form-select select-action-status">
+											{% for option in statusaction %}
+												{% if option.nom == x.status %}
+													<option selected value="{{option.id}}">{{option.nom}}</option>
+												{% else %}
+													<option value="{{option.id}}">{{option.nom}}</option>
+												{% endif %}
+											{% endfor %}
+										</select>
+									</div>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+				{% else %}
+					<p>Aucune action !</p>
+				{% endif %}
+			</div>
+		</div>
+		
+		
+		
+		
+		
+	{% else %}
+		Not authenticated
+	{% endif %}
+	
 </div>
+
 {% endblock %}
