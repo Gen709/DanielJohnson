@@ -53,7 +53,7 @@ class Problematique(models.Model):
     nom = models.ForeignKey(Item, on_delete=models.CASCADE)
     status = models.ForeignKey(StatusProblematique, on_delete=models.CASCADE)
     instigateur = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    detail = models.TextField(null=True)
+    detail = models.TextField(null=True, blank=True)
     eleve = models.ForeignKey(Student, on_delete=models.SET_NULL, null=True)
     # action = models.ManyToManyField(Action, blank=True)
     
@@ -74,7 +74,7 @@ class Action(models.Model):
     createur = models.ForeignKey(User, related_name='createur_foreign_key', on_delete=models.SET_NULL, null=True)
     responsable = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     description = models.CharField(max_length=300, null=True)
-    detail = models.TextField(null=True)
+    detail = models.TextField(null=True, blank=True)
     status = models.ForeignKey(StatusAction, on_delete=models.SET_NULL, null=True)
     problematique = models.ForeignKey(Problematique, on_delete=models.SET_NULL, null=True)
     
