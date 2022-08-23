@@ -8,10 +8,6 @@ from django.contrib.auth.models import User
 from django.http.response import JsonResponse, HttpResponse
 
 
-def home(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
-
-
 def ajax_search_student(request):
     
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':

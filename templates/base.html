@@ -33,8 +33,7 @@
 				<!--- BEGINNING OF NAVBAR -->
 				{% include "nav_bar.html" %}
 				<!--- END OF NAVBAR -->
-				{% if user.is_authenticated %}
-					
+								
 					
 					{% block content %}{% endblock %}
 					
@@ -42,10 +41,7 @@
 				<!-- Copyright -->
 						<!--© 2021 Copyright:Louis-Philippe David-->
 				</footer>
-					{% else %}
-						Not authenticated
-					{% endif %}
-				
+								
 			</div>
 			
 		 	{% block js %}

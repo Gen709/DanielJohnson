@@ -1,7 +1,7 @@
 from django.urls import path
 
-from student import views
+from . import views
 
 urlpatterns = [
-    path('', views.home, name='home1'),
+    path('ajax/', views.ajax_search_problematiques, name='ajax-search-problematiques'),
 ]
