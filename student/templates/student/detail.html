@@ -28,7 +28,10 @@
 				<h3>État de la situation</h3>
 			</div>
 			<div class="col">
-				<a href="#">+ ajouter une problématique</a>
+				<!-- <a href="#">+ ajouter une problématique</a> -->
+				<button type="button sm" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+				  + Ajout problématique
+				</button>
 			</div>
 		</div>
 		<div class="row">
@@ -41,7 +44,7 @@
 			<div class="accordion" id="accordionEtatDeLaSituation">
 				{% if student.problematique_set.all %}
 					{% for problematique in student.problematique_set.all %}
-					<div class="accordion-item">
+					<div class="accordion-item mb-2">
 						<h2 class="accordion-header" id="heading_{{forloop.counter}}">
 							<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{forloop.counter}}" aria-expanded="true" aria-controls="collapse_{{forloop.counter}}">
 								{{ problematique.nom }} | statut: {{ problematique.status }} | inscrit par :  {{ problematique.instigateur.first_name }} {{ problematique.instigateur.last_name }}
@@ -84,7 +87,6 @@
 			<h3>Suivis des actions</h3>
 		</div>
 	</div>
-
-
 </div>
+{% include 'student/ajout_problematique.html' %}
 {% endblock %}

@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .models import Student
 from urllib.parse import unquote
+from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -31,8 +32,11 @@ def ajax_search_student(request):
 
 def student_detail_view(request, pk):
     
+    staff = User.objects.get(username = request.user.get_username())
+    
     student = Student.objects.get(pk=pk)
     
-    context = {'student': student}
+    context = {'student': student,
+               'staff': staff}
     
     return render(request, 'student/detail.html', context)

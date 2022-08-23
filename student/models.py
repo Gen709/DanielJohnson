@@ -13,10 +13,13 @@ User.add_to_class("__str__", get_first_name)
 
 class CodeEtudiant(models.Model):
     code = models.CharField(max_length=10)
-    definition = models.CharField(max_length=100, null=True)
+    definition = models.CharField(max_length=250, null=True)
     
     def __str__(self):
-        return self.code
+        return self.code + " " + self.definition
+    
+    class Meta:
+        ordering = ['definition']
 
 
 
