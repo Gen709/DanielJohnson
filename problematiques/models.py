@@ -1,6 +1,7 @@
 from django.db import models
 
-from student.models import Student
+
+# from student.models import Student
 
 # Create your models here.
 
@@ -13,7 +14,10 @@ class Categorie(models.Model):
 class Item(models.Model):
     nom = models.CharField(max_length=200)
     categorie = models.ForeignKey(Categorie, on_delete=models.SET_NULL, null=True)
-    student = models.ManyToManyField(Student, null=True)
+    # student = models.ManyToManyField("student.Student", blank=True)
+    
+    class Meta:
+        ordering = ['nom']
     
     def __str__(self):
-        return self.nom +" (" + self.categorie.nom + ")"
+        return self.nom 
