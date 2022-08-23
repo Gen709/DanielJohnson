@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col"><h1>Comité clinique</h1></div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-6">
+			<table class="table table-striped table-sm">
+				<tr><td>Élève:</td><td>{{student.nom}}, {{student.prenom}}</td></tr>
+				<tr><td>Groupe repère:</td><td>{{student.groupe_repere}}</td></tr>
+				<tr><td>Plan d'intervention:</td><td> {{student.plan_intervention}}</td></tr>
+				<tr><td>Code:</td><td>{{student.code}}</td></tr>
+				<tr><td>Classification:</td><td>{{student.classification}}</td></tr>
+			</table>
+		</div>
+	</div>
+	<!-- Section État de la situation -->
+	<div class="row border mt-5">
+		<!--  section titre-->
+		<div class="row mt-2">
+			<div class="col">
+				<h3>État de la situation</h3>
+			</div>
+			<div class="col">
+				<a href="#">+ ajouter une problématique</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col mt-2 mb-3">
+				Probématiques:
+			</div>
+		</div>
+		<!-- section accordéon -->
+		<div class="row mb-2">
+			<div class="accordion" id="accordionEtatDeLaSituation">
+				{% if student.problematique_set.all %}
+					{% for problematique in student.problematique_set.all %}
+					<div class="accordion-item">
+						<h2 class="accordion-header" id="heading_{{forloop.counter}}">
+							<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{forloop.counter}}" aria-expanded="true" aria-controls="collapse_{{forloop.counter}}">
+								{{ problematique.nom }} | statut: {{ problematique.status }} | inscrit par :  {{ problematique.instigateur.first_name }} {{ problematique.instigateur.last_name }}
+							</button>
+						</h2>
+						<div id="collapse_{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="heading_{{forloop.counter}}" data-bs-parent="#accordionEtatDeLaSituation">
+							<div class="accordion-body">
+							
+								<strong>Explications / Détail:</strong>
+									{% if problematique.detail %}
+										<p>{{ problematique.detail }}</p>
+									{%else%}
+										<p>Aucune Explication / Détail</p>
+									{%endif%}
+								<strong>Actions:</strong>
+								<ul class="list-group list-group-flush">
+								{% if problematique.action_set.all %}
+									{%for action in problematique.action_set.all %}
+										<li class="list-group-item">{{action.description}} | {{action.responsable}} | {{action.status}}</li>
+									{% endfor %}
+								{% else %}
+									<li class="list-group-item">Aucune Action n'a été planifiée </li>
+								{% endif %}
+								</ul>
+								<a href="#">+ ajouter une action</a>
+							</div>
+						</div>
+					</div>
+					{% endfor %}
+				{% else %}
+					Aucune problématique n'est associée avec {{student.nom}}, {{student.prenom}}
+				{%endif%}
+			</div>
+		</div>
+		
+	</div>
+	<!--  Section Suivis des actions -->
+	<div class="row border mt-5">
+		<div class="col mt-2">
+			<h3>Suivis des actions</h3>
+		</div>
+	</div>
+
+
+</div>
+{% endblock %}
