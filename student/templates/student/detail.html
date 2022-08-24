@@ -25,7 +25,7 @@
 	<div class="row border mt-5">
 		<!--  section titre-->
 		<div class="row mt-2">
-			<h3>État de la situation</h3>
+			<h3>État de la situation:</h3>
 		</div>
 		
 		<div class="row mt-2 mb-2" style="height: 100px;"> <!-- min height ? -->
@@ -94,17 +94,21 @@
 		
 	</div>
 	<!--  Section Suivis des actions -->
-	<div class="row border mt-5">
-		<div class="col mt-2">
-			<h3>Suivis des actions</h3>
+	<div class="row mt-5">
+		<div class="row">
+			<div class="col mt-2">
+				<h3>Suivis des actions</h3>
+			</div>
 		</div>
 		
-		<div class="row mt-2 mb-2" style="height: 100px;"> <!-- min height ? -->
+		<div class="row mt-2 mb-2 border"> <!-- min height ? -->
 			{% if student.problematique_set.all %}
 				{% for problematique in student.problematique_set.all %}
 					{% if problematique.action_set.all %}
 						{% for action in problematique.action_set.all %}
-							<p>{{action.description}} | Resp: {{action.responsable}}</p>
+							<div class="row  mb-2">
+								<p>{{action.description}} | Resp: {{action.responsable}}</p>
+							</div>
 						{% endfor %}
 					{% else %}
 						<p> Aucune action d'inscrite pour la probématique {{problematique.nom}}</p>
