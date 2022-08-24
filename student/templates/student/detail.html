@@ -5,6 +5,7 @@
 
 
 <div class="container-fluid">
+
 	<div class="row">
 		<div class="col"><h1>Comité clinique</h1></div>
 	</div>
@@ -26,13 +27,21 @@
 		<div class="row mt-2">
 			<h3>État de la situation</h3>
 		</div>
+		
+		<div class="row mt-2 mb-2" style="height: 100px;"> <!-- min height ? -->
+			{% if student.etat_situation %}
+				student.etat_situation
+			{% else %}
+				<p>Rien d'inscrit pour {{student.nom}}, {{student.prenom}}</p>
+			{% endif %}
+		</div>
 	</div>
 	<!-- Section Problemes -->
 	<div class="row border mt-5">
 		<!--  section titre-->
 		<div class="row mt-2">
 			<div class="col-md-6">
-				
+				<h3>Probématiques:</h3>
 			</div>
 			<div class="col">
 				<!-- <a href="#">+ ajouter une problématique</a> -->
@@ -41,11 +50,7 @@
 				</button>
 			</div>
 		</div>
-		<div class="row">
-			<div class="col mt-2 mb-3">
-				Probématiques:
-			</div>
-		</div>
+		
 		<!-- section accordéon -->
 		<div class="row mb-2">
 			<div class="accordion" id="accordionEtatDeLaSituation">
@@ -93,6 +98,22 @@
 		<div class="col mt-2">
 			<h3>Suivis des actions</h3>
 		</div>
+		
+		<div class="row mt-2 mb-2" style="height: 100px;"> <!-- min height ? -->
+			{% if student.problematique_set.all %}
+				{% for problematique in student.problematique_set.all %}
+					{% if problematique.action_set.all %}
+						{% for action in problematique.action_set.all %}
+							<p>{{action.description}} | Resp: {{action.responsable}}</p>
+						{% endfor %}
+					{% else %}
+						<p> Aucune action d'inscrite pour la probématique {{problematique.nom}}</p>
+					{% endif %}
+				{% endfor %}
+			
+			{% endif %}
+		</div>
+		
 	</div>
 </div>
 {% include 'student/ajout_problematique.html' %}
