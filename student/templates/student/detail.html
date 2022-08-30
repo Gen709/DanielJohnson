@@ -64,7 +64,7 @@
 			</div>
 			<div class="col">
 				<!-- <a href="#">+ ajouter une problématique</a> -->
-				<button type="button sm" class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#exampleModal">
+				<button type="button" class="btn btn-sm btn-primary float-end" data-bs-toggle="modal" data-bs-target="#exampleModal">
 				  + Ajout problématique
 				</button>
 			</div>
@@ -102,10 +102,11 @@
 									<li class="list-group-item">Aucune Action n'a été planifiée </li>
 								{% endif %}
 								</ul>
-								<a href="#">+ ajouter une action</a>
+								<!-- <a href="#">+ ajouter une action</a> -->
+								<button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#Modalaction">+ ajouter une action</button>
 								<!-- <div class="row md-2"> -->
 									<button type="button" class="btn btn-sm btn-danger float-end">
-									  	Suprimer problématique
+									  	Supr. prob.
 									</button>
 								<!-- </div> -->
 							</div>
@@ -147,4 +148,5 @@
 	
 </div>
 {% include 'student/ajout_problematique.html' %}
+{% include 'student/ajout_action.html' %}
 {% endblock %}

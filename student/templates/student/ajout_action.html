@@ -1,0 +1,70 @@
+
+{% load static %}
+
+<!-- Modal -->
+<div class="modal fade" id="Modalaction" tabindex="-1" aria-labelledby="ModalactionLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ModalactionLabel">Formulaire ajout d'actions</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{% url 'action-create' %}" method="post">
+      	{% csrf_token %}
+      
+	      <div class="modal-body">
+			<!--CREATEUR  -->				
+			<input type="hidden" name="staff_id" value="{{staff.id}}">
+		
+			<input type="hidden" name="problematique_id" value="{{student.id}}">
+			
+				<div class="form-group">
+					<label for="action_status_id">Status</label>
+					<!-- <input type="text" id="problematique_suggestion_box" class="form-control" value="n/a"> -->
+					<select class="form-select" name="action_status_id">
+						{% for status in statusaction %}
+							<option value="{{status.id}}" >
+								{{status.nom}}	
+							</option>
+						{% endfor %}
+					</select>
+				</div>
+				
+				<div class="form-group">
+					<label for="responsable_id">Responsable</label>
+					<!-- <input type="text" id="problematique_suggestion_box" class="form-control" value="n/a"> -->
+					<select class="form-select" name="responsable_id">
+						{% for responsable in responsable_qs %}
+							<option value="{{status.id}}" >
+								{{responsable.last_name}}	{{responsable.first_name}}
+							</option>
+						{% endfor %}
+					</select>
+				</div>
+				
+				<div class="form-group">
+					<label for="description">Courte description:</label>
+					<input class="form-control" id="description" name="description"></input>
+				</div>
+				
+				<div class="form-group">
+					<label for="detail">Détails:</label>
+					<textarea rows="7" class="form-control" id="detail" name="detail"></textarea>
+				</div>
+				
+								
+				<div class="form-group">
+				</div>
+				
+	      
+	        
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+	        <button type="submit" class="btn btn-primary">Save changes</button>
+	      </div>
+      </form>
+    </div>
+    
+  </div>
+ </div>

@@ -35,6 +35,8 @@ def student_detail_view(request, pk):
     
     staff = User.objects.get(username = request.user.get_username())
     
+    responsable_qs = User.objects.all()
+    
     student = Student.objects.get(pk=pk)
     
     problematiques = Item.objects.all()
@@ -47,7 +49,8 @@ def student_detail_view(request, pk):
                'staff': staff,
                'problematiques': problematiques,
                'statusaction': statusaction, 
-               'statusproblematique':statusproblematique
+               'statusproblematique':statusproblematique,
+               'responsable_qs':responsable_qs
                }
     
     return render(request, 'student/detail.html', context)
@@ -67,6 +70,9 @@ def student_problematique_create_view(request):
     p.save()
     
     return redirect(student.get_absolute_url())
+
+def student_action_problematique_insert_view(request):
+    pass
 
 # class ComiteCliniqueStudentListView(ListView):
 #     model=Student
