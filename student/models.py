@@ -89,7 +89,8 @@ class Action(models.Model):
         return self.description[:50] + " *- Status -* " + self.status.nom
 
 
-
+class ActionSuggestion(models.Model):
+    nom = models.CharField(max_length=250)
 
     
 
