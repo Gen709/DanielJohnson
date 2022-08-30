@@ -1,8 +1,8 @@
 from django.contrib import admin
 
-from .models import Student, StatusAction, StatusProblematique, Action, Problematique, CodeEtudiant
+from .models import Student, StatusAction, StatusProblematique, Action, Problematique, CodeEtudiant, ActionSuggestion
 
-model_list = [Student, StatusAction, StatusProblematique, Action, Problematique, CodeEtudiant]
+model_list = [Student, StatusAction, StatusProblematique, Action, Problematique, CodeEtudiant, ActionSuggestion]
 
 # Register your models here.
 

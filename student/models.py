@@ -91,6 +91,12 @@ class Action(models.Model):
 
 class ActionSuggestion(models.Model):
     nom = models.CharField(max_length=250)
+    
+    def __str__(self):
+        return self.nom
+    
+    class Meta:
+        ordering = ['nom']
 
     
 

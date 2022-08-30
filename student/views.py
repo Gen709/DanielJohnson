@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Student, StatusAction, Problematique, StatusProblematique
+from .models import Student, StatusAction, Problematique, StatusProblematique, Action
 from problematiques.models import Item
 from urllib.parse import unquote
 from django.contrib.auth.models import User
@@ -72,7 +72,29 @@ def student_problematique_create_view(request):
     return redirect(student.get_absolute_url())
 
 def student_action_problematique_insert_view(request):
-    pass
+    student = Student.objects.get(pk=request.POST.get("eleve_id"))
+    staff = User.objects.get(pk=request.POST.get("staff_id"))
+    problematique = Problematique.objects.get(pk=request.POST.get("problematique_id"))
+    description = request.POST.get("description")
+    detail = request.POST.get("detail")
+    action_status = StatusAction.objects.get(pk=request.POST.get("action_status_id"))
+    responsable =  User.objects.get(pk=request.POST.get("responsable_id"))
+    
+    a = Action(createur=staff, 
+               responsable=responsable, 
+               description=description, 
+               detail=detail, 
+               status=action_status, 
+               problematique=problematique)
+    a.save()
+    # 
+    # 
+    # 
+    # 
+    # 
+    # 
+    
+    return redirect(student.get_absolute_url())
 
 # class ComiteCliniqueStudentListView(ListView):
 #     model=Student

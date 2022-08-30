@@ -4,9 +4,8 @@
 {% block js %}
 	<script src="https://cdn.tiny.cloud/1/3uxow28ssthmenpgxa54gwbtdj7mdpjqzi8sprt26xpv0dcz/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 	<script src="{% static 'page/js/inline_textarea.js' %}"> </script>
-	<style>
-    	.mce-notification {display: none !important;}
-	</style>
+	<script src="{% static 'student/js/set_problem_id.js' %}"> </script>
+	
 	
 {% endblock %}
 
@@ -103,7 +102,7 @@
 								{% endif %}
 								</ul>
 								<!-- <a href="#">+ ajouter une action</a> -->
-								<button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#Modalaction">+ ajouter une action</button>
+								<button type="button" class="btn btn-link open-action" data-id="{{problematique.id}}" data-bs-toggle="modal" data-bs-target="#Modalaction">+ ajouter une action</button>
 								<!-- <div class="row md-2"> -->
 									<button type="button" class="btn btn-sm btn-danger float-end">
 									  	Supr. prob.
