@@ -21,8 +21,9 @@ def user_detail(request, pk):
     action_createur = Action.objects.filter(createur__id=pk)
     context = {'id': pk, 
                'action_resp': action_resp,
-               'action_createur': action_createur,
-               'statusaction': statusaction}
+               'action_createur': action_createur
+               
+               }
     
     return render(request, 'page/user_detail.html', context)
 
