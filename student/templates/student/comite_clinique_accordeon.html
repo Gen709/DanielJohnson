@@ -36,7 +36,7 @@
 						<div class="row mt-2 mb-2 justify-content-center" style="height: 100px;"> <!-- min height ? -->
 							<div class="col-11 ms-3">
 								{% if s.etat_situation %}
-									s.etat_situation
+									{{s.etat_situation}}
 								{% else %}
 									<p>Rien d'inscrit pour {{s.nom}}, {{s.prenom}}</p>
 								{% endif %}
