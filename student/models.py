@@ -61,6 +61,9 @@ class Problematique(models.Model):
     eleve = models.ForeignKey(Student, on_delete=models.SET_NULL, null=True)
     # action = models.ManyToManyField(Action, blank=True)
     
+    class Meta:
+        unique_together = [['nom', 'eleve']]
+    
     def __str__(self):
         return self.nom.nom + " - Éleve: " + self.eleve.nom + " "+ self.eleve.prenom + " - Status: " + self.status.nom
 

@@ -1,8 +1,10 @@
-from django.shortcuts import render
-from .models import Student, CodeEtudiant
+from django.shortcuts import render, redirect
+from .models import Student, StatusAction, Problematique, StatusProblematique
+from problematiques.models import Item
 from urllib.parse import unquote
 from django.contrib.auth.models import User
 from django.views.generic.list import ListView
+from django.contrib.auth.models import User
 
 
 
@@ -35,10 +37,36 @@ def student_detail_view(request, pk):
     
     student = Student.objects.get(pk=pk)
     
+    problematiques = Item.objects.all()
+    
+    statusproblematique = StatusProblematique.objects.all()
+    
+    statusaction = StatusAction.objects.all()
+    
     context = {'student': student,
-               'staff': staff}
+               'staff': staff,
+               'problematiques': problematiques,
+               'statusaction': statusaction, 
+               'statusproblematique':statusproblematique
+               }
     
     return render(request, 'student/detail.html', context)
+
+def student_problematique_create_view(request):
+    student = Student.objects.get(pk=request.POST.get("eleve_id"))
+    instigateur = User.objects.get(pk=request.POST.get("staff_id"))
+    problematique = Item.objects.get(pk=request.POST.get("problematique_id"))
+    detail = request.POST.get("prob_detail")
+    status = StatusProblematique.objects.get(pk=request.POST.get("status_prob"))
+    
+    p = Problematique(nom=problematique, 
+                      status=status, 
+                      instigateur=instigateur,
+                      detail=detail, 
+                      eleve=student)
+    p.save()
+    
+    return redirect(student.get_absolute_url())
 
 # class ComiteCliniqueStudentListView(ListView):
 #     model=Student

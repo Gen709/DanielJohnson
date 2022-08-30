@@ -9,27 +9,40 @@
         <h5 class="modal-title" id="exampleModalLabel">Formulaire ajout problématique</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="#" method="post">
+      <form action="{% url 'problematique-create' %}" method="post">
+      	{% csrf_token %}
       
 	      <div class="modal-body">
-			<div class="row">
-				<p>Instigateur: {{staff.first_name}} {{staff.last_name}}</p>
-				<input type="hidden" name="instigateur_user_name" value="{{staff.username}}">
-			</div>
-			<div class="row">
-				<p>Eleve: {{student.nom}}, {{student.prenom}}</p>
-				<input type="hidden" name="eleve_id" value="{{student.id}}">
-			</div>
+							
+			<input type="hidden" name="staff_id" value="{{staff.id}}">
+		
+			<input type="hidden" name="eleve_id" value="{{student.id}}">
+			
 				<div class="form-group">
 					<label for="problematique">Problématique</label>
 					
-					<input type="text" id="problematique_suggestion_box" class="form-control" value="n/a">
+					<!-- <input type="text" id="problematique_suggestion_box" class="form-control" value="n/a"> -->
+					<select class="form-select" name="problematique_id">
+						{% for probleme in problematiques %}
+							<option value="{{probleme.id}}" >
+								{{probleme.nom}} {{probleme.id}}
+								
+							</option>
+						{% endfor %}
+					</select>
 					
-					<div name="suggestion_box" class="suggesstion-box mb-3" id="suggesstion-box"></div>
+					<!-- <div name="suggestion_box" class="suggesstion-box mb-3" id="suggesstion-box"></div> -->
 				</div>
 				<div class="form-group">
-				
+					<label for="problematique_details">Détails:</label>
+					<textarea rows="7" class="form-control" id="problematique_details", name="prob_detail"></textarea>
 				</div>
+					<label for="problematique_status">Status:</label>
+					<select class="form-select" id="problematique_status" name="status_prob">
+						{% for status in statusproblematique %}
+							<option value="{{status.id}}">{{status.nom}}</option>
+						{% endfor %}
+					</select>
 				<div class="form-group">
 				</div>
 				
