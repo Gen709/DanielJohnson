@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block js %}
+	
+{% endblock %}
+
+{% block content %}
+ <h1> Comité Clinique liste</h1>
+ 	{% for n in niveau %}
+ 		<div class="row border bg-light text-muted">
+ 		<h5>{{ n }}</h5>
+ 		<div class="accordion" id="accordion{{ n }}">
+ 			{% for s in student %}
+				{% if s.classification == n %}
+				<div class="accordion-item mb-3 danger">
+				
+				    <h2 class="accordion-header" id="heading{{s.fiche}}">
+				      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{s.fiche}}" aria-expanded="true" aria-controls="collapse{{s.fiche}}">
+				        {{s.nom}} {{s.prenom}} - {{s.code}}
+				      </button>
+				    </h2>
+				    
+				    <div id="collapse{{s.fiche}}" class="accordion-collapse collapse" aria-labelledby="heading{{s.fiche}}" data-bs-parent="#accordion{{ n }}">
+				      <div class="accordion-body">
+				        <a href="{{s.get_absolute_url}}"> Voir profile </a>
+				        
+				        <div class="row border bg-light mt-5">
+						<!--  section titre-->
+						<div class="row mt-2 justify-content-center">
+							<div class="col-11 bg-secondary text-white">
+								<h3>État de la situation:</h3>
+							</div>
+						</div>
+						
+						<div class="row mt-2 mb-2 justify-content-center" style="height: 100px;"> <!-- min height ? -->
+							<div class="col-11 ms-3">
+								{% if s.etat_situation %}
+									s.etat_situation
+								{% else %}
+									<p>Rien d'inscrit pour {{s.nom}}, {{s.prenom}}</p>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+					<!-- Section Problemes -->
+					<div class="row border mt-5 bg-light">
+						<!--  section titre-->
+						<div class="row mt-2 justify-content-center">
+							<div class="col-11 bg-secondary text-white">
+								<h3>Problématiques:</h3>
+								<!-- <a href="#">+ ajouter une problématique</a> -->
+								<!-- <button type="button sm" class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#exampleModal">
+								  + Ajout problématique
+								</button> -->
+							</div>
+							
+						</div>
+						
+						
+						<!-- section accordéon -->
+						<div class="row mb-2 justify-content-center">
+							<div class="col-11">
+								<div class="accordion" id="accordionEtatDeLaSituation">
+									{% if s.problematique_set.all %}
+										{% for problematique in s.problematique_set.all %}
+										<div class="accordion-item mb-2">
+											<h2 class="accordion-header" id="heading_{{forloop.counter}}">
+												<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{forloop.counter}}" aria-expanded="false" aria-controls="collapse_{{forloop.counter}}">
+													{{ problematique.nom }} | statut: {{ problematique.status }} | inscrit par :  {{ problematique.instigateur.first_name }} {{ problematique.instigateur.last_name }}
+												</button>
+											</h2>
+											<div id="collapse_{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="heading_{{forloop.counter}}" data-bs-parent="#accordionEtatDeLaSituation">
+												<div class="accordion-body">
+												
+													<strong>Explications / Détail:</strong>
+														{% if problematique.detail %}
+															<p>{{ problematique.detail }}</p>
+														{%else%}
+															<p>Aucune Explication / Détail</p>
+														{%endif%}
+													<strong>Actions:</strong>
+													<ul class="list-group list-group-flush">
+													{% if problematique.action_set.all %}
+														{%for action in problematique.action_set.all %}
+															<li class="list-group-item">
+																{{action.description}} | {{action.responsable}} | {{action.status}}
+															</li>
+														{% endfor %}
+													{% else %}
+														<li class="list-group-item">Aucune Action n'a été planifiée </li>
+													{% endif %}
+													</ul>
+													<a href="#">+ ajouter une action</a>
+												</div>
+											</div>
+										</div>
+										{% endfor %}
+									{% else %}
+										Aucune problématique n'est associée avec {{s.nom}}, {{s.prenom}}
+									{%endif%}
+								</div>
+							</div>
+						</div>
+						
+						<!-- <div class="row border mt-5 bg-light">
+							<div class="row mt-2 justify-content-center">
+								<div class="col-11 bg-secondary text-white">
+									<h3>Suivis des actions</h3>
+								</div>
+							</div>
+							
+							<div class="row mt-2 mb-2 border"> min height ?
+								{% if student.problematique_set.all %}
+									{% for problematique in student.problematique_set.all %}
+										{% if problematique.action_set.all %}
+											{% for action in problematique.action_set.all %}
+												<div class="row  mb-2">
+													<p>{{action.description}} | Resp: {{action.responsable}}</p>
+												</div>
+											{% endfor %}
+										{% else %}
+											<p> Aucune action d'inscrite pour la probématique {{problematique.nom}}</p>
+										{% endif %}
+									{% endfor %}
+								
+								{% endif %}
+							</div>
+						</div> -->
+					</div>  
+				</div>
+			</div>			    
+		</div>
+				{% endif %}
+		{% endfor %}
+		 </div>
+		</div>
+	{% endfor %}
+	
+{% endblock %}

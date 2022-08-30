@@ -1,7 +1,10 @@
 from django.shortcuts import render
-from .models import Student
+from .models import Student, CodeEtudiant
 from urllib.parse import unquote
 from django.contrib.auth.models import User
+from django.views.generic.list import ListView
+
+
 
 # Create your views here.
 
@@ -36,3 +39,27 @@ def student_detail_view(request, pk):
                'staff': staff}
     
     return render(request, 'student/detail.html', context)
+
+# class ComiteCliniqueStudentListView(ListView):
+#     model=Student
+#     context_object_name = 'student_list'
+#     template_name = "student/comite_clinique_liste.html"
+#
+#     def get_queryset(self):
+#         return Student.objects.filter(comite_clinique=True)
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['niveau'] = CodeEtudiant.objects.all()
+#         return context
+        
+def comitecliniquestudentlistview(request):
+    student = Student.objects.filter(comite_clinique=True)
+    classification_list = set([x for x in Student.objects.all().values_list('classification', flat=True)])
+    context = {'student': student,
+               'niveau': classification_list}
+    
+    return render(request, "student/comite_clinique_accordeon.html", context)
+    
+            
+    
