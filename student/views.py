@@ -105,27 +105,9 @@ def student_action_problematique_insert_view(request):
                status=action_status, 
                problematique=problematique)
     a.save()
-    # 
-    # 
-    # 
-    # 
-    # 
-    # 
     
     return redirect(student.get_absolute_url())
 
-# class ComiteCliniqueStudentListView(ListView):
-#     model=Student
-#     context_object_name = 'student_list'
-#     template_name = "student/comite_clinique_liste.html"
-#
-#     def get_queryset(self):
-#         return Student.objects.filter(comite_clinique=True)
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['niveau'] = CodeEtudiant.objects.all()
-#         return context
         
 def comitecliniquestudentlistview(request):
     student = Student.objects.filter(comite_clinique=True)
@@ -136,4 +118,13 @@ def comitecliniquestudentlistview(request):
     return render(request, "student/comite_clinique_accordeon.html", context)
     
             
+def eleve_evaluation_list(request):
+    suggestion_list = ActionSuggestion.objects.all()
+    a = Action.objects.filter(description__in=[x.nom for x in suggestion_list])
     
+    context = {'evaluation_suggestion_list':suggestion_list, 
+               'evaluation_liste':a
+               }
+    
+    return render(request, 'student/evaluation_eleve.html', context)
+      

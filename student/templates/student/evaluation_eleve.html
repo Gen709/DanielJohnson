@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block js %}
+	
+{% endblock %}
+
+{% block content %}
+ <h1> Liste des évaluations</h1>
+ 	{% for eval in evaluation_suggestion_list %}
+ 		<div class="row border bg-light text-muted">
+ 			<div class="row">
+ 				<h5>{{ eval.nom }}</h5>
+ 			</div>
+ 			
+ 			<div class="row">
+ 				{% for action in evaluation_liste %}
+	 				{% if action.description == eval.nom %}
+	 					<a href="{{action.problematique.eleve.get_absolute_url}}">{{action.problematique.eleve.nom}} {{action.problematique.eleve.prenom}}</a>
+	 				{% endif %}
+ 				{% endfor %}
+ 			</div>
+
+		</div>
+	{% endfor %}
+	
+{% endblock %}
