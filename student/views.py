@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Student, StatusAction, Problematique, StatusProblematique, Action
+from .models import Student, StatusAction, Problematique, StatusProblematique, Action, ActionSuggestion
 from problematiques.models import Item
 from urllib.parse import unquote
 from django.contrib.auth.models import User
@@ -13,6 +13,24 @@ from django.contrib.auth.models import User
 from django.http.response import JsonResponse, HttpResponse
 
 
+def ajax_search_probleme_action_sugestions(request):
+    
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        # input_str = request.GET.get('term', '')
+        data_list =[]
+        input_str = unquote(request.GET['term'])
+        data_list = [{x.id: {'description':x.nom }} for x in ActionSuggestion.objects.filter(nom__istartswith=input_str)]
+    
+        data = JsonResponse(data_list, safe=False)
+        
+        mimetype = 'application/json'
+        
+        if len(data_list) > 0 and input_str != '':
+            return HttpResponse(data, mimetype)
+        else:
+            data = JsonResponse([{'description':'Aucune suggestion'}], safe=False)
+            return HttpResponse('data', mimetype)
+        
 def ajax_search_student(request):
     
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
