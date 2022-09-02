@@ -34,6 +34,7 @@ class Student(models.Model):
     fiche = models.CharField(max_length=20, null=True)
     classification = models.CharField(max_length=5, null=True)
     etat_situation = models.TextField(null=True, blank=True)
+    dob=models.DateField(null=True, blank=True)
     
     class Meta:
         ordering = ['nom', 'prenom']
