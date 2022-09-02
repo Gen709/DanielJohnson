@@ -35,6 +35,7 @@ class Student(models.Model):
     classification = models.CharField(max_length=5, null=True)
     etat_situation = models.TextField(null=True, blank=True)
     dob=models.DateField(null=True, blank=True)
+    lang=models.CharField(max_length=10, blank=True, null=True, default=None)
     
     class Meta:
         ordering = ['nom', 'prenom']
