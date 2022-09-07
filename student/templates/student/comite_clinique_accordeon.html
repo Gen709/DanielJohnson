@@ -2,7 +2,8 @@
 {% load static %}
 
 {% block js %}
-	
+	<script src="https://cdn.tiny.cloud/1/3uxow28ssthmenpgxa54gwbtdj7mdpjqzi8sprt26xpv0dcz/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+	<script src="{% static 'page/js/inline_textarea.js' %}"> </script>
 {% endblock %}
 
 {% block content %}
@@ -33,15 +34,21 @@
 							</div>
 						</div>
 						
-						<div class="row mt-2 mb-2 justify-content-center" style="height: 100px;"> <!-- min height ? -->
-							<div class="col-11 ms-3">
-								{% if s.etat_situation %}
-									{{s.etat_situation|safe}}
-								{% else %}
-									<p>Rien d'inscrit pour {{s.nom}}, {{s.prenom}}</p>
-								{% endif %}
-							</div>
+						<div class="row mt-2 mb-2"> 
+							<form>
+							{% csrf_token %}<!-- min height ? -->
+								<div class="inline_textarea ms-3" id="inline_textarea">
+									{% if s.etat_situation %}
+										{{s.etat_situation|safe}}
+									{% else %}
+										<p>Rien d'inscrit pour {{s.nom}}, {{s.prenom}}</p>
+									{% endif %}
+								</div>
+								<input type="hidden" value="{{s.id}}" id="student_id">
+							</form>
 						</div>
+						
+						
 					</div>
 					<!-- Section Problemes -->
 					<div class="row border mt-5 bg-light">
