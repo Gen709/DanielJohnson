@@ -10,7 +10,7 @@
  <h1> Comité Clinique liste</h1>
  	{% for n in niveau %}
  		<div class="row border bg-light text-muted">
- 		<h5>{{ n }}</h5>
+ 		<h5>{{ n.nom }}</h5>
  		<div class="accordion" id="accordion{{ n }}">
  			{% for s in student %}
 				{% if s.classification == n %}

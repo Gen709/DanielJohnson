@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse
 
 from problematiques.models import Item
+from school.models import Classification
 from django.contrib.auth.models import User
 
 def get_first_name(self):
@@ -32,7 +33,7 @@ class Student(models.Model):
     groupe_repere = models.CharField(max_length=4)
     code = models.ForeignKey(CodeEtudiant, on_delete=models.SET_NULL, null=True)
     fiche = models.CharField(max_length=20, null=True)
-    classification = models.CharField(max_length=5, null=True)
+    classification = models.ForeignKey(Classification, on_delete=models.SET_NULL, null=True)
     etat_situation = models.TextField(null=True, blank=True)
     dob=models.DateField(null=True, blank=True)
     lang=models.CharField(max_length=10, blank=True, null=True, default=None)

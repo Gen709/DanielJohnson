@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
+
 from .models import Student, StatusAction, Problematique, StatusProblematique, Action, ActionSuggestion
 from problematiques.models import Item
+from school.models import Classification
 from urllib.parse import unquote
 from django.contrib.auth.models import User
 from django.views.generic.list import ListView
@@ -111,7 +113,7 @@ def student_action_problematique_insert_view(request):
         
 def comitecliniquestudentlistview(request):
     student = Student.objects.filter(comite_clinique=True)
-    classification_list = set([x for x in Student.objects.all().values_list('classification', flat=True)])
+    classification_list = Classification.objects.all()
     context = {'student': student,
                'niveau': classification_list}
     
