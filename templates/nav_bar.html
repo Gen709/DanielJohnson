@@ -42,6 +42,10 @@
 						<a class="nav-link" href="{% url 'evaluation-list' %}">List évaluation</a>
 					</li>
 					
+					<li class="nav-item">
+						<a class="nav-link" href="{% url 'problematique-list' %}">List problematiques</a>
+					</li>
+					
 	        		<li class="nav-item">
 						<a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
 					</li>
@@ -65,7 +69,7 @@
 	</nav>
 </div>
 <div class="row">
-	<div name="suggestion_box" class="suggesstion-box mb-3" id="suggesstion-box"></div>
+	<div name="suggestion_box" class="suggestion-box mb-3" id="suggestion-box"></div>
 </div>
 {% else %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">

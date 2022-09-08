@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block js %}
+	
+{% endblock %}
+
+{% block content %}
+ <h1> Liste des problemes</h1>
+ 	{% for code_etudiant, classification_etudiant_liste_dict in results.items %}
+ 		
+ 		<div class="row border bg-light text-muted">
+ 			<div class="row">
+ 				<h5>{{ code_etudiant }} </h5>
+ 			</div>
+ 			
+ 			<div class="row">
+ 				<ul>
+ 					{% for classification, student_list in classification_etudiant_liste_dict.items %}
+ 						<li>{{classification}}</li>
+ 							<ul>
+ 								{% for student in student_list %}
+ 									<li><a href="student.get_absolute_url">{{student.nom}}, {{student.prenom}}</a></li>
+ 								{% endfor %}
+ 							</ul>
+ 					{% endfor %}
+ 				</ul>
+ 			
+ 			</div>
+		</div>
+			
+	{% endfor %}
+	
+{% endblock %}

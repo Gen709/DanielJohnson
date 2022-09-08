@@ -11,4 +11,5 @@ urlpatterns = [
     # path('comite_clinique/list', views.ComiteCliniqueStudentListView.as_view(), name='comite-clinique-list'),
     path('comite_clinique/list', views.comitecliniquestudentlistview, name='comite-clinique-list'),
     path('evaluation/list', views.eleve_evaluation_list, name='evaluation-list'),
+    path('problematiques/list', views.eleve_problematique_list_view, name='problematique-list'),
 ]

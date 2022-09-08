@@ -88,6 +88,7 @@ class Action(models.Model):
     status = models.ForeignKey(StatusAction, on_delete=models.SET_NULL, null=True)
     problematique = models.ForeignKey(Problematique, on_delete=models.SET_NULL, null=True)
     
+    
     def __str__(self):
         return self.description[:50] + " *- Status -* " + self.status.nom
 

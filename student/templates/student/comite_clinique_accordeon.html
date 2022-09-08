@@ -11,9 +11,13 @@
  	{% for n in niveau %}
  		<div class="row border bg-light text-muted">
  		<h5>{{ n.nom }}</h5>
- 		<div class="accordion" id="accordion{{ n }}">
+ 		
+ 		<div class="accordion" id="accordion{{ n.nom }}">
+ 		
  			{% for s in student %}
+ 			
 				{% if s.classification == n %}
+				
 				<div class="accordion-item mb-3 danger">
 				
 				    <h2 class="accordion-header" id="heading{{s.fiche}}">
@@ -22,8 +26,9 @@
 				      </button>
 				    </h2>
 				    
-				    <div id="collapse{{s.fiche}}" class="accordion-collapse collapse" aria-labelledby="heading{{s.fiche}}" data-bs-parent="#accordion{{ n }}">
+				    <div id="collapse{{s.fiche}}" class="accordion-collapse collapse" aria-labelledby="heading{{s.fiche}}" data-bs-parent="#accordion{{ n.nom }}">
 				      <div class="accordion-body">
+				      
 				        <a href="{{s.get_absolute_url}}"> Voir profile </a>
 				        
 				        <div class="row border bg-light mt-5">
@@ -134,14 +139,21 @@
 								{% endif %}
 							</div>
 						</div> -->
-					</div>  
+						</div>  
+					</div>
 				</div>
-			</div>			    
-		</div>
-				{% endif %}
+				
+			<!--  si l etudiant est dans le groupe -->			    
+			</div>
+			{% endif %}
+		
+		<!-- fin de la boite pour l'étudiant -->		
 		{% endfor %}
-		 </div>
-		</div>
+	 	</div>
+	 
+	 <!-- fin de la boite pour le niveau  -->
+	</div>
 	{% endfor %}
+	
 	
 {% endblock %}

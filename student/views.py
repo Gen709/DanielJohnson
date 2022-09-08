@@ -1,14 +1,13 @@
 from django.shortcuts import render, redirect
+from django.db.models import Count
 
-from .models import Student, StatusAction, Problematique, StatusProblematique, Action, ActionSuggestion
+from .models import Student, StatusAction, Problematique, StatusProblematique, Action, ActionSuggestion, CodeEtudiant
 from problematiques.models import Item
 from school.models import Classification
 from urllib.parse import unquote
 from django.contrib.auth.models import User
-from django.views.generic.list import ListView
-from django.contrib.auth.models import User
-
-
+# from django.views.generic.list import ListView
+# from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -32,7 +31,9 @@ def ajax_search_probleme_action_sugestions(request):
         else:
             data = JsonResponse([{'description':'Aucune suggestion'}], safe=False)
             return HttpResponse('data', mimetype)
-        
+
+
+
 def ajax_search_student(request):
     
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -48,8 +49,12 @@ def ajax_search_student(request):
         if len(data_list) > 0 and input_str != '':
             return HttpResponse(data, mimetype)
         else:
-            return HttpResponse('', mimetype)
+            data = JsonResponse([{'description': "Nothing with the term "+ input_str,
+                                  'url': "NO URL"}], safe=False)
+            return HttpResponse(data, mimetype)
     
+
+
 
 def student_detail_view(request, pk):
     
@@ -75,6 +80,8 @@ def student_detail_view(request, pk):
     
     return render(request, 'student/detail.html', context)
 
+
+
 def student_problematique_create_view(request):
     student = Student.objects.get(pk=request.POST.get("eleve_id"))
     instigateur = User.objects.get(pk=request.POST.get("staff_id"))
@@ -90,6 +97,8 @@ def student_problematique_create_view(request):
     p.save()
     
     return redirect(student.get_absolute_url())
+
+
 
 def student_action_problematique_insert_view(request):
     student = Student.objects.get(pk=request.POST.get("eleve_id"))
@@ -110,6 +119,7 @@ def student_action_problematique_insert_view(request):
     
     return redirect(student.get_absolute_url())
 
+
         
 def comitecliniquestudentlistview(request):
     student = Student.objects.filter(comite_clinique=True)
@@ -119,6 +129,7 @@ def comitecliniquestudentlistview(request):
     
     return render(request, "student/comite_clinique_accordeon.html", context)
     
+
             
 def eleve_evaluation_list(request):
     suggestion_list = ActionSuggestion.objects.all()
@@ -129,4 +140,30 @@ def eleve_evaluation_list(request):
                }
     
     return render(request, 'student/evaluation_eleve.html', context)
-      
+
+def eleve_problematique_list_view(request):
+    code_etudiant_qs = CodeEtudiant.objects.exclude(code=0).annotate(num_student= Count('student'))
+    
+    results = {code.definition: {classification.nom:
+                                [student for student in code.student_set.all().filter(classification=classification.id)] 
+                                for classification in {etudiant.classification for etudiant in code.student_set.all()} 
+                                } 
+                                for code in code_etudiant_qs
+            }
+    # classification_list = problematique_list.student.classification.distinct()
+    
+    # classification = CodeEtudiant.objects.
+    context = {"results": results
+                # "classification_list":test
+               }
+    
+    return render(request, 'student/problemes_eleve.html', context)
+
+
+
+
+
+
+
+
+
