@@ -5,6 +5,7 @@
 	<script src="https://cdn.tiny.cloud/1/3uxow28ssthmenpgxa54gwbtdj7mdpjqzi8sprt26xpv0dcz/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 	<script src="{% static 'page/js/inline_textarea.js' %}"> </script>
 	<script src="{% static 'student/js/set_problem_id.js' %}"> </script>
+	<script src="{% static 'student/js/submit_student_detail_form.js' %}"> </script>
 	<script src="{% static 'page/js/search_student_name.js' %}"> </script>
 		
 {% endblock %}
@@ -58,7 +59,7 @@
 							<td> 
 								{% if student.comite_clinique %}
 									<div class="form-check form-check-inline">
-										<input class="form-check-input" type="radio" name="comite_cliniqueeRadioOptions" id="comite_cliniqueRadio1" value="1" checked="checked">
+										<input class="form-check-input" type="radio" name="comite_cliniqueRadioOptions" id="comite_cliniqueRadio1" value="1" checked="checked">
 										<label class="form-check-label" for="comite_cliniqueRadio1">Oui</label>
 									</div>
 									<div class="form-check form-check-inline">
@@ -79,7 +80,26 @@
 							</td>
 						</tr>
 						<tr><td>Code:</td>
-							<td>{{student.code}}</td>
+							
+							<td>
+								<select class="form-select" aria-label="Default select example">
+									{% if student.code %}
+										{% for code in code_etudiant %}
+											{% if student.code == code %}
+												<option selected>{{code.definition}}</option>
+											{% else %}
+												<option>{{code.definition}}</option>
+											{% endif %}
+										{% endfor %}
+							
+									{% else %}
+										<option selected>No code</option>
+										{% for code in code_etudiant %}
+											<option value="1">{{code.definition}}</option>
+										{% endfor %}
+									{% endif %}
+								</select>
+							</td>
 						</tr>
 						<tr>
 							<td>Classification:</td>

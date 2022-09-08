@@ -70,12 +70,15 @@ def student_detail_view(request, pk):
     
     statusaction = StatusAction.objects.all()
     
+    code_etudiant = CodeEtudiant.objects.all()
+    
     context = {'student': student,
                'staff': staff,
                'problematiques': problematiques,
                'statusaction': statusaction, 
                'statusproblematique':statusproblematique,
-               'responsable_qs':responsable_qs
+               'responsable_qs':responsable_qs,
+               'code_etudiant': code_etudiant
                }
     
     return render(request, 'student/detail.html', context)
