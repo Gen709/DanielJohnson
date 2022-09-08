@@ -7,7 +7,7 @@ $(document).ready(function(){
 		data:'term='+$(this).val(),
 		
 			success: function(data){
-				//console.log(data)
+				console.log(data)
 				
 				var html_str ;
 				html_str = '<ul class="list-group" id="student-list">';
@@ -28,8 +28,8 @@ $(document).ready(function(){
 					
 				html_str += '</ul>';	
 				
-				$("#suggesstion-box").show();
-				$("#suggesstion-box").html(html_str);
+				$("#suggestion-box").show();
+				$("#suggestion-box").html(html_str);
 					
 			}
 		});	
@@ -38,12 +38,11 @@ $(document).ready(function(){
 
 
 function selectStudent(student_desc, student_id) {
-	//console.log(typeof student_id);
+	console.log(typeof student_id);
 	$("#student_id").val(student_id);
 	//$('input[class="student_id"]').val(student_id);
 	$("#studentsearchbox").val(student_desc);
-	$("#suggesstion-box").hide();
-	
+	$("#suggestion-box").hide();
 	var url = "http://127.0.0.1:8000/etudiant/detail/" + student_id; 
 	console.log(url)
 	if (url) { // require a URL

@@ -18,7 +18,7 @@
 		<div class="row border mt-5">
 		
 			<div class="row mt-2">
-				<h4> Actions dans lesquelles vous avez été identifié comme propriétaire</h4>
+				<h4> Actions pour lesquelles vous avez été identifié comme propriétaire</h4>
 			</div>
 			
 			<div class="row mb-3">
@@ -26,7 +26,7 @@
 				
 					<div class="accordion" id="accordionResposabilite">
 						{% for x in action_resp %}
-							<div class="accordion-item mb-2">
+							<div class="accordion-item mb-2 mt-2">
 								<h2 class="accordion-header" id="heading_{{forloop.counter}}">
 									<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{forloop.counter}}" aria-expanded="false" aria-controls="collapse_{{forloop.counter}}">
 										dossier: {{x.problematique.eleve.nom}} {{x.problematique.eleve.prenom}} Gr. {{x.problematique.eleve.groupe_repere}} | {{x.description}} | Attitré par: {{x.createur}}
@@ -34,17 +34,27 @@
 								</h2>
 								<div id="collapse_{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="heading_{{forloop.counter}}" data-bs-parent="#accordionResposabilite">
 									<div class="accordion-body">
-										Pour la problematique: {{x.problematique.nom}}<br>
-										status 
-										<select class="form-select select-action-status">
-											{% for option in statusaction %}
-												{% if option.nom == x.status %}
-													<option selected value="{{option.id}}">{{option.nom}}</option>
-												{% else %}
-													<option value="{{option.id}}">{{option.nom}}</option>
-												{% endif %}
-											{% endfor %}
-										</select>
+										<div class="row">
+											<div class="row">
+												{{ x.description }} dans le cadre de la problematique: {{x.problematique.nom}}<br>
+											</div>
+											<div class="row">
+												<div class="col">
+													status
+												</div>
+												<div class="col"> 
+													<select class="form-select select-action-status" id="action-status-selection">
+														{% for option in statusaction %}
+															{% if option.nom == x.status %}
+																<option selected value="{{option.id}}">{{option.nom}}</option>
+															{% else %}
+																<option value="{{option.id}}">{{option.nom}}</option>
+															{% endif %}
+														{% endfor %}
+													</select>
+												</div>
+											</div>
+										</div>
 									</div>
 								</div>
 							</div>
