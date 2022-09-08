@@ -144,11 +144,11 @@ def eleve_evaluation_list(request):
 def eleve_problematique_list_view(request):
     code_etudiant_qs = CodeEtudiant.objects.exclude(code=0).annotate(num_student= Count('student'))
     
-    results = {code.definition: {classification.nom:
-                                [student for student in code.student_set.all().filter(classification=classification.id)] 
-                                for classification in {etudiant.classification for etudiant in code.student_set.all()} 
-                                } 
-                                for code in code_etudiant_qs
+    results = {code: {classification: 
+                      [student for student in code.student_set.all().filter(classification=classification.id)] 
+                      for classification in {etudiant.classification for etudiant in code.student_set.all()} 
+                      } 
+                      for code in code_etudiant_qs
             }
     # classification_list = problematique_list.student.classification.distinct()
     

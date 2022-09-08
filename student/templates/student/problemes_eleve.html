@@ -11,7 +11,7 @@
  		
  		<div class="row border bg-light text-muted">
  			<div class="row">
- 				<h5>{{ code_etudiant }} </h5>
+ 				<h5>{{ code_etudiant.definition }}, Nombre d'étudiants: {{code_etudiant.num_student}}</h5>
  			</div>
  			
  			<div class="row">
@@ -20,7 +20,7 @@
  						<li>{{classification}}</li>
  							<ul>
  								{% for student in student_list %}
- 									<li><a href="student.get_absolute_url">{{student.nom}}, {{student.prenom}}</a></li>
+ 									<li><a href="{{student.get_absolute_url}}">{{student.nom}}, {{student.prenom}}</a></li>
  								{% endfor %}
  							</ul>
  					{% endfor %}
