@@ -26,24 +26,16 @@
 						<a class="nav-link" href="{% url 'home' pk=user.pk %}">Mon profile</a>
 					</li>
 					
-					<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-							Comité Clinique
-						</a>
-						<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-							<li><a class="dropdown-item" href="{% url 'comite-clinique-list' %}">Accordéons</a></li>
-							<!-- <li><a class="dropdown-item" href="#">List 2</a></li>
-							<li><a class="dropdown-item" href="#">List 3</a></li> -->
-						 
-						</ul>
+					<li class="nav-item">
+						<a class="nav-link" href="{% url 'comite-clinique-list' %}">Comité Clinique</a>
 					</li>
 					
 					<li class="nav-item">
-						<a class="nav-link" href="{% url 'evaluation-list' %}">List évaluation</a>
+						<a class="nav-link" href="{% url 'evaluation-list' %}">Évaluation</a>
 					</li>
 					
 					<li class="nav-item">
-						<a class="nav-link" href="{% url 'problematique-list' %}">List problematiques</a>
+						<a class="nav-link" href="{% url 'problematique-list' %}">Problematiques</a>
 					</li>
 					
 	        		<li class="nav-item">
