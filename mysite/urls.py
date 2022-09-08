@@ -26,5 +26,6 @@ urlpatterns = [
     path('etudiant/', include('student.urls')),
     path('problematiques/', include('problematiques.urls')),
     path('', include('page.urls')),
+    # path('user/profile/<pk:int>')
 
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
