@@ -22,90 +22,83 @@
 		<!-- tableau info -->
 		<div class="row mt-3">
 			<div class="col-md-8">
-				<form>
+				<form method="get" action="{% url 'ajax-update-student' %}">
 					{% csrf_token %}
+					
+					<input type="hidden" name="student_id" value={{student.id}}>
+					
 					<table class="table table-striped table-sm">
 						<tr><td>Nom, prénom:</td><td>{{student.nom}}, {{student.prenom}}</td></tr>
 						<tr><td>Langue:</td><td>{{student.lang}}</td></tr>
 						<tr><td>Date de Naissance:</td><td>{{student.dob}}</td></tr>
 						<tr><td>Groupe repère:</td><td>{{student.groupe_repere}}</td></tr>
+						
 						<tr>
-							<td>Plan d'intervention:</td>
+							<td>PI:</td>
 							<td> 
 								{% if student.plan_intervention %}
-									<div class="form-check form-check-inline">
-										<input class="form-check-input" type="radio" name="plan_interventionRadioOptions" id="plan_interventionRadio1" value="1" checked="checked">
-										<label class="form-check-label" for="plan_interventionRadio1">Oui</label>
-									</div>
-									<div class="form-check form-check-inline">
-										<input class="form-check-input" type="radio" name="plan_interventionRadioOptions" id="plan_interventionRadio2" value="0">
-										<label class="form-check-label" for="plan_interventionRadio2">Non</label>
+									<div class="form-check form-switch">
+										<input class="form-check-input" type="checkbox" id="plan_interventionRadioOptionsflexSwitchCheck" checked>
+										<label class="form-check-label" for="plan_interventionRadioOptionsflexSwitchCheck"></label>
 									</div>
 								{% else %}
-									<div class="form-check form-check-inline">
-										<input class="form-check-input" type="radio" name="plan_interventionRadioOptions" id="plan_interventionRadio1" value="1">
-										<label class="form-check-label" for="plan_interventionRadio1">Oui</label>
-									</div>
-									<div class="form-check form-check-inline">
-										<input class="form-check-input" type="radio" name="plan_interventionRadioOptions" id="plan_interventionRadio2" value="0" checked="checked">
-										<label class="form-check-label" for="plan_interventionRadio2">Non</label>
+									<div class="form-check form-switch">
+										<input class="form-check-input" type="checkbox" id="plan_interventionRadioOptionsflexSwitchCheck">
+										<label class="form-check-label" for="plan_interventionRadioOptionsflexSwitchCheck"></label>
 									</div>
 								{% endif %}
 								
 							</td>
 						</tr>
+						
 						<tr>
 							<td>Comité clinique:</td>
 							<td> 
 								{% if student.comite_clinique %}
-									<div class="form-check form-check-inline">
-										<input class="form-check-input" type="radio" name="comite_cliniqueRadioOptions" id="comite_cliniqueRadio1" value="1" checked="checked">
-										<label class="form-check-label" for="comite_cliniqueRadio1">Oui</label>
-									</div>
-									<div class="form-check form-check-inline">
-										<input class="form-check-input" type="radio" name="comite_cliniqueRadioOptions" id="comite_cliniqueRadio2" value="0">
-										<label class="form-check-label" for="comite_cliniqueRadio2">Non</label>
+									<div class="form-check form-switch">
+										<input class="form-check-input" type="checkbox" id="comite_cliniqueflexSwitchCheck" checked>
+										<label class="form-check-label" for="comite_cliniqueflexSwitchCheck"></label>
 									</div>
 								{% else %}
-									<div class="form-check form-check-inline">
-										<input class="form-check-input" type="radio" name="comite_cliniqueRadioOptions" id="comite_cliniqueRadio1" value="1">
-										<label class="form-check-label" for="comite_cliniqueRadio1">Oui</label>
-									</div>
-									<div class="form-check form-check-inline">
-										<input class="form-check-input" type="radio" name="comite_cliniqueRadioOptions" id="comite_cliniqueRadio2" value="0" checked="checked">
-										<label class="form-check-label" for="comite_cliniqueRadio2">Non</label>
+									<div class="form-check form-switch">
+										<input class="form-check-input" type="checkbox" id="comite_cliniqueflexSwitchCheck">
+										<label class="form-check-label" for="comite_cliniqueflexSwitchCheck"></label>
 									</div>
 								{% endif %}
 								
 							</td>
 						</tr>
+						
+						
 						<tr><td>Code:</td>
-							
 							<td>
-								<select class="form-select" aria-label="Default select example">
+								<select class="form-select" aria-label="Default select example" name="student_code">
 									{% if student.code %}
 										{% for code in code_etudiant %}
 											{% if student.code == code %}
-												<option selected>{{code.definition}}</option>
+												<option value="{{code.id}}" selected>{{code.definition}}</option>
 											{% else %}
-												<option>{{code.definition}}</option>
+												<option value="{{code.id}}">{{code.definition}}</option>
 											{% endif %}
 										{% endfor %}
 							
 									{% else %}
 										<option selected>No code</option>
 										{% for code in code_etudiant %}
-											<option value="1">{{code.definition}}</option>
+											<option value="{{code.id}}">{{code.definition}}</option>
 										{% endfor %}
 									{% endif %}
 								</select>
 							</td>
 						</tr>
+						
 						<tr>
 							<td>Classification:</td>
 							<td>{{student.classification}}</td>
 						</tr>
+						
 					</table>
+					
 				</form>
 			</div>
 		</div>

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block js %}
+	<!-- <script src="https://cdn.tiny.cloud/1/3uxow28ssthmenpgxa54gwbtdj7mdpjqzi8sprt26xpv0dcz/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+	<script src="{% static 'page/js/inline_textarea.js' %}"> </script> -->
+{% endblock %}
+
+{% block content %}
+	
+	<h1> Comité Clinique</h1>
+ 	{% for classification, student_list in student_comite_clinique_dict.items %}
+ 		<div class="row border bg-light text-muted">
+ 			<div class="row">
+		 		<h5>{{ classification.nom }}</h5>
+		 	</div>
+		 	<div class="row">
+	 			<ul>
+		 			{% for s in student_list %}
+		 			
+					<li><a href="{{s.get_absolute_url}}">{{s.nom}} {{s.prenom}}</a></li>	
+						
+				<!-- fin de la boite pour l'étudiant -->		
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+	{% endfor %}
+	
+	
+	
+{% endblock %}

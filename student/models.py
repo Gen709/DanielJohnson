@@ -103,4 +103,10 @@ class ActionSuggestion(models.Model):
         ordering = ['nom']
 
     
-
+# class ActionDiscussion(models):
+#     action = models.ForeignKey(Action, on_delete=models.CASCADE)
+#     auteur = models.ForeignKey(User, on_delete=models.CASCADE)
+#     date = models.DateField()
+#     lft = models.IntegerField()
+#     rgt = models.IntegerField()
+#     content = models.TextField()

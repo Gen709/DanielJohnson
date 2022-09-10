@@ -1,17 +1,23 @@
 from django.shortcuts import render, redirect
 from django.db.models import Count
+from urllib.parse import unquote
+from django.contrib.auth.models import User
+from django.http.response import JsonResponse, HttpResponse
+
+
 
 from .models import Student, StatusAction, Problematique, StatusProblematique, Action, ActionSuggestion, CodeEtudiant
 from problematiques.models import Item
 from school.models import Classification
-from urllib.parse import unquote
-from django.contrib.auth.models import User
+
+
 # from django.views.generic.list import ListView
 # from django.contrib.auth.models import User
 
 # Create your views here.
 
-from django.http.response import JsonResponse, HttpResponse
+
+
 
 
 def ajax_search_probleme_action_sugestions(request):
@@ -53,6 +59,28 @@ def ajax_search_student(request):
                                   'url': "NO URL"}], safe=False)
             return HttpResponse(data, mimetype)
     
+
+
+def ajax_update_student(request):
+    
+
+    parameter = unquote(request.GET.get('param'))
+    value = unquote(request.GET.get('value'))
+    student_id = unquote(request.GET.get('student_id'))
+    
+    s = Student.objects.get(pk=student_id)
+    
+    if parameter == "comite_cliniqueflexSwitchCheck":
+        s.comite_clinique=value
+    elif parameter == "plan_interventionRadioOptionsflexSwitchCheck":
+        s.plan_intervention=value
+    elif parameter == "student_code":
+        c = CodeEtudiant.objects.get(pk=value)
+        s.code=c
+    
+    s.save()
+    
+    return redirect('student-detail', pk=student_id)
 
 
 
@@ -125,12 +153,15 @@ def student_action_problematique_insert_view(request):
 
         
 def comitecliniquestudentlistview(request):
-    student = Student.objects.filter(comite_clinique=True)
-    classification_list = Classification.objects.all()
-    context = {'student': student,
-               'niveau': classification_list}
     
-    return render(request, "student/comite_clinique_accordeon.html", context)
+    student_comite_clinique_dict = {classification:[s for s in Student.objects.filter(classification=classification).filter(comite_clinique=True)] 
+                                    for classification in 
+                                    {c for c in Classification.objects.filter(student__comite_clinique=True)} 
+                                    }
+    
+    context = {'student_comite_clinique_dict': student_comite_clinique_dict}
+    
+    return render(request, "student/comite_clinique_list.html", context)
     
 
             
@@ -143,6 +174,8 @@ def eleve_evaluation_list(request):
                }
     
     return render(request, 'student/evaluation_eleve.html', context)
+
+
 
 def eleve_problematique_list_view(request):
     code_etudiant_qs = CodeEtudiant.objects.exclude(code=0).annotate(num_student= Count('student'))

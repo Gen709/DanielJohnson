@@ -7,16 +7,17 @@
 {% endblock %}
 
 {% block content %}
- <h1> Comité Clinique liste</h1>
- 	{% for n in niveau %}
+	
+	<h1> Comité Clinique</h1>
+ 	{% for classification, student_list in student_comite_clinique_dict.items %}
  		<div class="row border bg-light text-muted">
- 		<h5>{{ n.nom }}</h5>
+ 		<h5>{{ classification.nom }}</h5>
  		
  		<div class="accordion" id="accordion{{ n.nom }}">
  		
- 			{% for s in student %}
+ 			{% for s in student_list %}
  			
-				{% if s.classification == n %}
+				
 				
 				<div class="accordion-item mb-3 danger">
 				
@@ -115,45 +116,23 @@
 							</div>
 						</div>
 						
-						<!-- <div class="row border mt-5 bg-light">
-							<div class="row mt-2 justify-content-center">
-								<div class="col-11 bg-secondary text-white">
-									<h3>Suivis des actions</h3>
-								</div>
-							</div>
-							
-							<div class="row mt-2 mb-2 border"> min height ?
-								{% if student.problematique_set.all %}
-									{% for problematique in student.problematique_set.all %}
-										{% if problematique.action_set.all %}
-											{% for action in problematique.action_set.all %}
-												<div class="row  mb-2">
-													<p>{{action.description}} | Resp: {{action.responsable}}</p>
-												</div>
-											{% endfor %}
-										{% else %}
-											<p> Aucune action d'inscrite pour la probématique {{problematique.nom}}</p>
-										{% endif %}
-									{% endfor %}
-								
-								{% endif %}
-							</div>
-						</div> -->
+						
 						</div>  
 					</div>
 				</div>
 				
 			<!--  si l etudiant est dans le groupe -->			    
 			</div>
-			{% endif %}
+		
 		
 		<!-- fin de la boite pour l'étudiant -->		
-		{% endfor %}
+			{% endfor %}
 	 	</div>
 	 
 	 <!-- fin de la boite pour le niveau  -->
 	</div>
 	{% endfor %}
+	
 	
 	
 {% endblock %}
