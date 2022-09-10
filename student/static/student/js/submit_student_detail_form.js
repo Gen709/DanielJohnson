@@ -16,9 +16,6 @@ $(document).ready(function(){
 	
 	var student_id = $("input[name=student_id]").val();
 	
-	
-	
-	
 	$('#plan_interventionRadioOptionsflexSwitchCheck').on('change', function() {
 		let parameter = this.id;
 		let value = 0
@@ -26,7 +23,7 @@ $(document).ready(function(){
 			value=1
 		}
 		update_student(parameter, value, student_id);
-    	alert(parameter + " " + value + " " + student_id);
+    	//alert(parameter + " " + value + " " + student_id);
 	});
 	
 	$('#comite_cliniqueflexSwitchCheck').on('change', function() {
@@ -36,7 +33,7 @@ $(document).ready(function(){
 			value=1
 		}
 		update_student(parameter, value, student_id);
-    	alert(parameter + " " + value + " " + student_id);
+    	//alert(parameter + " " + value + " " + student_id);
 	});
 	
 	
@@ -45,7 +42,6 @@ $(document).ready(function(){
 		var parameter = this.name;
 	    var value = this.value;
 		update_student(parameter, value, student_id);
-		
 		//alert(parameter + " " + value +" "+student_id);
    
 	});
