@@ -23,7 +23,7 @@ $(document).on("click", ".open-action", function (){
 						
 				  		var student_desc = info.description;
 						
-				  		html_str +=  '<li class="list-group-item list-group-flush" onClick="selectStudent(\''+ student_desc.replaceAll('\'', '') + '\', ' + student_id + ', 1)">'  + student_desc.replaceAll('\'', '') +'</li>';
+				  		html_str +=  '<li class="list-group-item list-group-flush" onClick="selectAction(\''+ student_desc.replaceAll('\'', '') + '\', ' + student_id + ', 1)">'  + student_desc.replaceAll('\'', '') +'</li>';
 				  } 
 				}	
 					
@@ -37,7 +37,7 @@ $(document).on("click", ".open-action", function (){
 	});
 });
 
-function selectStudent(student_desc, student_id) {
+function selectAction(student_desc, student_id) {
 	//console.log(typeof student_id);
 	//$("#ajax-action-suggestions").val(student_id);
 	//$('input[class="student_id"]').val(student_id);
