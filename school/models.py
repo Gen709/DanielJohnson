@@ -8,4 +8,4 @@ class Classification(models.Model):
     nom = models.CharField(max_length=5)
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     def __str__(self):
-        return self.nom
+        return self.nom + " - Resp: " + str(self.owner)
