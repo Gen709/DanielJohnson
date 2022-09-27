@@ -90,7 +90,7 @@ class Action(models.Model):
     
     
     def __str__(self):
-        return self.problematique.eleve.nom + " " + self.problematique.eleve.prenom + " " + self.description[:50] + " *- Status -* " + self.status.nom
+        return  self.description[:50] + " *- Status -* " + self.status.nom
 
 
 class ActionSuggestion(models.Model):
