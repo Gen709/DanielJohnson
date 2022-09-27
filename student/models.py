@@ -101,7 +101,26 @@ class ActionSuggestion(models.Model):
     
     class Meta:
         ordering = ['nom']
-
+        
+        
+class Grades(models.Model):
+    foyer=models.CharField(max_length=4)
+    no_fiche = models.CharField(max_length=15)
+    nom= models.CharField(max_length=200)
+    classification = models.CharField(max_length=4)
+    plan=models.BooleanField(null=True, blank=True)
+    difficulte = models.IntegerField(null=True, blank=True)
+    age_30_sept = models.IntegerField(null=True, blank=True)
+    note=models.IntegerField(null=True, blank=True)
+    matiere=models.CharField(max_length=50, null=True, blank=True)
+    student=models.ForeignKey(Student, on_delete=models.CASCADE, null=True, blank=True)
+    
+    def __str__(self):
+        return(self.matiere + " " + str(self.note))
+    
+    # class Meta:
+    #     unique_together = ('no_fiche', 'field2',)
+    
     
 # class ActionDiscussion(models):
 #     action = models.ForeignKey(Action, on_delete=models.CASCADE)

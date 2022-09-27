@@ -14,4 +14,6 @@ urlpatterns = [
     path('comite_clinique/list', views.comitecliniquestudentlistview, name='comite-clinique-list'),
     path('evaluation/list', views.eleve_evaluation_list, name='evaluation-list'),
     path('problematiques/list', views.eleve_problematique_list_view, name='problematique-list'),
+    
+    path('cours_ete/list', views.cours_ete_list_view, name='coursdete-list'),
 ]

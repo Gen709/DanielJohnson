@@ -85,7 +85,7 @@ def ajax_update_student(request):
 
 
 def student_detail_view(request, pk):
-    
+     # a revoir
     staff = User.objects.get(username = request.user.get_username())
     
     responsable_qs = User.objects.all()
@@ -164,7 +164,14 @@ def comitecliniquestudentlistview(request):
     return render(request, "student/comite_clinique_list.html", context)
     
 
-            
+ 
+ 
+def cours_ete_list_view(request):
+    context={}
+    return render(request, 'student/coursdete_eleve.html', context)
+
+
+           
 def eleve_evaluation_list(request):
     suggestion_list = ActionSuggestion.objects.all()
     a = Action.objects.filter(description__in=[x.nom for x in suggestion_list])
