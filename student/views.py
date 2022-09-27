@@ -3,8 +3,7 @@ from django.db.models import Count
 from urllib.parse import unquote
 from django.contrib.auth.models import User
 from django.http.response import JsonResponse, HttpResponse
-
-
+from django.contrib.auth.decorators import login_required
 
 from .models import Student, StatusAction, Problematique, StatusProblematique, Action, ActionSuggestion, CodeEtudiant
 from problematiques.models import Item
@@ -62,7 +61,6 @@ def ajax_search_student(request):
 
 
 def ajax_update_student(request):
-    
 
     parameter = unquote(request.GET.get('param'))
     value = unquote(request.GET.get('value'))
@@ -83,7 +81,7 @@ def ajax_update_student(request):
     return redirect('student-detail', pk=student_id)
 
 
-
+@login_required
 def student_detail_view(request, pk):
      # a revoir
     staff = User.objects.get(username = request.user.get_username())
@@ -151,7 +149,7 @@ def student_action_problematique_insert_view(request):
     return redirect(student.get_absolute_url())
 
 
-        
+@login_required
 def comitecliniquestudentlistview(request):
     
     student_comite_clinique_dict = {classification:[s for s in Student.objects.filter(classification=classification).filter(comite_clinique=True)] 
@@ -162,16 +160,15 @@ def comitecliniquestudentlistview(request):
     context = {'student_comite_clinique_dict': student_comite_clinique_dict}
     
     return render(request, "student/comite_clinique_list.html", context)
-    
 
- 
- 
+
+@login_required
 def cours_ete_list_view(request):
     context={}
     return render(request, 'student/coursdete_eleve.html', context)
 
 
-           
+@login_required
 def eleve_evaluation_list(request):
     suggestion_list = ActionSuggestion.objects.all()
     a = Action.objects.filter(description__in=[x.nom for x in suggestion_list])
@@ -183,7 +180,7 @@ def eleve_evaluation_list(request):
     return render(request, 'student/evaluation_eleve.html', context)
 
 
-
+@login_required
 def eleve_problematique_list_view(request):
     code_etudiant_qs = CodeEtudiant.objects.exclude(code=0).annotate(num_student= Count('student'))
     
