@@ -207,6 +207,7 @@
 						{% for action in problematique.action_set.all %}
 							<div class="row  mb-2">
 								<p>{{action.description}} | Resp: {{action.responsable}}</p>
+								<p>{{action.detail}}</p>
 							</div>
 						{% endfor %}
 					{% else %}
