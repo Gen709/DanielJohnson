@@ -69,7 +69,7 @@ class Problematique(models.Model):
         unique_together = [['nom', 'eleve']]
     
     def __str__(self):
-        return self.nom.nom + " - Cleve: " + self.eleve.nom + " " + self.eleve.prenom + " - Status: " + self.status.nom
+        return self.nom.nom + " - Éleve: " + self.eleve.nom + " " + self.eleve.prenom + " - Status: " + self.status.nom
 
 
 class StatusAction(models.Model):
@@ -88,7 +88,7 @@ class Action(models.Model):
     problematique = models.ForeignKey(Problematique, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
-        return self.description[:50] + " *- Status -* " + self.status.nom
+        return self.problematique.eleve.prenom + " " + self.description[:50] + " *- Status -* " + self.status.nom
 
 
 class ActionSuggestion(models.Model):
