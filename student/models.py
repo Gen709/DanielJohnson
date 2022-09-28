@@ -88,7 +88,7 @@ class Action(models.Model):
     problematique = models.ForeignKey(Problematique, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
-        return self.problematique.eleve.prenom + " " + self.description[:50] + " *- Status -* " + self.status.nom
+        return self.problematique.eleve.prenom + " " + self.problematique.eleve.prenom + " " + self.description[:50] + " *- Status -* " + self.status.nom
 
 
 class ActionSuggestion(models.Model):
