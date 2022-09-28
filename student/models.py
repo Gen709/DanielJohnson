@@ -89,6 +89,8 @@ class Action(models.Model):
 
     class Meta:
         unique_together = [['description', 'problematique']]
+        ordering = ['problematique']
+
     def __str__(self):
         return self.problematique.eleve.prenom + " " + self.problematique.eleve.prenom + " " + self.description[:50] + " *- Status -* " + self.status.nom
 
