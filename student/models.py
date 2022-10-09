@@ -34,11 +34,11 @@ class Student(models.Model):
     plan_intervention = models.BooleanField(default=False)
     groupe_repere = models.CharField(max_length=4)
     code = models.ForeignKey(CodeEtudiant, on_delete=models.SET_NULL, null=True)
-    fiche = models.CharField(max_length=20, null=True)
+    fiche = models.CharField(max_length=20, null=True, unique=True)
     classification = models.ForeignKey(Classification, on_delete=models.SET_NULL, null=True)
     etat_situation = models.TextField(null=True, blank=True)
     dob = models.DateField(null=True, blank=True)
-    lang = models.CharField(max_length=10, blank=True, null=True, default=None)
+    lang = models.CharField(max_length=20, blank=True, null=True, default=None)
     
     class Meta:
         ordering = ['nom', 'prenom']
