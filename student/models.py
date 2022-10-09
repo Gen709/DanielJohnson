@@ -38,7 +38,7 @@ class Student(models.Model):
     classification = models.ForeignKey(Classification, on_delete=models.SET_NULL, null=True)
     etat_situation = models.TextField(null=True, blank=True)
     dob = models.DateField(null=True, blank=True)
-    lang = models.CharField(max_length=20, blank=True, null=True, default=None)
+    lang = models.CharField(max_length=100, blank=True, null=True, default=None)
     
     class Meta:
         ordering = ['nom', 'prenom']
