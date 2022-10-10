@@ -4,11 +4,23 @@ from urllib.parse import unquote
 from django.contrib.auth.models import User
 from django.http.response import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import Student, StatusAction, Problematique, StatusProblematique, Action, ActionSuggestion, CodeEtudiant
 from problematiques.models import Item
 from school.models import Classification
 # Create your views here.
+@csrf_exempt
+def ajax_student_problematique_update(request):
+    if request.method == "POST":
+        problematique_id = request.POST.get("problematique_id", "No problematique id")
+        p = Problematique.objects.get(id=problematique_id)
+        problematique_desc = request.POST.get("problematique_desc", "No problematique desc")
+        p.detail = problematique_desc
+        p.save()
+    return render(request, "student/prob_erreur.html")
+
+
 def ajax_search_probleme_action_sugestions(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         # input_str = request.GET.get('term', '')
@@ -93,7 +105,7 @@ def student_detail_view(request, pk):
 
     return render(request, 'student/detail.html', context)
 
-
+@login_required
 def student_problematique_create_view(request):
     student = Student.objects.get(pk=request.POST.get("eleve_id"))
     instigateur = User.objects.get(pk=request.POST.get("staff_id"))
@@ -110,7 +122,7 @@ def student_problematique_create_view(request):
 
     return redirect(student.get_absolute_url())
 
-
+@login_required
 def student_action_problematique_insert_view(request):
     student = Student.objects.get(pk=request.POST.get("eleve_id"))
     staff = User.objects.get(pk=request.POST.get("staff_id"))
