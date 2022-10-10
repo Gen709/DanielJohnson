@@ -18,7 +18,7 @@ def ajax_student_problematique_update(request):
         problematique_desc = request.POST.get("problematique_desc", "No problematique desc")
         p.detail = problematique_desc
         p.save()
-    return render(request, "student/prob_erreur.html")
+    return redirect(p.eleve.get_absolute_url())
 
 
 def ajax_search_probleme_action_sugestions(request):
