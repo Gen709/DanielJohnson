@@ -14,6 +14,9 @@ urlpatterns = [
     path('problematique/action/create', views.student_action_problematique_insert_view, name='action-create'),
     # path('comite_clinique/list', views.ComiteCliniqueStudentListView.as_view(), name='comite-clinique-list'),
     path('comite_clinique/list', views.comitecliniquestudentlistview, name='comite-clinique-list'),
+    path('comite_clinique/data/excel_download', views.download_excel_data, name='comite-clinique-excel-download-data'),
+
+
     path('evaluation/list', views.eleve_evaluation_list, name='evaluation-list'),
     path('problematiques/list', views.eleve_problematique_list_view, name='problematique-list'),
     

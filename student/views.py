@@ -9,6 +9,13 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Student, StatusAction, Problematique, StatusProblematique, Action, ActionSuggestion, CodeEtudiant
 from problematiques.models import Item
 from school.models import Classification
+
+from datetime import datetime as dt
+from openpyxl import Workbook
+from openpyxl.styles import Alignment
+import re
+
+
 # Create your views here.
 @csrf_exempt
 def ajax_student_problematique_update(request):
@@ -18,7 +25,7 @@ def ajax_student_problematique_update(request):
         problematique_desc = request.POST.get("problematique_desc", "No problematique desc")
         p.detail = problematique_desc
         p.save()
-    return redirect(p.eleve.get_absolute_url())
+        return redirect(p.eleve.get_absolute_url())
 
 
 def ajax_search_probleme_action_sugestions(request):
@@ -105,6 +112,7 @@ def student_detail_view(request, pk):
 
     return render(request, 'student/detail.html', context)
 
+
 @login_required
 def student_problematique_create_view(request):
     student = Student.objects.get(pk=request.POST.get("eleve_id"))
@@ -121,6 +129,7 @@ def student_problematique_create_view(request):
     p.save()
 
     return redirect(student.get_absolute_url())
+
 
 @csrf_exempt
 def student_problematique_update_status(request):
@@ -203,3 +212,118 @@ def eleve_problematique_list_view(request):
                }
 
     return render(request, 'student/problemes_eleve.html', context)
+
+
+@login_required
+def download_excel_data(request, user_id=None):
+    def cleanhtml(raw_html):
+        CLEANR = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});')
+
+        if raw_html != "" and (type(raw_html) == str):
+            cleantext = re.sub(CLEANR, '', raw_html)
+            return cleantext
+
+    response = HttpResponse(content_type='application/ms-excel')
+
+    response['Content-Disposition'] = 'attachment; filename="Comité_Clinique_Daniel_Johnson_' + dt.now().strftime(
+        "%Y-%m-%d %H:%M:%S") + ".xlsx"
+
+    wb = Workbook()
+
+    ws1 = wb.active
+    ws1.title = "Comité Clinique"
+    ws1['A1'] = "Étudiant"
+    ws1.merge_cells(start_row=1, start_column=1, end_row=1, end_column=9)
+    ws1['J1'] = "Problématiques"
+    ws1.merge_cells(start_row=1, start_column=10, end_row=1, end_column=13)
+    ws1['N1'] = "Action"
+    ws1.merge_cells(start_row=1, start_column=14, end_row=1, end_column=18)
+
+    c = ws1['A3']
+    ws1.freeze_panes = c
+    ws1['A2'] = "fiche"
+    ws1['B2'] = "nom"
+    ws1['C2'] = "prenom"
+    ws1['D2'] = "groupe_repere"
+    ws1['E2'] = "classification"
+    ws1['F2'] = "comite_clinique"
+    ws1['g2'] = "plan_intervention"
+    ws1['h2'] = "etat_situation"
+    ws1['i2'] = "classification"
+    ws1['j2'] = "problematique_nom"
+    ws1['k2'] = "problematique_status"
+    ws1['l2'] = "problematique_instigateur"
+    ws1['m2'] = "problematique_detail"
+    ws1['n2'] = "action_createur"
+    ws1['o2'] = "action_responsable"
+    ws1['p2'] = "action_description"
+    ws1['q2'] = "action_detail"
+    ws1['r2'] = "action_status"
+
+    i = 3
+
+    for student in Student.objects.filter(comite_clinique=True).order_by('classification', 'nom'):
+        if student.problematique_set.all():
+            for problematique in student.problematique_set.all():
+                if problematique.action_set.all():
+                    for action in problematique.action_set.all():
+                        ws1['A' + str(i)] = student.fiche
+                        ws1['B' + str(i)] = student.nom
+                        ws1['C' + str(i)] = student.prenom
+                        ws1['D' + str(i)] = student.groupe_repere
+                        ws1['E' + str(i)] = student.classification.nom
+                        ws1['F' + str(i)] = student.comite_clinique
+                        ws1['g' + str(i)] = student.plan_intervention
+                        ws1['h' + str(i)] = cleanhtml(student.etat_situation)
+                        ws1['h' + str(i)].alignment = Alignment(wrapText=True)
+                        ws1['i' + str(i)] = student.classification.nom
+
+                        ws1['j' + str(i)] = problematique.nom.nom
+                        ws1['k' + str(i)] = problematique.status.nom
+                        ws1['l' + str(i)] = problematique.instigateur.first_name
+                        ws1['m' + str(i)] = cleanhtml(problematique.detail)
+                        ws1['m' + str(i)].alignment = Alignment(wrapText=True)
+
+                        ws1['n' + str(i)] = action.createur.first_name
+                        ws1['o' + str(i)] = action.responsable.first_name
+                        ws1['p' + str(i)] = action.description
+                        ws1['q' + str(i)] = cleanhtml(action.detail)
+                        ws1['q' + str(i)].alignment = Alignment(wrapText=True)
+                        ws1['r' + str(i)] = action.status.nom
+                        i += 1
+
+                else:
+                    ws1['A' + str(i)] = student.fiche
+                    ws1['B' + str(i)] = student.nom
+                    ws1['C' + str(i)] = student.prenom
+                    ws1['D' + str(i)] = student.groupe_repere
+                    ws1['E' + str(i)] = student.classification.nom
+                    ws1['F' + str(i)] = student.comite_clinique
+                    ws1['g' + str(i)] = student.plan_intervention
+                    ws1['h' + str(i)] = cleanhtml(student.etat_situation)
+                    ws1['h' + str(i)].alignment = Alignment(wrapText=True)
+                    ws1['i' + str(i)] = student.classification.nom
+
+                    ws1['j' + str(i)] = problematique.nom.nom
+                    ws1['k' + str(i)] = problematique.status.nom
+                    ws1['l' + str(i)] = problematique.instigateur.first_name
+                    ws1['m' + str(i)] = cleanhtml(problematique.detail)
+                    ws1['m' + str(i)].alignment = Alignment(wrapText=True)
+                    i += 1
+
+        else:
+            ws1['A' + str(i)] = student.fiche
+            ws1['B' + str(i)] = student.nom
+            ws1['C' + str(i)] = student.prenom
+            ws1['D' + str(i)] = student.groupe_repere
+            ws1['E' + str(i)] = student.classification.nom
+            ws1['F' + str(i)] = student.comite_clinique
+            ws1['g' + str(i)] = student.plan_intervention
+            ws1['h' + str(i)] = cleanhtml(student.etat_situation)
+            ws1['h' + str(i)].alignment = Alignment(wrapText=True)
+            ws1['i' + str(i)] = student.classification.nom
+            i += 1
+
+    wb.save(filename=response)
+
+    return response
