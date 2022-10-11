@@ -8,6 +8,7 @@
 	<script src="{% static 'student/js/submit_student_detail_form.js' %}"> </script>
 	<script src="{% static 'student/js/inline_textarea_problematique.js' %}"> </script>
 	<script src="{% static 'student/js/problematic_status_submit.js' %}"> </script>
+	<script src="{% static 'student/js/action_status_submit.js' %}"> </script>
 	<!-- <script src="{% static 'page/js/search_student_name.js' %}"> </script> -->
 		
 {% endblock %}
@@ -208,7 +209,7 @@
 															</button>
 														</h2>
 														<div id="collapse_problematique_action{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="heading_problematique_action{{forloop.counter}}" data-bs-parent="#accordionResposabilite">
-															<div class="accordion-body">
+															<div class="accordion-body bg-light">
 																<div class="row mt-2">
 																	<div class="row mt-2">
 																		<div class="col-md-2">
@@ -225,14 +226,22 @@
 																				{% endfor %}
 																			</select>
 																		</div>
-
 																	</div>
+
 																	<div class="row mt-2">
 																		<div class="col-md-2">
 																			Description:
 																		</div>
 																		<div class="col">
-																			{{ x.detail }}
+																			<div class="inline_textarea_action_detail bg-body border rounded px-4 pt-3" id="{{x.id}}">
+																				{% if x.detail %}
+																					{{ x.detail }}
+																				{% else %}
+																					<p>Aucune description de l'action n'est fournnie</p>
+																				{% endif %}
+																			</div>
+
+
 																		</div>
 																	</div>
 
@@ -248,7 +257,7 @@
 											</div>
 									</div>
 									<div class="row float-right">
-										<div class="col-sm-2">
+										<div class="col-sm-2 float-right">
 											<button type="button" class="btn btn-link open-action" data-id="{{problematique.id}}" data-bs-toggle="modal" data-bs-target="#Modalaction">
 												+ Ajout action
 											</button>
