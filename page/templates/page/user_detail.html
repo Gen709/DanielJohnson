@@ -39,20 +39,24 @@
 												{{ x.description }} dans le cadre de la problematique: {{x.problematique.nom}}<br>
 											</div>
 											<div class="row">
-												<div class="col">
+												<div class="col-md-1">
 													status
 												</div>
-												<div class="col"> 
-													<select class="form-select select-action-status" id="action-status-selection">
-														{% for option in statusaction %}
-															{% if option.nom == x.status %}
-																<option selected value="{{option.id}}">{{option.nom}}</option>
-															{% else %}
-																<option value="{{option.id}}">{{option.nom}}</option>
-															{% endif %}
-														{% endfor %}
-													</select>
+												<div class="col-md-1">
+													{{x.status}}
+<!--													<select class="form-select select-action-status" id="action-status-selection">-->
+<!--														{% for option in statusaction %}-->
+<!--															{% if option.nom == x.status %}-->
+<!--																<option selected value="{{option.id}}">{{option.nom}}</option>-->
+<!--															{% else %}-->
+<!--																<option value="{{option.id}}">{{option.nom}}</option>-->
+<!--															{% endif %}-->
+<!--														{% endfor %}-->
+<!--													</select>-->
 												</div>
+											</div>
+											<div class="row">
+												<a href="#">Voir fiche de l'éleve</a>
 											</div>
 										</div>
 									</div>
