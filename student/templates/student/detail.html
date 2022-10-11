@@ -17,6 +17,7 @@
 
 
 <div class="container-fluid">
+	<!-- Section étudiant	-->
 	<div class="row border">
 	
 		<div class="row mt-3">
@@ -128,16 +129,16 @@
 			</div>
 			
 		</div>
+
 	</div>
 	<!-- Section Problemes -->
-	<div class="row border mt-5">
-		<!--  section titre-->
+	<div class="row border border-danger rounded mt-5">
+		<!--  section titre avec boutton -->
 		<div class="row mt-2">
 			<div class="col-md-6">
 				<h4>Problématiques:</h4>
 			</div>
 			<div class="col">
-				<!-- <a href="#">+ ajouter une problématique</a> -->
 				<button type="button" class="btn btn-sm btn-primary float-end" data-bs-toggle="modal" data-bs-target="#exampleModal">
 				  + Ajout problématique
 				</button>
@@ -263,39 +264,7 @@
 											</button>
 										</div>
 									</div>
-
 								</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!--								<ul class="list-group list-group-flush">-->
-<!--								{% if problematique.action_set.all %}-->
-<!--									{%for action in problematique.action_set.all %}-->
-<!--										<li class="list-group-item">-->
-<!--											{{action.description}} | {{action.responsable}} | {{action.status}}-->
-<!--										</li>-->
-<!--									{% endfor %}-->
-<!--								{% else %}-->
-<!--									<li class="list-group-item">Aucune Action n'a été planifiée </li>-->
-<!--								{% endif %}-->
-<!--								</ul>-->
-								<!-- <a href="#">+ ajouter une action</a> -->
-
-								<!-- <div class="row md-2"> -->
-
-								<!-- </div> -->
 							</div>
 						</div>
 					</div>
@@ -305,7 +274,6 @@
 				{%endif%}
 			</div>
 		</div>
-		
 	</div>
 	<!--  Section Suivis des actions -->
 	<div class="row mt-5">
