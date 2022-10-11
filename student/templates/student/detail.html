@@ -7,6 +7,7 @@
 	<script src="{% static 'student/js/set_problem_id.js' %}"> </script>
 	<script src="{% static 'student/js/submit_student_detail_form.js' %}"> </script>
 	<script src="{% static 'student/js/inline_textarea_problematique.js' %}"> </script>
+	<script src="{% static 'student/js/problematic_status_submit.js' %}"> </script>
 	<!-- <script src="{% static 'page/js/search_student_name.js' %}"> </script> -->
 		
 {% endblock %}
@@ -155,9 +156,32 @@
 						</h2>
 						<div id="collapse_{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="heading_{{forloop.counter}}" data-bs-parent="#accordionEtatDeLaSituation">
 							<div class="accordion-body">
+								<div class="row">
+									<div class="col-md-2">
+										Status:
+									</div>
+									<div class="col-md-2">
+										<select class="form-select" name="" id="select_status_{{ problematique.id }}">
+											{% for status in statusproblematique %}
+												{% if status.nom == problematique.status.nom %}
+													<option value="{{ status.id }}" selected>{{ status.nom }}</option>
+												{% else %}
+													<option value="{{ status.id }}">{{ status.nom }}</option>
+												{% endif %}
+											{% endfor %}
+										</select>
+									</div>
+									<div class="col">
+									</div>
+									<div class="col-md-2">
+										<button type="button" class="btn btn-sm btn-danger float-end">
+											Supr. prob.
+										</button>
+									</div>
+								</div>
 								<strong>Explications / Détail:</strong>
 
-								<div class="inline_textarea_problematique" id="{{problematique.id}}">
+								<div class="inline_textarea_problematique border m-x-3" id="{{problematique.id}}">
 										{% if problematique.detail %}
 											<p>{{ problematique.detail|safe }}</p>
 										{%else%}
@@ -180,9 +204,7 @@
 								<!-- <a href="#">+ ajouter une action</a> -->
 								<button type="button" class="btn btn-link open-action" data-id="{{problematique.id}}" data-bs-toggle="modal" data-bs-target="#Modalaction">+ ajouter une action</button>
 								<!-- <div class="row md-2"> -->
-									<button type="button" class="btn btn-sm btn-danger float-end">
-									  	Supr. prob.
-									</button>
+
 								<!-- </div> -->
 							</div>
 						</div>

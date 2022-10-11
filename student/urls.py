@@ -6,6 +6,7 @@ urlpatterns = [
     path('ajax/', views.ajax_search_student, name='ajax-search-student'),
     path('ajax/update', views.ajax_update_student, name='ajax-update-student'),
     path('problematique/ajax/update', views.ajax_student_problematique_update, name='ajax-student-problematique-update'),
+    path('problematique/status/ajax/update', views.student_problematique_update_status, name='ajax-student-problematique-status-update'),
     
     path('ajax/action/suggestions', views.ajax_search_probleme_action_sugestions, name='ajax-search-probleme-suggestions'),
     path('detail/<int:pk>', views.student_detail_view, name='student-detail'),

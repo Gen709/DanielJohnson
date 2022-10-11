@@ -122,6 +122,17 @@ def student_problematique_create_view(request):
 
     return redirect(student.get_absolute_url())
 
+@csrf_exempt
+def student_problematique_update_status(request):
+    p = Problematique.objects.get(id=int(request.POST.get('problematique_id', "").split("_")[2]))
+    s = StatusProblematique.objects.get(id=request.POST.get('status_id', ""))
+
+    p.status = s
+    p.save()
+
+    return redirect(p.eleve.get_absolute_url())
+
+
 @login_required
 def student_action_problematique_insert_view(request):
     student = Student.objects.get(pk=request.POST.get("eleve_id"))

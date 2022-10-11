@@ -26,8 +26,8 @@ $(document).ready(function(){
     // get info on select
 
     $(".inline_textarea_problematique").click(function() {
-        problematique_id = this.id ;
-        console.log(problematique_id);
+        var problematique_id = this.id ;
+        //console.log(problematique_id);
 
         $('#' + problematique_id ).focusout(function(){
             var myContent = {problematique_id: problematique_id,
