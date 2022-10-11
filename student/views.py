@@ -18,6 +18,19 @@ import re
 
 # Create your views here.
 @csrf_exempt
+def ajax_student_problematique_action_status_update(request):
+    if request.method == "POST":
+        a = Action.objects.get(id=int(request.POST.get('action_id', "").split("_")[2]))
+        s = StatusAction.objects.get(id=request.POST.get('status_id', ""))
+
+        a.status = s
+        a.save()
+
+        return redirect(a.problematique.eleve.get_absolute_url())
+
+
+
+@csrf_exempt
 def ajax_student_problematique_update(request):
     if request.method == "POST":
         problematique_id = request.POST.get("problematique_id", "No problematique id")
