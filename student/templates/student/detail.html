@@ -150,7 +150,7 @@
 
 		<div class="accordion" id="accordionProblematiques">
 			{% if student.problematique_set.all %}
-				there are problems
+
 				{% for problematique in student.problematique_set.all %}
 					<div class="accordion-item mb-2">
 						<h2 class="accordion-header" id="accordionProblematiques_heading_{{forloop.counter}}">
@@ -258,14 +258,17 @@
 										{% else %}
 											Aucune action n'a été enregistrée
 										{% endif %}
+										<div class="row float-right">
+											<div class="col-sm-2 float-right">
+												<button type="button" class="btn btn-link open-action" data-id="{{problematique.id}}" data-bs-toggle="modal" data-bs-target="#Modalaction">
+													+ Ajout action
+												</button>
+											</div>
+										</div>
 									</div>
 								</div>
-
 							</div>
 						</div>
-
-
-
 					</div>
 
 				{% endfor %}
