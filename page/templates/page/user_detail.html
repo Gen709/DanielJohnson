@@ -2,7 +2,8 @@
 {% load static %}
 
 {% block js %}
-<script src="{% static 'js/search_student_name.js' %}"> </script>
+<script src="{% static 'page/js/search_student_name.js' %}"> </script>
+<script src="{% static 'student/js/action_status_submit.js' %}"> </script>
 {% endblock %}
 
 {% block content %}
@@ -15,7 +16,7 @@
 			<h1> Bonjour {{user.first_name}}!</h1>
 		</div>
 		<!--  Section propriétaire -->
-		<div class="row border mt-5">
+		<div class="row border mt-3">
 		
 			<div class="row mt-2">
 				<h4> Actions pour lesquelles vous avez été identifié comme propriétaire</h4>
@@ -34,44 +35,71 @@
 								</h2>
 								<div id="collapse_{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="heading_{{forloop.counter}}" data-bs-parent="#accordionResposabilite">
 									<div class="accordion-body">
-										<div class="row">
+										<div class="row mt-2">
 											<div class="row">
-												{{ x.description }} dans le cadre de la problematique: {{x.problematique.nom}}<br>
-											</div>
-											<div class="row">
-												<div class="col-md-1">
-													status
+												<div class="col-md-2">
+													Problematique:
 												</div>
-												<div class="col-md-1">
-													{{x.status}}
-<!--													<select class="form-select select-action-status" id="action-status-selection">-->
-<!--														{% for option in statusaction %}-->
-<!--															{% if option.nom == x.status %}-->
-<!--																<option selected value="{{option.id}}">{{option.nom}}</option>-->
-<!--															{% else %}-->
-<!--																<option value="{{option.id}}">{{option.nom}}</option>-->
-<!--															{% endif %}-->
-<!--														{% endfor %}-->
-<!--													</select>-->
+												<div class="col">
+													{{x.problematique.nom}}
 												</div>
 											</div>
-											<div class="row">
-												<a href="#">Voir fiche de l'éleve</a>
+											<div class="row mt-2">
+												<div class="col-md-2">
+
+												</div>
+												<div class="col-md-10 text-secondary">
+													{{x.problematique.detail|safe}}
+												</div>
+											</div>
+											<div class="row mt-2">
+												<div class="col-md-2">
+													Action:
+												</div>
+												<div class="col">
+													{{ x.description }}
+												</div>
+											</div>
+											<div class="row mt-2">
+												<div class="col-md-2">
+
+												</div>
+												<div class="col text-secondary">
+													{{ x.detail|safe }}
+												</div>
+											</div>
+											<div class="row mt-2">
+												<div class="col-md-2">
+													Status:
+												</div>
+												<div class="col-md-2">
+													<select class="form-select action-status-select-js" name="" id="select_status_{{ x.id }}">
+														{% for status in statusaction %}
+															{% if status.nom == x.status.nom %}
+																<option value="{{ status.id }}" selected>{{ status.nom }}</option>
+															{% else %}
+																<option value="{{ status.id }}">{{ status.nom }}</option>
+															{% endif %}
+														{% endfor %}
+													</select>
+												</div>
+												<div class="row mt-2">
+													<a href="{% url 'student-detail' x.problematique.eleve.id %}">Voir fiche de l'élève</a>
+												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
 						{% endfor %}
-					</div>
 				{% else %}
 					<p>Aucune action !</p>
 				{% endif %}
+					</div>
 			</div>
-			
 		</div>
 		
-		
+<!--		section attributeur -->
 		<div class="row border mt-5">
 		
 			<div class="row mt-2">
