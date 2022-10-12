@@ -73,7 +73,7 @@
 													Status:
 												</div>
 												<div class="col-md-2">
-													<select class="form-select action-status-select-js" name="" id="select_status_{{ x.id }}">
+													<select class="form-select action-status-select-js" id="select_status_{{ x.id }}">
 														{% for status in statusaction %}
 															{% if status.nom == x.status.nom %}
 																<option value="{{ status.id }}" selected>{{ status.nom }}</option>

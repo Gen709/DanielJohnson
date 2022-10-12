@@ -25,18 +25,21 @@ $(document).ready(function(){
 		var myContent = {student_id: $('#student_id').val(), 
 						 etatdelasituation: tinymce.get("inline_textarea_etat_situation").getContent(),
 						 csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-					};
-		$.ajax({
-		method:"POST",
-		url: "http://127.0.0.1:8000/etudiant/ajax/etatdelasituation/",
-		dataType: "json",
-		//data:'etatdelasituation='+myContent,
-		data:myContent,
-			success: function(data){
-				console.log(data);
-			},
+						 };
 
-		});
+        console.log(myContent);
+
+//		$.ajax({
+//		method:"POST",
+//		url: "http://127.0.0.1:8000/etudiant/ajax/etatdelasituation/",
+//		dataType: "json",
+//		//data:'etatdelasituation='+myContent,
+//		data:myContent,
+//			success: function(data){
+//				console.log(data);
+//			},
+//
+//		});
 
 	});
 
