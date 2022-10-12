@@ -33,7 +33,6 @@ def ajax_etat_situation_save_view(request):
     if request.POST.get('etatdelasituation'):
         etat_situation_str = request.POST.get('etatdelasituation')
         student_id = request.POST.get('student_id')
-        # crf_token = request.POST.get('csrfmiddlewaretoken')
         s = Student.objects.get(id=student_id)
         s.etat_situation = etat_situation_str
         s.save()
