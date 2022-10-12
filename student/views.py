@@ -18,6 +18,17 @@ import re
 
 # Create your views here.
 @csrf_exempt
+def ajax_student_problematique_action_detail_update(request):
+    if request.method == "POST":
+        a = Action.objects.get(id=int(request.POST.get('action_id', "").split("_")[2]))
+        detail = request.POST.get('action_desc', "")
+
+        a.detail = detail
+        a.save()
+
+        return redirect(a.problematique.eleve.get_absolute_url())
+
+@csrf_exempt
 def ajax_student_problematique_action_status_update(request):
     if request.method == "POST":
         a = Action.objects.get(id=int(request.POST.get('action_id', "").split("_")[2]))
@@ -27,7 +38,6 @@ def ajax_student_problematique_action_status_update(request):
         a.save()
 
         return redirect(a.problematique.eleve.get_absolute_url())
-
 
 
 @csrf_exempt

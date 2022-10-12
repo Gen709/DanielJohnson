@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from django.urls import reverse
 
 from problematiques.models import Item
@@ -48,7 +49,12 @@ class Student(models.Model):
     
     def get_absolute_url(self):
         return reverse('student-detail', kwargs={'pk': self.pk})
-    
+
+    def get_inactive_problems_query_set(self):
+        return self.problematique_set.filter(status__nom="réglé")
+
+    def get_active_problems_query_set(self):
+        return self.problematique_set.filter(~Q(status__nom="réglé"))
     
 class StatusProblematique(models.Model):
     nom = models.CharField(max_length=50)

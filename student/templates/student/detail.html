@@ -3,10 +3,16 @@
 
 {% block js %}
 	<script src="https://cdn.tiny.cloud/1/3uxow28ssthmenpgxa54gwbtdj7mdpjqzi8sprt26xpv0dcz/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-	<script src="{% static 'page/js/inline_textarea.js' %}"> </script>
-	<script src="{% static 'student/js/set_problem_id.js' %}"> </script>
+
 	<script src="{% static 'student/js/submit_student_detail_form.js' %}"> </script>
+
+	<script src="{% static 'page/js/inline_textarea_etat_situation.js' %}"> </script>
 	<script src="{% static 'student/js/inline_textarea_problematique.js' %}"> </script>
+	<script src="{% static 'student/js/inline_textarea_action.js' %}"> </script>
+
+	<script src="{% static 'student/js/set_problem_id.js' %}"> </script>
+
+
 	<script src="{% static 'student/js/problematic_status_submit.js' %}"> </script>
 	<script src="{% static 'student/js/action_status_submit.js' %}"> </script>
 	<!-- <script src="{% static 'page/js/search_student_name.js' %}"> </script> -->
@@ -17,9 +23,10 @@
 
 
 <div class="container-fluid">
-	<!-- Section étudiant	-->
-	<div class="row border">
-	
+
+	<!-- Section fiche étudiant	-->
+	<div class="row border rounded">
+		<!--	titre	-->
 		<div class="row mt-3">
 			<div class="col"><h3>Fiche Étudiant</h3></div>
 		</div>
@@ -108,18 +115,20 @@
 				</form>
 			</div>
 		</div>
-		<!-- Section etat de la situation -->
-		<div class="row mt-3">
+	</div>
+
+	<!-- Section etat de la situation -->
+	<div class="row border rounded mt-4">
+		<div class="row mt-2">
 			<!--  section titre-->
 			<div class="row">
 				<h4>État de la situation:</h4>
 			</div>
-			
 			<!-- section input -->
 			<div class="row mt-2 mb-2"> 
 				<form>
 				{% csrf_token %}<!-- min height ? -->
-					<div class="inline_textarea ms-3" id="inline_textarea">
+					<div class="inline_textarea_etat_situation ms-3 bg-body border rounded pt-3 px-4" id="inline_textarea_etat_situation">
 						{% if student.etat_situation %}
 							{{student.etat_situation|safe}}
 						{% else %}
@@ -134,12 +143,12 @@
 
 	</div>
 
-	<!-- Section Problemes -->
-	<div class="row border rounded mt-5">
+	<!-- Section Problemes actif -->
+	<div class="row border rounded mt-4">
 		<!--  Entete section titre avec boutton -->
 		<div class="row mt-2">
-			<div class="col-md-6">
-				<h4>Problématiques:</h4>
+			<div class="col-sm-4">
+				<h4>Problématiques en cours:</h4>
 			</div>
 			<div class="col">
 				<button type="button" class="btn btn-sm btn-primary float-end" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -147,12 +156,14 @@
 				</button>
 			</div>
 		</div>
-
+		<!-- Accordeon problemes-->
 		<div class="accordion" id="accordionProblematiques">
-			{% if student.problematique_set.all %}
+			{% if student.get_active_problems_query_set %}
 
-				{% for problematique in student.problematique_set.all %}
+				{% for problematique in student.get_active_problems_query_set %}
+
 					<div class="accordion-item mb-2">
+
 						<h2 class="accordion-header" id="accordionProblematiques_heading_{{forloop.counter}}">
 							<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#accordionProblematiques_collapse_{{forloop.counter}}" aria-expanded="false" aria-controls="collapse_{{forloop.counter}}">
 								{{ problematique.nom }} | statut: {{ problematique.status }} | inscrit par :  {{ problematique.instigateur.first_name }} {{ problematique.instigateur.last_name }}
@@ -186,7 +197,7 @@
 											<strong>Explications / Détail:</strong>
 										</div>
 										<div class="col">
-											<div class="inline_textarea_problematique bg-body border rounded px-4 pt-3" id="{{problematique.id}}">
+											<div class="inline_textarea_problematique bg-body border rounded pt-3 px-4 " id="{{problematique.id}}">
 												{% if problematique.detail %}
 													{{ problematique.detail|safe }}
 												{%else%}
@@ -212,7 +223,7 @@
 																{{x.description}} | Attitré par {{x.createur}} à {{x.responsable}}
 															</button>
 														</h2>
-
+														<!-- -->
 														<div id="accordionAction_collapse_{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="accordionAction_heading_{{forloop.counter}}" data-bs-parent="#accordionAction">
 															<div class="accordion-body bg-light">
 
@@ -235,14 +246,14 @@
 																	</div>
 																	<div class="row mt-2">
 																		<div class="col-md-2">
-																			Description:
+																			Detail:
 																		</div>
 																		<div class="col">
-																			<div class="inline_textarea_action_detail bg-body border rounded px-4 pt-3" id="{{x.id}}">
+																			<div class="inline_textarea_action_detail bg-body border rounded pt-3 px-4" id="action_detail_{{x.id}}">
 																				{% if x.detail %}
-																					{{ x.detail }}
+																					{{ x.detail|safe }}
 																				{% else %}
-																					<p>Aucune description de l'action n'est fournnie</p>
+																					<p>Aucun détail</p>
 																				{% endif %}
 																			</div>
 																		</div>
@@ -259,7 +270,7 @@
 											Aucune action n'a été enregistrée
 										{% endif %}
 										<div class="row float-right">
-											<div class="col-sm-2 float-right">
+											<div class="col-md-2 sm-12 float-right">
 												<button type="button" class="btn btn-link open-action" data-id="{{problematique.id}}" data-bs-toggle="modal" data-bs-target="#Modalaction">
 													+ Ajout action
 												</button>
@@ -269,27 +280,30 @@
 								</div>
 							</div>
 						</div>
-					</div>
 
+					</div>
 				{% endfor %}
 			{% else %}
-				there are no problems
+				<div class="bg-body border rounded pt-3 px-4 mt-3 mb-3">
+
+						<p>Aucune problèmatique en cours pour {{student.prenom}} {{student.nom}} </p>
+
+				</div>
 			{% endif %}
 
 		</div>
-
-
-
 	</div>
-	<!--  Section Suivis des actions -->
-	<div class="row mt-5">
+
+	<!--  Section Suivis des actions Active -->
+	<div class="row mt-5 border rounded">
+		<!--	titre-entête	-->
 		<div class="row">
 			<div class="col mt-2">
-				<h3>Suivis des actions</h3>
+				<h3>Actions en cours pour {{student.prenom}} {{student.nom}}</h3>
 			</div>
 		</div>
 		
-		<div class="row mt-2 mb-2 border"> <!-- min height ? -->
+		<div class="row mt-2 mb-2"> <!-- min height ? -->
 			{% if student.problematique_set.all %}
 				{% for problematique in student.problematique_set.all %}
 					{% if problematique.action_set.all %}
@@ -307,7 +321,137 @@
 			{% endif %}
 		</div>
 	</div>
-	
+
+	<!-- section problèmes réglés	-->
+	<div class="row border rounded mt-4 mb-7">
+		<!--  Entete section titre avec boutton -->
+		<div class="row mt-2">
+			<div class="col-sm-4">
+				<h4>Problématiques réglées:</h4>
+			</div>
+		</div>
+
+		<div class="accordion" id="accordionProblematiquesReglees">
+			{% if student.get_inactive_problems_query_set %}
+
+				{% for problematique in student.get_inactive_problems_query_set %}
+
+					<div class="accordion-item mb-2">
+						<!--entete -->
+						<h2 class="accordion-header" id="accordionProblematiquesReglees_heading_{{forloop.counter}}">
+							<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#accordionProblematiquesReglees_collapse_{{forloop.counter}}" aria-expanded="false" aria-controls="accordionProblematiquesReglees_collapse_{{forloop.counter}}">
+								{{ problematique.nom }}
+							</button>
+						</h2>
+
+						<div id="accordionProblematiquesReglees_collapse_{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="accordionProblematiquesReglees_heading_{{forloop.counter}}" data-bs-parent="#accordionProblematiquesReglees">
+							<div class="accordion-body bg-light ">
+
+								<div class="row">
+									<!--	inscrit par -->
+									<div class="row mt-3">
+										<div class="col-md-2">
+											<strong>Inscrit par:</strong>
+										</div>
+										<div class="col-md-2">
+											{{ problematique.instigateur.first_name }} {{ problematique.instigateur.last_name }}
+										</div>
+
+									</div>
+									<!-- detail de la problematique -->
+									<div class="row mt-3">
+										<div class="col-md-2">
+											<p><strong>Explications / Détail:</strong></p>
+										</div>
+										<div class="col">
+												{% if problematique.detail %}
+													{{ problematique.detail|safe }}
+												{%else%}
+													<p>Aucune Explication / Détail</p>
+												{%endif%}
+										</div>
+									</div>
+								</div>
+								<!-- actions posées	-->
+								<div class="row mt-3">
+									<div class="col-md-2">
+										<strong>Actions Posées:</strong>
+									</div>
+									<div class="col">
+										{% if problematique.action_set.all %}
+											<!--accordéon des actions posées-->
+											<div class="accordion" id="accordionActionPosees">
+												{% for x in problematique.action_set.all %}
+													<div class="accordion-item mb-2 mt-2">
+
+														<h2 class="accordion-header" id="accordionActionPosees_heading_{{forloop.counter}}">
+															<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#accordionActionPosees_collapse_{{forloop.counter}}" aria-expanded="false" aria-controls="accordionActionPosees_collapse_{{forloop.counter}}">
+																{{x.description}}
+															</button>
+														</h2>
+														<!-- -->
+														<div id="accordionActionPosees_collapse_{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="accordionActionPosees_heading_{{forloop.counter}}" data-bs-parent="#accordionActionPosees">
+															<div class="accordion-body bg-light">
+
+																<div class="row mt-2">
+																	<div class="row mt-2">
+																		<div class="col-md-2">
+																			Attitré par:
+																		</div>
+																		<div class="col-md-2">
+																			{{x.createur}}
+																		</div>
+																	</div>
+																	<div class="row mt-2">
+																		<div class="col-md-2">
+																			Responsable:
+																		</div>
+																		<div class="col-md-2">
+																			{{x.responsable}}
+																		</div>
+																	</div>
+																	<div class="row mt-2">
+																		<div class="col-md-2">
+																			Detail:
+																		</div>
+																		<div class="col">
+
+																			{% if x.detail %}
+																				{{ x.detail|safe }}
+																			{% else %}
+																				<p>Aucun détail</p>
+																			{% endif %}
+
+																		</div>
+																	</div>
+																</div>
+
+															</div>
+														</div>
+
+													</div>
+												{% endfor %}
+											</div>
+										{% else %}
+											Aucune action n'a été enregistrée
+										{% endif %}
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			{% else %}
+				there are no problems
+			{% endif %}
+
+		</div>
+
+	</div>
+
+
+
 </div>
 
 {% include 'student/ajout_problematique.html' %}

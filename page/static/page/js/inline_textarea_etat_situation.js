@@ -1,5 +1,5 @@
-const inline_textarea = {
-  selector: '.inline_textarea',
+const inline_textarea_etat_situation = {
+  selector: '.inline_textarea_etat_situation',
   menubar: false,
   inline: true,
   plugins: [
@@ -18,12 +18,12 @@ const inline_textarea = {
   powerpaste_html_import: 'clean',
 };
 
-tinymce.init(inline_textarea);
+tinymce.init(inline_textarea_etat_situation);
 
 $(document).ready(function(){
-	$("#inline_textarea").focusout(function(){
+	$("#inline_textarea_etat_situation").focusout(function(){
 		var myContent = {student_id: $('#student_id').val(), 
-						 etatdelasituation: tinymce.get("inline_textarea").getContent(),
+						 etatdelasituation: tinymce.get("inline_textarea_etat_situation").getContent(),
 						 csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
 					};
 		$.ajax({
@@ -35,9 +35,9 @@ $(document).ready(function(){
 			success: function(data){
 				console.log(data);
 			},
-			
+
 		});
-	
+
 	});
 
 });
