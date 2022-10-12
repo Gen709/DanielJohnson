@@ -236,8 +236,7 @@ def download_excel_data(request, user_id=None):
             cleantext = re.sub(CLEANR, '', raw_html)
             return cleantext
 
-    response = HttpResponse(content_type='application/ms-excel')
-
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename="Comité_Clinique_Daniel_Johnson_' + dt.now().strftime(
         "%Y-%m-%d %H:%M:%S") + ".xlsx"
 
@@ -304,7 +303,6 @@ def download_excel_data(request, user_id=None):
                         ws1['q' + str(i)].alignment = Alignment(wrapText=True)
                         ws1['r' + str(i)] = action.status.nom
                         i += 1
-
                 else:
                     ws1['A' + str(i)] = student.fiche
                     ws1['B' + str(i)] = student.nom
@@ -337,6 +335,10 @@ def download_excel_data(request, user_id=None):
             ws1['i' + str(i)] = student.classification.nom
             i += 1
 
-    wb.save(filename=response)
 
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=Comité_Clinique_Daniel_Johnson_' + dt.now().strftime(
+        "%Y-%m-%d %H:%M:%S")+'.xlsx'
+    wb.save(filename=response)
     return response
