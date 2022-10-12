@@ -30,13 +30,12 @@ def user_detail(request, pk):
 
 @csrf_exempt
 def ajax_etat_situation_save_view(request):
-    if request.POST.get('etatdelasituation'):
+    if request.method == "POST":
         etat_situation_str = request.POST.get('etatdelasituation')
         student_id = request.POST.get('student_id')
         s = Student.objects.get(id=student_id)
         s.etat_situation = etat_situation_str
         s.save()
-
 
         data_list = [{'etat_situation_str': etat_situation_str},
                      {'student_id': student_id}
