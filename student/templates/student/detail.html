@@ -301,7 +301,7 @@
 		<!--	titre-entête	-->
 		<div class="row">
 			<div class="col mt-2">
-				<h3>Actions en cours pour {{student.prenom}} {{student.nom}}</h3>
+				<h4>Actions en cours pour {{student.prenom}} {{student.nom}}</h4>
 			</div>
 		</div>
 		<!--	statut 	-->
@@ -312,7 +312,7 @@
 						{% for action in problematique.action_set.all %}
 							<div class="row  mb-2">
 								<p>{{action.description}} | Resp: {{action.responsable}}</p>
-								<p>{{action.detail}}</p>
+								<p>{{action.detail|safe}}</p>
 							</div>
 						{% endfor %}
 					{% else %}
