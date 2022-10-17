@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from django.http.response import JsonResponse, HttpResponse
 
-
+from django.db.models import Q
 # Create your views here.
 def index(request):
     if request.user.is_authenticated:
@@ -16,8 +16,8 @@ def index(request):
 
 def user_detail(request, pk):
     statusaction = StatusAction.objects.all()
-    action_resp = Action.objects.filter(responsable__id=pk)
-    action_createur = Action.objects.filter(createur__id=pk)
+    action_resp = Action.objects.filter(~Q(status__nom="terminé"), responsable__id=pk)
+    action_createur = Action.objects.filter(~Q(status__nom="terminé"), createur__id=pk)
     context = {'id': pk, 
                'action_resp': action_resp,
                'action_createur': action_createur,
