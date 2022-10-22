@@ -111,17 +111,11 @@ def ajax_update_student(request):
 def student_detail_view(request, pk):
     # a revoir
     staff = User.objects.get(username=request.user.get_username())
-
     responsable_qs = User.objects.all()
-
     student = Student.objects.get(pk=pk)
-
     problematiques = Item.objects.all()
-
     statusproblematique = StatusProblematique.objects.all()
-
     statusaction = StatusAction.objects.all()
-
     code_etudiant = CodeEtudiant.objects.all()
 
     context = {'student': student,
@@ -158,7 +152,6 @@ def student_problematique_create_view(request):
 def student_problematique_update_status(request):
     p = Problematique.objects.get(id=int(request.POST.get('problematique_id', "").split("_")[2]))
     s = StatusProblematique.objects.get(id=request.POST.get('status_id', ""))
-
     p.status = s
     p.save()
 

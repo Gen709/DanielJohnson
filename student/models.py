@@ -34,7 +34,7 @@ class Student(models.Model):
     date_ref_comite_clinique = models.DateField(null=True)
     plan_intervention = models.BooleanField(default=False)
     groupe_repere = models.CharField(max_length=4)
-    code = models.ForeignKey(CodeEtudiant, on_delete=models.SET_NULL, null=True)
+    code = models.ForeignKey(CodeEtudiant, on_delete=models.SET_NULL, null=True, blank=True)
     fiche = models.CharField(max_length=20, null=True, unique=True)
     classification = models.ForeignKey(Classification, on_delete=models.SET_NULL, null=True)
     etat_situation = models.TextField(null=True, blank=True)
