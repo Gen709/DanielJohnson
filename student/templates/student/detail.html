@@ -8,7 +8,7 @@
 
 	<script src="{% static 'page/js/inline_textarea_etat_situation.js' %}"> </script>
 	<script src="{% static 'student/js/inline_textarea_problematique.js' %}"> </script>
-	<script src="{% static 'student/js/inline_textarea_action.js' %}"> </script>
+	<script src="{% static 'student/js/action_inline_textarea.js' %}"> </script>
 
 	<script src="{% static 'student/js/set_problem_id.js' %}"> </script>
 
@@ -198,7 +198,7 @@
 											<strong>Statut:</strong>
 										</div>
 										<div class="col-md-2">
-											<select class="form-select" name="" id="select_status_{{ problematique.id }}">
+											<select class="form-select" name="problematique-status" id="select_status_{{ problematique.id }}">
 												{% for status in statusproblematique %}
 													{% if status.nom == problematique.status.nom %}
 														<option value="{{ status.id }}" selected>{{ status.nom }}</option>
@@ -252,7 +252,7 @@
 																			Statut:
 																		</div>
 																		<div class="col-md-4">
-																			<select class="form-select action-status-select-js" name="" id="select_status_{{ x.id }}">
+																			<select class="form-select action-status-select-js" name="action-status-select" id="select_status_{{ x.id }}">
 																				{% for status in statusaction %}
 																					{% if status.nom == x.status.nom %}
 																						<option value="{{ status.id }}" selected>{{ status.nom }}</option>

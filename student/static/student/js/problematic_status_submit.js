@@ -1,5 +1,6 @@
 $(document).ready(function(){
-    $(".form-select").change(function(){
+//    $(".form-select").change(function(){
+    $('select[name="problematique-status"]').change(function(){
         var myContent = {problematique_id: this.id,
                          status_id: this.value
                              //csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()

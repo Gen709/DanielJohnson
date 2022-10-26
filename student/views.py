@@ -196,7 +196,7 @@ def student_problematique_create_view(request):
 
 @csrf_exempt
 def student_problematique_update_status(request):
-    p = Problematique.objects.get(id=int(request.POST.get('problematique_id', "").split("_")[2]))
+    p = Problematique.objects.get(id=int(request.POST.get('problematique_id', "").split("_")[2])) # probleme
     s = StatusProblematique.objects.get(id=request.POST.get('status_id', ""))
     p.status = s
     p.save()
