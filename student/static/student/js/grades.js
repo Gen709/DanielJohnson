@@ -61,16 +61,17 @@ $(document).ready(function() {
             };
 
             layout = {
-                title: "Portrait académique",
+//                title: "Portrait académique",
                 xaxis: {
                     type: 'category',
                     title: 'Matière',
                 },
                 yaxis: {
-                    autorange: true,
+                    autorange: false,
                     showgrid: true,
                     zeroline: true,
-                    dtick: 5,
+                    dtick: 10,
+                    range: [0, 100],
                     gridcolor: 'rgb(255, 255, 255)',
                     gridwidth: 1,
                     zerolinecolor: 'rgb(255, 255, 255)',
@@ -80,7 +81,7 @@ $(document).ready(function() {
                     l: 40,
                     r: 30,
                     b: 80,
-                    t: 100
+                    t: 80
                 },
 //                paper_bgcolor: 'rgb(243, 243, 243)',
 //                plot_bgcolor: 'rgb(243, 243, 243)',
