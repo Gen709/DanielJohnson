@@ -6,7 +6,7 @@ from django.http.response import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import Student, StatusAction, Problematique, StatusProblematique, Action, ActionSuggestion, CodeEtudiant
+from .models import Student, StatusAction, Problematique, StatusProblematique, Action, ActionSuggestion, CodeEtudiant, Grades
 from problematiques.models import Item
 from school.models import Classification
 
@@ -27,6 +27,7 @@ def ajax_student_problematique_action_detail_update(request):
         a.save()
 
         return redirect(a.problematique.eleve.get_absolute_url())
+
 
 @csrf_exempt
 def ajax_student_problematique_action_status_update(request):
@@ -67,6 +68,51 @@ def ajax_search_probleme_action_sugestions(request):
         else:
             data = JsonResponse([{'description': 'Aucune suggestion'}], safe=False)
             return HttpResponse(data, mimetype)
+
+@csrf_exempt
+def ajax_note_student(request):
+    student_id = request.POST.get("student_id")
+    data_dict = {}
+    # etudiant
+    s = Student.objects.get(id=student_id)
+
+    # niveau de l'étudiant
+
+    niveau = s.classification
+
+    data_dict["niveau"] = niveau.nom
+
+    # notes de l'année en cour
+
+    n = Grades.objects.filter(student_id=student_id)
+
+    # liste des notes de l'élève
+
+    grades_list = [x.note for x in n]
+
+    data_dict["grade_list"] = grades_list
+
+    # liste des cours de l'élève
+
+    class_name_list = [x.matiere for x in n]
+
+    classification_className_tuple_list = [(x.classification, x.matiere) for x in n]
+
+    data_dict["class_name_list"] = class_name_list
+
+    data_dict["classification_className_tuple_list"] = classification_className_tuple_list
+
+    # Notes de groupe
+
+    data_dict["class_grades"] = {}
+
+    for classification_className_tuple in data_dict["classification_className_tuple_list"]:
+        data_dict["class_grades"][classification_className_tuple[1]] = [x.note for x in Grades.objects.filter(
+            matiere=classification_className_tuple[1])]
+
+    data = JsonResponse(data_dict, safe=False)
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)
 
 
 def ajax_search_student(request):

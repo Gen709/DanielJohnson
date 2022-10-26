@@ -5,10 +5,15 @@ from . import views
 urlpatterns = [
     path('ajax/', views.ajax_search_student, name='ajax-search-student'),
     path('ajax/update', views.ajax_update_student, name='ajax-update-student'),
+
+    path('ajax/notes/', views.ajax_note_student, name='ajax-note-student'),
+
     path('problematique/ajax/update', views.ajax_student_problematique_update, name='ajax-student-problematique-update'),
     path('problematique/status/ajax/update', views.student_problematique_update_status, name='ajax-student-problematique-status-update'),
     path('problematique/action/status/ajax/update', views.ajax_student_problematique_action_status_update, name='ajax-student-problematique-action-status-update'),
     path('problematique/action/detail/ajax/update', views.ajax_student_problematique_action_detail_update, name='ajax-student-problematique-action-detail-update'),
+
+
     
     path('ajax/action/suggestions', views.ajax_search_probleme_action_sugestions, name='ajax-search-probleme-suggestions'),
     path('detail/<int:pk>', views.student_detail_view, name='student-detail'),
