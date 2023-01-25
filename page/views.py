@@ -5,6 +5,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http.response import JsonResponse, HttpResponse
 
 from django.db.models import Q
+
+
 # Create your views here.
 def index(request):
     if request.user.is_authenticated:
@@ -17,14 +19,14 @@ def index(request):
 def user_detail(request, pk):
     statusaction = StatusAction.objects.all()
     action_resp = Action.objects.filter(~Q(status__nom="terminé"), responsable__id=pk)
-    action_createur = Action.objects.filter(~Q(status__nom="terminé"), createur__id=pk)
-    context = {'id': pk, 
+    # action_createur = Action.objects.filter(~Q(status__nom="terminé"), createur__id=pk)
+    action_createur = Action.objects.filter(~Q(status__nom="terminé"), ~Q(responsable__id = pk), createur__id = pk)
+    context = {'id': pk,
                'action_resp': action_resp,
                'action_createur': action_createur,
                'statusaction': statusaction
-               
                }
-    
+
     return render(request, 'page/user_detail.html', context)
 
 
@@ -39,11 +41,8 @@ def ajax_etat_situation_save_view(request):
 
         data_list = [{'etat_situation_str': etat_situation_str},
                      {'student_id': student_id}
-                    ]
+                     ]
         data = JsonResponse(data_list, safe=False)
         mimetype = 'application/json'
 
         return HttpResponse(data, mimetype)
-
-
-
