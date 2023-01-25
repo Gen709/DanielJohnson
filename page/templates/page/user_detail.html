@@ -118,8 +118,23 @@
 								</h2>
 								<div id="collapse{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="heading{{forloop.counter}}" data-bs-parent="#accordionAttribution">
 									<div class="accordion-body">
-										Pour la problematique: {{x.problematique.nom}}<br>
-										status: {{x.status}}
+										<div class="row mt-2">
+											Pour la problematique: {{x.problematique.nom}}
+										</div>
+										<div class="row mt-2 border rounded px-3 pt-3 pb-3">
+											{% if x.problematique.detail %}
+												{{x.problematique.detail}}
+											{% else %}
+												Aucun détail n'est insctit
+											{% endif %}
+										</div>
+										<div class="row mt-2">
+											status: {{x.status}}
+										</div>
+										<div class="row mt-2">
+											<a href="{% url 'student-detail' x.problematique.eleve.id %}">Voir fiche de l'élève</a>
+										</div>
+
 									</div>
 								</div>
 							</div>
