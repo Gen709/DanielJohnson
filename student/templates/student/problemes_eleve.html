@@ -9,9 +9,9 @@
  <h1> Liste des problemes</h1>
  	{% for code_etudiant, classification_etudiant_liste_dict in results.items %}
  		
- 		<div class="row border bg-light text-muted">
- 			<div class="row">
- 				<h5>{{ code_etudiant.definition }}, Nombre d'étudiants: {{code_etudiant.num_student}}</h5>
+ 		<div class="row border rounded bg-light text-muted mt-4">
+ 			<div class="row pt-3 pb-3">
+ 				<h4>{{ code_etudiant.definition }}, Nombre d'étudiants: {{code_etudiant.num_student}}</h4>
  			</div>
  			
  			<div class="row">
