@@ -12,7 +12,10 @@ from school.models import Classification
 
 from datetime import datetime as dt
 from openpyxl import Workbook
-from openpyxl.styles import Alignment
+from openpyxl.styles import PatternFill, Border, Side, Alignment, Font, NamedStyle, Color, Fill
+from openpyxl.worksheet.dimensions import ColumnDimension
+from openpyxl.utils import get_column_letter
+
 import re
 
 
@@ -75,7 +78,7 @@ def ajax_note_student(request):
     data_dict = {}
     # etudiant
     s = Student.objects.get(id=student_id)
-
+    fiche = s.fiche
     # niveau de l'étudiant
 
     niveau = s.classification
@@ -84,8 +87,8 @@ def ajax_note_student(request):
 
     # notes de l'année en cour
 
-    n = Grades.objects.filter(student_id=student_id)
-
+    # n = Grades.objects.filter(student_id=student_id)
+    n = Grades.objects.filter(no_fiche=fiche)
     # liste des notes de l'élève
 
     grades_list = [x.note for x in n]
@@ -278,6 +281,7 @@ def eleve_problematique_list_view(request):
 
 @login_required
 def download_excel_data(request, user_id=None):
+
     def cleanhtml(raw_html):
         CLEANR = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});')
 
@@ -290,38 +294,121 @@ def download_excel_data(request, user_id=None):
         "%Y-%m-%d %H:%M:%S") + ".xlsx"
 
     wb = Workbook()
+    # small text
+    v_centerAlignment = Alignment(horizontal='left', 
+                                  vertical='top', 
+                                  text_rotation=0, 
+                                  wrap_text=False, 
+                                  shrink_to_fit=False, 
+                                  indent=0)
+    # large text
+    v_centerAlignment_large = Alignment(horizontal='left', 
+                                        vertical='top', 
+                                        text_rotation=0, 
+                                        wrap_text=True, 
+                                        shrink_to_fit=False, 
+                                        indent=0)
+
+    title_centerAlignment = Alignment(horizontal='center', 
+                                      vertical='center', 
+                                      text_rotation=0, 
+                                      wrap_text=False, 
+                                      shrink_to_fit=False, 
+                                      indent=0)
+    # c_white = Color('00FFFFFF')
+
+
+    bigTitleStyle = NamedStyle(name="bigTitleStyle") 
+    bigTitleFont = Font(name='Calibri', 
+                     size=22, 
+                     bold=True, 
+                     italic=False, 
+                     vertAlign=None, 
+                     underline='none', 
+                     strike=False, 
+                     color='00C0C0C0')
+    bigTitleStyle.font = bigTitleFont
+    bd = Side(style='thick', color="00C0C0C0") 
+    bigTitleStyle.border = Border(left=None, top=bd, right=bd, bottom=bd)
+    bigTitleFill = PatternFill(fill_type="solid", 
+                                start_color='00000000', 
+                                end_color='00000000')
+    bigTitleStyle.fill = bigTitleFill
+    bigTitleStyle.alignment = title_centerAlignment
+
+    secondTitleStyle = NamedStyle(name="secondTitleStyle") 
+    secondTitleFont = Font(name='Calibri', 
+                           size=16, 
+                           bold=False, 
+                           italic=False, 
+                           vertAlign=None, 
+                           underline='none', 
+                           strike=False, 
+                           color='00C0C0C0')
+    secondTitleStyle.font = secondTitleFont
+    secondTitleStyle.alignment = title_centerAlignment
+    secondTitleFill = PatternFill(fill_type="solid", 
+                                  start_color='00000000', 
+                                  end_color='00000000')
+    secondTitleStyle.fill = secondTitleFill
+    SecondTitlebd = Side(style="thin", color="00C0C0C0")
+    secondTitleStyle.border = Border(left=SecondTitlebd, top=SecondTitlebd, right=SecondTitlebd, bottom=SecondTitlebd)
 
     ws1 = wb.active
+
     ws1.title = "Comité Clinique"
     ws1['A1'] = "Étudiant"
+    ws1['A1'].style = bigTitleStyle
     ws1.merge_cells(start_row=1, start_column=1, end_row=1, end_column=9)
     ws1['J1'] = "Problématiques"
+    ws1['J1'].style = bigTitleStyle
     ws1.merge_cells(start_row=1, start_column=10, end_row=1, end_column=13)
     ws1['N1'] = "Action"
+    ws1['N1'].style = bigTitleStyle
     ws1.merge_cells(start_row=1, start_column=14, end_row=1, end_column=18)
 
     c = ws1['A3']
     ws1.freeze_panes = c
-    ws1['A2'] = "fiche"
-    ws1['B2'] = "nom"
-    ws1['C2'] = "prenom"
-    ws1['D2'] = "groupe_repere"
-    ws1['E2'] = "classification"
-    ws1['F2'] = "comite_clinique"
-    ws1['g2'] = "plan_intervention"
-    ws1['h2'] = "etat_situation"
-    ws1['i2'] = "classification"
-    ws1['j2'] = "problematique_nom"
-    ws1['k2'] = "problematique_status"
-    ws1['l2'] = "problematique_instigateur"
-    ws1['m2'] = "problematique_detail"
-    ws1['n2'] = "action_createur"
-    ws1['o2'] = "action_responsable"
-    ws1['p2'] = "action_description"
-    ws1['q2'] = "action_detail"
-    ws1['r2'] = "action_status"
+    ws1['A2'] = "Fiche"
+    ws1['A2'].style = secondTitleStyle
+    ws1['B2'] = "Nom"
+    ws1['B2'].style = secondTitleStyle
+    ws1['C2'] = "Prenom"
+    ws1['C2'].style = secondTitleStyle
+    ws1['D2'] = "Groupe Repere"
+    ws1['D2'].style = secondTitleStyle
+    ws1['E2'] = "Classification"
+    ws1['E2'].style = secondTitleStyle
+    ws1['F2'] = "Comite Clinique"
+    ws1['F2'].style = secondTitleStyle
+    ws1['g2'] = "Plan Intervention"
+    ws1['g2'].style = secondTitleStyle
+    ws1['h2'] = "État Situation"
+    ws1['h2'].style = secondTitleStyle
+    ws1['i2'] = "Classification"
+    ws1['i2'].style = secondTitleStyle
+    ws1['j2'] = "Nom"
+    ws1['j2'].style = secondTitleStyle
+    ws1['k2'] = "Status"
+    ws1['k2'].style = secondTitleStyle
+    ws1['l2'] = "Instigateur"
+    ws1['l2'].style = secondTitleStyle
+    ws1['m2'] = "Detail"
+    ws1['m2'].style = secondTitleStyle
+    ws1['n2'] = "Createur"
+    ws1['n2'].style = secondTitleStyle
+    ws1['o2'] = "Responsable"
+    ws1['o2'].style = secondTitleStyle
+    ws1['p2'] = "Description"
+    ws1['p2'].style = secondTitleStyle
+    ws1['q2'] = "Detail"
+    ws1['q2'].style = secondTitleStyle
+    ws1['r2'] = "Status"
+    ws1['r2'].style = secondTitleStyle
 
     i = 3
+
+   
 
     for student in Student.objects.filter(comite_clinique=True).order_by('classification', 'nom'):
         if student.problematique_set.all():
@@ -329,62 +416,113 @@ def download_excel_data(request, user_id=None):
                 if problematique.action_set.all():
                     for action in problematique.action_set.all():
                         ws1['A' + str(i)] = student.fiche
+                        ws1['A' + str(i)].alignment = v_centerAlignment
                         ws1['B' + str(i)] = student.nom
+                        ws1['B' + str(i)].alignment = v_centerAlignment
                         ws1['C' + str(i)] = student.prenom
+                        ws1['C' + str(i)].alignment = v_centerAlignment
                         ws1['D' + str(i)] = student.groupe_repere
+                        ws1['D' + str(i)].alignment = v_centerAlignment
                         ws1['E' + str(i)] = student.classification.nom
+                        ws1['E' + str(i)].alignment = v_centerAlignment
                         ws1['F' + str(i)] = student.comite_clinique
+                        ws1['F' + str(i)].alignment = v_centerAlignment
                         ws1['g' + str(i)] = student.plan_intervention
+                        ws1['g' + str(i)].alignment = v_centerAlignment
                         ws1['h' + str(i)] = cleanhtml(student.etat_situation)
-                        ws1['h' + str(i)].alignment = Alignment(wrapText=True)
+                        ws1['h' + str(i)].alignment = v_centerAlignment_large
                         ws1['i' + str(i)] = student.classification.nom
+                        ws1['i' + str(i)].alignment = v_centerAlignment
 
                         ws1['j' + str(i)] = problematique.nom.nom
+                        ws1['j' + str(i)].alignment = v_centerAlignment_large
                         ws1['k' + str(i)] = problematique.status.nom
+                        ws1['k' + str(i)].alignment = v_centerAlignment
                         ws1['l' + str(i)] = problematique.instigateur.first_name
+                        ws1['l' + str(i)].alignment = v_centerAlignment
                         ws1['m' + str(i)] = cleanhtml(problematique.detail)
-                        ws1['m' + str(i)].alignment = Alignment(wrapText=True)
+                        ws1['m' + str(i)].alignment = v_centerAlignment_large
 
                         ws1['n' + str(i)] = action.createur.first_name
+                        ws1['n' + str(i)].alignment = v_centerAlignment
                         ws1['o' + str(i)] = action.responsable.first_name
+                        ws1['o' + str(i)].alignment = v_centerAlignment
                         ws1['p' + str(i)] = action.description
+                        ws1['p' + str(i)].alignment = v_centerAlignment_large
                         ws1['q' + str(i)] = cleanhtml(action.detail)
-                        ws1['q' + str(i)].alignment = Alignment(wrapText=True)
+                        ws1['q' + str(i)].alignment = v_centerAlignment_large
                         ws1['r' + str(i)] = action.status.nom
+                        ws1['r' + str(i)].alignment = v_centerAlignment
                         i += 1
                 else:
                     ws1['A' + str(i)] = student.fiche
+                    ws1['A' + str(i)].alignment = v_centerAlignment
                     ws1['B' + str(i)] = student.nom
+                    ws1['B' + str(i)].alignment = v_centerAlignment
                     ws1['C' + str(i)] = student.prenom
+                    ws1['C' + str(i)].alignment = v_centerAlignment
                     ws1['D' + str(i)] = student.groupe_repere
+                    ws1['D' + str(i)].alignment = v_centerAlignment
                     ws1['E' + str(i)] = student.classification.nom
+                    ws1['E' + str(i)].alignment = v_centerAlignment
                     ws1['F' + str(i)] = student.comite_clinique
+                    ws1['F' + str(i)].alignment = v_centerAlignment
                     ws1['g' + str(i)] = student.plan_intervention
+                    ws1['g' + str(i)].alignment = v_centerAlignment
                     ws1['h' + str(i)] = cleanhtml(student.etat_situation)
-                    ws1['h' + str(i)].alignment = Alignment(wrapText=True)
+                    ws1['h' + str(i)].alignment = v_centerAlignment_large
                     ws1['i' + str(i)] = student.classification.nom
+                    ws1['i' + str(i)].alignment = v_centerAlignment
 
                     ws1['j' + str(i)] = problematique.nom.nom
+                    ws1['j' + str(i)].alignment = v_centerAlignment_large
                     ws1['k' + str(i)] = problematique.status.nom
+                    ws1['k' + str(i)].alignment = v_centerAlignment
                     ws1['l' + str(i)] = problematique.instigateur.first_name
+                    ws1['l' + str(i)].alignment = v_centerAlignment
                     ws1['m' + str(i)] = cleanhtml(problematique.detail)
-                    ws1['m' + str(i)].alignment = Alignment(wrapText=True)
+                    ws1['m' + str(i)].alignment = v_centerAlignment_large
                     i += 1
 
         else:
             ws1['A' + str(i)] = student.fiche
+            ws1['A' + str(i)].alignment = v_centerAlignment
             ws1['B' + str(i)] = student.nom
+            ws1['B' + str(i)].alignment = v_centerAlignment
             ws1['C' + str(i)] = student.prenom
+            ws1['C' + str(i)].alignment = v_centerAlignment
             ws1['D' + str(i)] = student.groupe_repere
+            ws1['D' + str(i)].alignment = v_centerAlignment
             ws1['E' + str(i)] = student.classification.nom
+            ws1['E' + str(i)].alignment = v_centerAlignment
             ws1['F' + str(i)] = student.comite_clinique
+            ws1['F' + str(i)].alignment = v_centerAlignment
             ws1['g' + str(i)] = student.plan_intervention
+            ws1['g' + str(i)].alignment = v_centerAlignment
             ws1['h' + str(i)] = cleanhtml(student.etat_situation)
-            ws1['h' + str(i)].alignment = Alignment(wrapText=True)
+            ws1['h' + str(i)].alignment = v_centerAlignment_large
             ws1['i' + str(i)] = student.classification.nom
+            ws1['i' + str(i)].alignment = v_centerAlignment
             i += 1
 
+    
+    def fit_col_width(ws1):
+        column_widths = []
+        for row in ws1:
+            for i, cell in enumerate(row):
+                if cell.value is not None and cell.row == 2:
+                    if len(column_widths) > i:
+                        if len(cell.value) > column_widths[i]:
+                            column_widths[i] = len(cell.value)
+                    else:
+                        column_widths += [len(cell.value)]
 
+        for i, column_width in enumerate(column_widths,1):  # ,1 to start at 1
+            ws1.column_dimensions[get_column_letter(i)].width = column_width * 2
+
+    fit_col_width(ws1)
+
+    ws1.auto_filter.ref = "A2:R"+str(i)
 
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename=Comité_Clinique_Daniel_Johnson_' + dt.now().strftime(
