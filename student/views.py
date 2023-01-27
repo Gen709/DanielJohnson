@@ -326,13 +326,13 @@ def download_excel_data(request, user_id=None):
                      vertAlign=None, 
                      underline='none', 
                      strike=False, 
-                     color='00C0C0C0')
+                     color='00000000')
     bigTitleStyle.font = bigTitleFont
     bd = Side(style='thick', color="00C0C0C0") 
     bigTitleStyle.border = Border(left=None, top=bd, right=bd, bottom=bd)
     bigTitleFill = PatternFill(fill_type="solid", 
-                                start_color='00000000', 
-                                end_color='00000000')
+                                start_color='0099CCFF', 
+                                end_color='0099CCFF')
     bigTitleStyle.fill = bigTitleFill
     bigTitleStyle.alignment = title_centerAlignment
 
@@ -344,12 +344,12 @@ def download_excel_data(request, user_id=None):
                            vertAlign=None, 
                            underline='none', 
                            strike=False, 
-                           color='00C0C0C0')
+                           color='00000000')
     secondTitleStyle.font = secondTitleFont
     secondTitleStyle.alignment = title_centerAlignment
     secondTitleFill = PatternFill(fill_type="solid", 
-                                  start_color='00000000', 
-                                  end_color='00000000')
+                                  start_color='0099CCFF', 
+                                  end_color='0099CCFF')
     secondTitleStyle.fill = secondTitleFill
     SecondTitlebd = Side(style="thin", color="00C0C0C0")
     secondTitleStyle.border = Border(left=SecondTitlebd, top=SecondTitlebd, right=SecondTitlebd, bottom=SecondTitlebd)
