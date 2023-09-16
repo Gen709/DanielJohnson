@@ -32,19 +32,19 @@ ALLOWED_HOSTS = ['127.0.0.1', '.pythonanywhere.com']
 # Application definition
 
 INSTALLED_APPS = [
-    
+
     'student.apps.StudentConfig',
     'problematiques.apps.ProblematiquesConfig',
     'page.apps.PageConfig',
     'school.apps.SchoolConfig',
-    
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     'django_extensions',
 ]
 
@@ -85,10 +85,10 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'danieljohnson',
-        'USER':'root',
-        'PASSWORD': 'Dl003352',
-        'HOST':'',
+        'NAME': 'Wooffy709$default',
+        'USER':'Wooffy709',
+        'PASSWORD': 'leanneanais709',
+        'HOST':'Wooffy709.mysql.pythonanywhere-services.com',
         'PORT':'3306'    }
 }
 
