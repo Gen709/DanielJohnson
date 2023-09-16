@@ -551,18 +551,39 @@ def upload_csv(request):
             # Read the CSV file and process the data
             decoded_file = csv_file.read().decode('utf-8').splitlines()
             reader = csv.DictReader(decoded_file)
+            # Other imports and existing code
 
             for row in reader:
-                # Create or update Student objects based on CSV data
+                # Extract nom and prenom from the "NOM" field
+                nom_prenom = row.get('NOM', '').split(',')
+                nom = nom_prenom[0].strip() if nom_prenom else ''
+                prenom = nom_prenom[1].strip() if len(nom_prenom) > 1 else ''
+
+                # Map CSV fields to model fields
+                student_data = {
+                    'nom': nom,
+                    'prenom': prenom,
+                    'groupe_repere': row.get('GROUPE', ''),
+                    'fiche': row.get('FICHE', ''),
+                    'dob': row.get('DATE DE NAISSANCE', None),
+                    'lang': row.get('LANGUE PARLÉE À LA MAISON', ''),
+                }
+
+                # Handle PLAN D'INTERVENTION field
+                plan_intervention_value = row.get("PLAN D'INTERVENTION", '').strip().lower()
+                student_data['plan_intervention'] = plan_intervention_value == 'oui'
+
+                # Get or create Classification
+                classification_name = row.get('CLASSIFICATION', '')
+                classification, _ = Classification.objects.get_or_create(name=classification_name)
+                student_data['classification'] = classification
+
+                # Create Student object
                 student, created = Student.objects.update_or_create(
-                    fiche=row['fiche'],
-                    defaults={
-                        'nom': row['nom'],
-                        'prenom': row['prenom'],
-                        'comite_clinique': row['comite_clinique'],
-                        # Add more fields as needed
-                    }
+                    fiche=student_data['fiche'],
+                    defaults=student_data
                 )
+
 
             messages.success(request, 'CSV file uploaded and processed successfully.')
     else:
