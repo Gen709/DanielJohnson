@@ -4,7 +4,13 @@ from urllib.parse import unquote
 from django.contrib.auth.models import User
 from django.http.response import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
+
+import csv
+from django.shortcuts import render
+from .forms import CSVUploadForm
+from .models import Student
 
 from .models import Student, StatusAction, Problematique, StatusProblematique, Action, ActionSuggestion, CodeEtudiant, Grades
 from problematiques.models import Item
@@ -529,3 +535,38 @@ def download_excel_data(request, user_id=None):
         "%Y-%m-%d %H:%M:%S")+'.xlsx'
     wb.save(filename=response)
     return response
+
+@login_required
+def upload_csv(request):
+    if request.method == 'POST':
+        form = CSVUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            csv_file = request.FILES['csv_file']
+
+            # Check if the uploaded file is a CSV
+            if not csv_file.name.endswith('.csv'):
+                messages.error(request, 'Please upload a CSV file.')
+                return render(request, 'upload_csv.html', {'form': form})
+
+            # Read the CSV file and process the data
+            decoded_file = csv_file.read().decode('utf-8').splitlines()
+            reader = csv.DictReader(decoded_file)
+
+            for row in reader:
+                # Create or update Student objects based on CSV data
+                student, created = Student.objects.update_or_create(
+                    fiche=row['fiche'],
+                    defaults={
+                        'nom': row['nom'],
+                        'prenom': row['prenom'],
+                        'comite_clinique': row['comite_clinique'],
+                        # Add more fields as needed
+                    }
+                )
+
+            messages.success(request, 'CSV file uploaded and processed successfully.')
+    else:
+        form = CSVUploadForm()
+
+    return render(request, 'upload_csv.html', {'form': form})
+
