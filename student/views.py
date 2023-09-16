@@ -553,6 +553,8 @@ def upload_csv(request):
             reader = csv.DictReader(decoded_file)
             # Other imports and existing code
 
+            # Other imports and existing code
+
             for row in reader:
                 # Extract nom and prenom from the "NOM" field
                 nom_prenom = row.get('NOM', '').split(',')
@@ -578,13 +580,22 @@ def upload_csv(request):
                 classification, _ = Classification.objects.get_or_create(name=classification_name)
                 student_data['classification'] = classification
 
-                # Create Student object
-                student, created = Student.objects.update_or_create(
-                    fiche=student_data['fiche'],
-                    defaults=student_data
-                )
+                # Check if the fiche number already exists in the system
+                existing_student = Student.objects.filter(fiche=student_data['fiche']).first()
 
+                if existing_student:
+                    # Update the existing student's information
+                    for field, value in student_data.items():
+                        setattr(existing_student, field, value)
+                    existing_student.save()
+                else:
+                    # Create a new student
+                    student, created = Student.objects.get_or_create(fiche=student_data['fiche'], defaults=student_data)
 
+            # Delete students not in the extract
+            Student.objects.exclude(fiche__in=[row.get('FICHE', '') for row in reader]).delete()
+
+            # Other existing code
             messages.success(request, 'CSV file uploaded and processed successfully.')
     else:
         form = CSVUploadForm()
