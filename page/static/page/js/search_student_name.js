@@ -15,20 +15,22 @@ $(document).ready(function(){
 				for (let key in data) {
 				  let value = data[key];
 				  
-                  for (student_id in value){
+				  for (student_id in value){
 
-                    let info=value[student_id];
-                        var student_desc = info.description;
-                        var student_detail_url = info.url
-                        //console.log(student_detail_url)
-                        html_str +=  '<li class="list-group-item list-group-flush" onClick="selectStudent(\''+ student_desc.replaceAll('\'', '') + '\', ' + student_id + ', 1)">'  + student_desc.replaceAll('\'', '') +'</li>';
-                  }
+				  	let info=value[student_id];
+
+				  		var student_desc = info.description;
+						var student_detail_url = info.url
+						//console.log(student_detail_url)
+				  		html_str +=  '<li class="list-group-item list-group-flush" onClick="selectStudent(\''+ student_desc.replaceAll('\'', '') + '\', ' + student_id + ', 1)">'  + student_desc.replaceAll('\'', '') +'</li>';
+				  }
 				}	
 					
 				html_str += '</ul>';	
 				
 				$("#suggestion-box").show();
 				$("#suggestion-box").html(html_str);
+
 			}
 		});	
 	});

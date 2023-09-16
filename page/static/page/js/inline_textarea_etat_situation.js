@@ -30,17 +30,14 @@ $(document).ready(function(){
         console.log(myContent);
 
 		$.ajax({
-		method:"POST",
-		url: "http://127.0.0.1:8000/etudiant/ajax/etatdelasituation/",
-		dataType: "json",
-		//data:'etatdelasituation='+myContent,
-		data:myContent,
-			success: function(data){
-				console.log(data);
-			},
-
+            method:"POST",
+            url: "http://127.0.0.1:8000/etudiant/ajax/etatdelasituation/",
+            dataType: "json",
+            //data:'etatdelasituation='+myContent,
+            data:myContent,
+            success: function(data){
+                console.log(data);
+            },
 		});
-
 	});
-
 });
