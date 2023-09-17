@@ -1,0 +1,54 @@
+<!-- summary_page.html -->
+{% extends 'base.html' %}
+
+{% load bootstrap5 %}
+
+{% block content %}
+<div class="container">
+    <h2>Summary of Operations</h2>
+
+    <h3>New Students:</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Fiche</th>
+                <th>Nom</th>
+                <th>Prenom</th>
+                <!-- Add more fields as needed -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in new_students %}
+            <tr>
+                <td>{{ student.fiche }}</td>
+                <td>{{ student.nom }}</td>
+                <td>{{ student.prenom }}</td>
+                <!-- Add more fields as needed -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>Students with is_active set to False:</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Fiche</th>
+                <th>Nom</th>
+                <th>Prenom</th>
+                <!-- Add more fields as needed -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in inactive_students %}
+            <tr>
+                <td>{{ student.fiche }}</td>
+                <td>{{ student.nom }}</td>
+                <td>{{ student.prenom }}</td>
+                <!-- Add more fields as needed -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

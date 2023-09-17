@@ -13,7 +13,7 @@ from problematiques.models import Item
 from school.models import Classification
 from .forms import CSVUploadForm
 
-from datetime import datetime as dt
+from datetime import datetime as dt, timedelta
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill, Border, Side, Alignment, Font, NamedStyle, Color, Fill
 from openpyxl.worksheet.dimensions import ColumnDimension
@@ -534,6 +534,7 @@ def download_excel_data(request, user_id=None):
     wb.save(filename=response)
     return response
 
+
 @login_required
 def upload_csv(request):
     if request.method == 'POST':
@@ -574,7 +575,7 @@ def upload_csv(request):
 
                 # Get or create Classification
                 classification_name = row.get('CLASSIFICATION', '')
-                classification, _ = Classification.objects.get_or_create(name=classification_name)
+                classification, _ = Classification.objects.get_or_create(nom=classification_name)
                 student_data['classification'] = classification
 
                 # Check if the fiche number already exists in the system
@@ -603,8 +604,26 @@ def upload_csv(request):
 
             # Other existing code
             messages.success(request, 'CSV file uploaded and processed successfully.')
+            # views.py
+
+
+
+            # Get the students for the summary
+            new_students = Student.objects.filter(date_created__gte=timezone.now() - timedelta(seconds=5))  # Assuming a recent timestamp for new students
+            inactive_students = Student.objects.filter(is_student=False)
+
+            return render(request, 'summary_page.html', {'new_students': new_students, 'inactive_students': inactive_students})
+
     else:
         form = CSVUploadForm()
 
     return render(request, 'upload_csv.html', {'form': form})
+
+
+@login_required
+def upload_summary(request):
+    new_students = Student.objects.filter(date_created__gte=timezone.now() - timedelta(seconds=5))
+    inactive_students = Student.objects.filter(is_student=False)
+
+    return render(request, 'summary_page.html', {'new_students': new_students, 'inactive_students': inactive_students})
 
