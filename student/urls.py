@@ -28,4 +28,5 @@ urlpatterns = [
     path('problematiques/list', views.eleve_problematique_list_view, name='problematique-list'),
     
     path('cours_ete/list', views.cours_ete_list_view, name='coursdete-list'),
+    path('csv_uplaod', views.upload_csv, name='csv-uplaod'),
 ]

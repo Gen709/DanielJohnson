@@ -40,6 +40,11 @@ class Student(models.Model):
     etat_situation = models.TextField(null=True, blank=True)
     dob = models.DateField(null=True, blank=True)
     lang = models.CharField(max_length=100, blank=True, null=True, default=None)
+    is_student = models.BooleanField(default=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, default=None)
+    date_created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    date_is_student_changed = models.DateTimeField(null=True, blank=True, default=None)
+
     
     class Meta:
         ordering = ['nom', 'prenom']

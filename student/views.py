@@ -1,20 +1,17 @@
 from django.shortcuts import render, redirect
 from django.db.models import Count
 from urllib.parse import unquote
-from django.contrib.auth.models import User
 from django.http.response import JsonResponse, HttpResponse
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-
-import csv
-from django.shortcuts import render
-from .forms import CSVUploadForm
-from .models import Student
+from django.utils import timezone
 
 from .models import Student, StatusAction, Problematique, StatusProblematique, Action, ActionSuggestion, CodeEtudiant, Grades
 from problematiques.models import Item
 from school.models import Classification
+from .forms import CSVUploadForm
 
 from datetime import datetime as dt
 from openpyxl import Workbook
@@ -23,6 +20,7 @@ from openpyxl.worksheet.dimensions import ColumnDimension
 from openpyxl.utils import get_column_letter
 
 import re
+import csv
 
 
 # Create your views here.
@@ -553,8 +551,6 @@ def upload_csv(request):
             reader = csv.DictReader(decoded_file)
             # Other imports and existing code
 
-            # Other imports and existing code
-
             for row in reader:
                 # Extract nom and prenom from the "NOM" field
                 nom_prenom = row.get('NOM', '').split(',')
@@ -569,6 +565,7 @@ def upload_csv(request):
                     'fiche': row.get('FICHE', ''),
                     'dob': row.get('DATE DE NAISSANCE', None),
                     'lang': row.get('LANGUE PARLÉE À LA MAISON', ''),
+                    'is_student': True  # Set to True for new students
                 }
 
                 # Handle PLAN D'INTERVENTION field
@@ -582,18 +579,27 @@ def upload_csv(request):
 
                 # Check if the fiche number already exists in the system
                 existing_student = Student.objects.filter(fiche=student_data['fiche']).first()
+                
 
                 if existing_student:
                     # Update the existing student's information
                     for field, value in student_data.items():
                         setattr(existing_student, field, value)
+                        # Update additional information
+                        existing_student.date_is_student_changed = timezone.now() if not student_data['is_student'] else None
                     existing_student.save()
                 else:
                     # Create a new student
                     student, created = Student.objects.get_or_create(fiche=student_data['fiche'], defaults=student_data)
+                    student.created_by = request.user  # Assuming you have access to the request object
+                    student.date_created = timezone.now()
+                    student.save()
 
-            # Delete students not in the extract
-            Student.objects.exclude(fiche__in=[row.get('FICHE', '') for row in reader]).delete()
+            # Update is_student to False for students not in the extract
+            # Student.objects.exclude(fiche__in=[row.get('FICHE', '') for row in reader]).update(is_student=False)
+            Student.objects.exclude(fiche__in=[row.get('FICHE', '') for row in reader]).update(is_student=False, date_is_student_changed=timezone.now())
+
+            # Student.objects.exclude(fiche__in=[row.get('FICHE', '') for row in reader]).delete()
 
             # Other existing code
             messages.success(request, 'CSV file uploaded and processed successfully.')
