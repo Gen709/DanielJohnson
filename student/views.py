@@ -21,7 +21,7 @@ from openpyxl.utils import get_column_letter
 
 import re
 import csv
-import chardet
+# import chardet
 
 
 # Create your views here.
