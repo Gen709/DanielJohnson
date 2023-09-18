@@ -1,0 +1,141 @@
+<!-- review_changes.html -->
+{% extends 'base.html' %}
+
+{% load bootstrap5 %}
+
+{% block content %}
+<div class="container">
+    <h2>Review Changes</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="mt-3">
+            <button type="button" class="btn btn-primary" onclick="selectAll('new_students')">Select All New Students</button>
+            <button type="button" class="btn btn-secondary" onclick="deselectAll('new_students')">Deselect All New Students</button>
+            {% comment %} <button type="button" class="btn btn-primary" onclick="selectAll('inactive_students')">Select All Inactive Students</button>
+            <button type="button" class="btn btn-secondary" onclick="deselectAll('inactive_students')">Deselect All Inactive Students</button> {% endcomment %}
+        </div>
+
+        <div class="accordion" id="studentsAccordion">
+            <!-- New Students section -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="newStudentsHeading">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#newStudentsCollapse" aria-expanded="true" aria-controls="newStudentsCollapse">
+                        New Students ({{ num_new_students }})
+                    </button>
+                </h2>
+                <div id="newStudentsCollapse" class="accordion-collapse collapse show" aria-labelledby="newStudentsHeading" data-bs-parent="#studentsAccordion">
+                    <div class="accordion-body">
+                        <!-- Display new students to be created -->
+                        <div class="accordion" id="newStudentsAccordion">
+                            <!-- Display new students to be created -->
+                            {% for student in new_students %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="new_students[]" value="{{ student.id }}" id="newStudent{{ student.id }}" checked>
+                                                <label class="form-check-label" for="newStudent{{ student.id }}">
+                                                    {{ student.nom }} {{ student.prenom }}
+                                                </label>
+                                        </div>
+                                    </button>
+                                </h2>
+                                <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#newStudentsAccordion">
+                                    <div class="accordion-body">
+                                        <p>Created by: {{ student.created_by }}</p>
+                                        <!-- Add more details as needed -->
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% comment %} {% for student in new_students %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="new_students[]" value="{{ student.id }}" id="newStudent{{ student.id }}" checked>
+                            <label class="form-check-label" for="newStudent{{ student.id }}">
+                                {{ student.nom }} {{ student.prenom }}
+                            </label>
+                        </div>
+                        {% endfor %} {% endcomment %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Students with is_active set to False section -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="inactiveStudentsHeading">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#inactiveStudentsCollapse" aria-expanded="false" aria-controls="inactiveStudentsCollapse">
+                        Students to be set to inactive ({{ num_inactive_students }})
+                    </button>
+                </h2>
+                <div id="inactiveStudentsCollapse" class="accordion-collapse collapse" aria-labelledby="inactiveStudentsHeading" data-bs-parent="#studentsAccordion">
+                    <div class="accordion-body">
+                        <!-- Display students with is_active set to False -->
+                        <div class="accordion" id="inactiveStudentsAccordion">
+                            <!-- Display students with is_active set to False -->
+                            {% for student in inactive_students %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="inactive_students[]" value="{{ student.id }}" id="inactiveStudent{{ student.id }}" checked>
+                                                <label class="form-check-label" for="inactiveStudent{{ student.id }}">
+                                                    {{ student.nom }} {{ student.prenom }}
+                                                </label>
+                                        </div>
+                                    </button>
+                                </h2>
+                                <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#inactiveStudentsAccordion">
+                                    <div class="accordion-body">
+                                        <!-- Add more details as needed -->
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% comment %} {% for student in inactive_students %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="inactive_students[]" value="{{ student.id }}" id="inactiveStudent{{ student.id }}" checked>
+                            <label class="form-check-label" for="inactiveStudent{{ student.id }}">
+                                {{ student.nom }} {{ student.prenom }}
+                            </label>
+                        </div>
+                        {% endfor %} {% endcomment %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            {% comment %} <button type="button" class="btn btn-primary" onclick="selectAll('new_students')">Select All New Students</button>
+            <button type="button" class="btn btn-secondary" onclick="deselectAll('new_students')">Deselect All New Students</button> {% endcomment %}
+            <button type="button" class="btn btn-primary" onclick="selectAll('inactive_students')">Select All Inactive Students</button>
+            <button type="button" class="btn btn-secondary" onclick="deselectAll('inactive_students')">Deselect All Inactive Students</button>
+        </div>
+
+        <div class="mt-3">
+            <button type="submit" class="btn btn-success">Approve</button>
+            <a href="{% url 'csv-uplaod' %}" class="btn btn-danger">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    // JavaScript functions to select/deselect all checkboxes in a given group
+    function selectAll(groupName) {
+        var checkboxes = document.querySelectorAll('input[name="' + groupName + '[]"]');
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = true;
+        });
+    }
+
+    function deselectAll(groupName) {
+        var checkboxes = document.querySelectorAll('input[name="' + groupName + '[]"]');
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = false;
+        });
+    }
+</script>
+
+{% endblock %}

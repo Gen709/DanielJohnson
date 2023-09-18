@@ -28,6 +28,8 @@ urlpatterns = [
     path('problematiques/list', views.eleve_problematique_list_view, name='problematique-list'),
     
     path('cours_ete/list', views.cours_ete_list_view, name='coursdete-list'),
+    
     path('csv_uplaod', views.upload_csv, name='csv-uplaod'),
+    path('review_changes/', views.review_changes, name='review_changes'),
     path('summary/', views.upload_summary, name='upload_summary'),
 ]

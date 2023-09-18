@@ -21,6 +21,7 @@ from openpyxl.utils import get_column_letter
 
 import re
 import csv
+import chardet
 
 
 # Create your views here.
@@ -540,24 +541,31 @@ def upload_csv(request):
     if request.method == 'POST':
         form = CSVUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            csv_file = request.FILES['csv_file']
-
+            
+            file = request.FILES['csv_file'] 
+            decoded_file = file.read().decode('utf-8-sig').splitlines()
+            print(type(decoded_file), len(decoded_file))
+            # print(decoded_file)
+            reader = csv.DictReader(decoded_file)
+            print(type(reader))
+            
             # Check if the uploaded file is a CSV
-            if not csv_file.name.endswith('.csv'):
+            if not file.name.endswith('.csv'):
                 messages.error(request, 'Please upload a CSV file.')
                 return render(request, 'upload_csv.html', {'form': form})
 
-            # Read the CSV file and process the data
-            decoded_file = csv_file.read().decode('utf-8').splitlines()
-            reader = csv.DictReader(decoded_file)
-            # Other imports and existing code
+            new_students_to_create = []
+            modified_students = []
+            inactive_students_to_update = []
 
+            
             for row in reader:
+                print("*****************")
                 # Extract nom and prenom from the "NOM" field
                 nom_prenom = row.get('NOM', '').split(',')
                 nom = nom_prenom[0].strip() if nom_prenom else ''
                 prenom = nom_prenom[1].strip() if len(nom_prenom) > 1 else ''
-
+                
                 # Map CSV fields to model fields
                 student_data = {
                     'nom': nom,
@@ -578,42 +586,55 @@ def upload_csv(request):
                 classification, _ = Classification.objects.get_or_create(nom=classification_name)
                 student_data['classification'] = classification
 
+                # print(student_data)
+
                 # Check if the fiche number already exists in the system
                 existing_student = Student.objects.filter(fiche=student_data['fiche']).first()
+                print("existing student:", existing_student)
+                print(student_data)
                 
 
                 if existing_student:
-                    # Update the existing student's information
+                #     # Update the existing student's information
                     for field, value in student_data.items():
                         setattr(existing_student, field, value)
-                        # Update additional information
-                        existing_student.date_is_student_changed = timezone.now() if not student_data['is_student'] else None
-                    existing_student.save()
+                #         # Update additional information
+                #         existing_student.date_is_student_changed = timezone.now() if not student_data['is_student'] else None
+                #         existing_student.save()
+                #         modified_students.append(existing_student)
                 else:
-                    # Create a new student
-                    student, created = Student.objects.get_or_create(fiche=student_data['fiche'], defaults=student_data)
+                #     # Create a new student
+                    # student, created = Student.objects.get_or_create(fiche=student_data['fiche'], defaults=student_data)
+                    student = Student(**student_data)
                     student.created_by = request.user  # Assuming you have access to the request object
                     student.date_created = timezone.now()
-                    student.save()
+                #     student.save()
+                    new_students_to_create.append(student)  # Append new student data to the list
+                    print(student)
 
-            # Update is_student to False for students not in the extract
-            # Student.objects.exclude(fiche__in=[row.get('FICHE', '') for row in reader]).update(is_student=False)
-            Student.objects.exclude(fiche__in=[row.get('FICHE', '') for row in reader]).update(is_student=False, date_is_student_changed=timezone.now())
+                # # Get students with is_active set to False
+                # inactive_students_to_update = Student.objects.filter(is_student=False).values()
 
-            # Student.objects.exclude(fiche__in=[row.get('FICHE', '') for row in reader]).delete()
+                # # Update is_student to False for students not in the extract
+                # Student.objects.exclude(fiche__in=[row.get('FICHE', '') for row in reader]).update(is_student=False, date_is_student_changed=timezone.now())
+
 
             # Other existing code
             messages.success(request, 'CSV file uploaded and processed successfully.')
-            # views.py
-
-
+            num_new_students = len(new_students_to_create)
+            num_inactive_students = Student.objects.exclude(fiche__in=[row.get('FICHE', '') for row in reader]).count()
 
             # Get the students for the summary
-            new_students = Student.objects.filter(date_created__gte=timezone.now() - timedelta(seconds=5))  # Assuming a recent timestamp for new students
-            inactive_students = Student.objects.filter(is_student=False)
-
-            return render(request, 'summary_page.html', {'new_students': new_students, 'inactive_students': inactive_students})
-
+            # new_students = Student.objects.filter(date_created__gte=timezone.now() - timedelta(seconds=5))  # Assuming a recent timestamp for new students
+            # inactive_students = Student.objects.filter(is_student=False)
+            # print(len(new_students_to_create))
+            return render(request, 'review_changes.html', {
+                'new_students': new_students_to_create,
+                'inactive_students': Student.objects.exclude(fiche__in=[row.get('FICHE', '') for row in reader]),
+                'num_new_students': num_new_students,
+                'num_inactive_students': num_inactive_students
+            })
+            # return render(request, 'summary_page.html', {'new_students': new_students, 'inactive_students': inactive_students})
     else:
         form = CSVUploadForm()
 
@@ -627,3 +648,20 @@ def upload_summary(request):
 
     return render(request, 'summary_page.html', {'new_students': new_students, 'inactive_students': inactive_students})
 
+
+@login_required
+def review_changes(request):
+    if request.method == 'POST':
+        # Process the selected changes (approve)
+
+        # Example: Print the approved changes for demonstration
+        print("Approved changes:")
+        print("New students to create:", request.POST.getlist('new_students'))
+        print("Students to update:", request.POST.getlist('inactive_students'))
+
+        # You can process the approved changes as needed
+
+        return redirect('upload_csv')  # Redirect to the CSV upload page after approval
+
+    else:
+        return HttpResponse("GET request to the review_changes page is not supported.")
