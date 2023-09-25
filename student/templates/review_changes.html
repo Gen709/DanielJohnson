@@ -9,6 +9,15 @@
 
     <form method="post">
         {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="sortingAttribute" class="form-label">Sort By:</label>
+            <select class="form-select" id="sortingAttribute" name="sort_by">
+                <option value="nom" {% if sorting_attribute == 'nom' %}selected{% endif %}>Name</option>
+                <option value="prenom" {% if sorting_attribute == 'prenom' %}selected{% endif %}>First Name</option>
+                <!-- Add more options for other attributes as needed -->
+            </select>
+        </div>
         <div class="mt-3">
             <button type="button" class="btn btn-primary" onclick="selectAll('new_students')">Select All New Students</button>
             <button type="button" class="btn btn-secondary" onclick="deselectAll('new_students')">Deselect All New Students</button>

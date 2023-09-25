@@ -5,50 +5,42 @@
 
 {% block content %}
 <div class="container">
-    <h2>Summary of Operations</h2>
-
-    <h3>New Students:</h3>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Fiche</th>
-                <th>Nom</th>
-                <th>Prenom</th>
-                <!-- Add more fields as needed -->
-            </tr>
-        </thead>
-        <tbody>
-            {% for student in new_students %}
-            <tr>
-                <td>{{ student.fiche }}</td>
-                <td>{{ student.nom }}</td>
-                <td>{{ student.prenom }}</td>
-                <!-- Add more fields as needed -->
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <h3>Students with is_active set to False:</h3>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Fiche</th>
-                <th>Nom</th>
-                <th>Prenom</th>
-                <!-- Add more fields as needed -->
-            </tr>
-        </thead>
-        <tbody>
-            {% for student in inactive_students %}
-            <tr>
-                <td>{{ student.fiche }}</td>
-                <td>{{ student.nom }}</td>
-                <td>{{ student.prenom }}</td>
-                <!-- Add more fields as needed -->
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <h1>Create Students</h1>
+        <form action="{% url 'csv-uplaod' %}" method="post">
+            {% csrf_token %}
+            Number of new students: {{num_new_students}}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        {% for field in table_header %}
+                            <th>{{ field }}</th>
+                        {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                    {% comment %} {% for table_field in table_header %} {% endcomment %}
+                        {% for student in new_students_to_create_list%}
+                            <tr>
+                            {% for field, value in student.get_fields %}
+                                {% comment %} {% if field == table_field%} {% endcomment %}
+                                    <td>{{ value }}</td>
+                                {% comment %} {% endif %} {% endcomment %}
+                            {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    {% comment %} {% endfor %} {% endcomment %}
+                    {% comment %} <tr>
+                        {% for field in form %}
+                            {% if not field.is_hidden %}
+                                <td>{{ field }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                    {% endfor %} {% endcomment %}
+                </tbody>
+            </table>
+            <button type="submit" class="btn btn-primary">Create Student</button>
+        </form>
+    </div>
 </div>
 {% endblock %}

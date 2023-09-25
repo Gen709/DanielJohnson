@@ -1,0 +1,37 @@
+<!-- review_changes.html -->
+{% extends 'base.html' %}
+
+{% load bootstrap5 %}
+
+{% block content %}
+<div class="container">
+    <h1>Create Students</h1>
+        <form action="{% url 'csv-uplaod' %}" method="post">
+            {% csrf_token %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        {% for field in empty_student_form.visible_fields %}
+                            {% if not field.is_hidden %}
+                                <th>{{ field.label_tag }}</th>
+                            {% endif %}
+                        {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                    {% for form in new_students_to_create %}
+                    <tr>
+                        {% for field in form %}
+                            {% if not field.is_hidden %}
+                                <td>{{ field }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button type="submit" class="btn btn-primary">Create Student</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
