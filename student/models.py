@@ -128,7 +128,7 @@ class Action(models.Model):
     description = models.CharField(max_length=300, null=True)
     detail = models.TextField(null=True, blank=True)
     status = models.ForeignKey(StatusAction, on_delete=models.SET_NULL, null=True)
-    problematique = models.ForeignKey(Problematique, on_delete=models.SET_NULL, null=True)
+    problematique = models.ForeignKey(Problematique, on_delete=models.CASCADE, null=True)
 
     class Meta:
         unique_together = [['description', 'problematique']]
