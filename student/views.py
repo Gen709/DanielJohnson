@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.db.models import Count
+from django.db.models import Count, Q
 from urllib.parse import unquote
 from django.http.response import JsonResponse, HttpResponse
 from django.contrib import messages
@@ -11,7 +11,7 @@ from django.utils import timezone
 from .models import Student, StatusAction, Problematique, StatusProblematique, Action, ActionSuggestion, CodeEtudiant, Grades
 from problematiques.models import Item
 from school.models import Classification
-from .forms import CSVUploadForm
+from .forms import CSVUploadForm, StudentForm
 
 from datetime import datetime as dt, timedelta
 from openpyxl import Workbook
@@ -544,97 +544,109 @@ def upload_csv(request):
             
             file = request.FILES['csv_file'] 
             decoded_file = file.read().decode('utf-8-sig').splitlines()
-            print(type(decoded_file), len(decoded_file))
-            # print(decoded_file)
             reader = csv.DictReader(decoded_file)
-            print(type(reader))
             
             # Check if the uploaded file is a CSV
             if not file.name.endswith('.csv'):
                 messages.error(request, 'Please upload a CSV file.')
                 return render(request, 'upload_csv.html', {'form': form})
-
-            new_students_to_create = []
-            modified_students = []
-            inactive_students_to_update = []
-
             
+            modified_students_list = []
+            new_students_to_create_list = []
+            student_set_to_inactive_list = []
+
             for row in reader:
-                print("*****************")
-                # Extract nom and prenom from the "NOM" field
+                
                 nom_prenom = row.get('NOM', '').split(',')
                 nom = nom_prenom[0].strip() if nom_prenom else ''
                 prenom = nom_prenom[1].strip() if len(nom_prenom) > 1 else ''
-                
-                # Map CSV fields to model fields
-                student_data = {
-                    'nom': nom,
-                    'prenom': prenom,
-                    'groupe_repere': row.get('GROUPE', ''),
-                    'fiche': row.get('FICHE', ''),
-                    'dob': row.get('DATE DE NAISSANCE', None),
-                    'lang': row.get('LANGUE PARLÉE À LA MAISON', ''),
-                    'is_student': True  # Set to True for new students
-                }
 
                 # Handle PLAN D'INTERVENTION field
                 plan_intervention_value = row.get("PLAN D'INTERVENTION", '').strip().lower()
-                student_data['plan_intervention'] = plan_intervention_value == 'oui'
+                # student_data['plan_intervention'] = plan_intervention_value == 'oui'
 
                 # Get or create Classification
                 classification_name = row.get('CLASSIFICATION', '')
                 classification, _ = Classification.objects.get_or_create(nom=classification_name)
-                student_data['classification'] = classification
+                # student_data['classification'] = classification
 
-                # print(student_data)
+                
+                # Map CSV fields to model fields
+                student_data = {
+                    # "id": "",
+                    "nom": nom,
+                    "prenom": prenom,
+                    "comite_clinique": False,
+                    "date_ref_comite_clinique": None,
+                    "plan_intervention": plan_intervention_value == 'oui',
+                    "groupe_repere": row.get('GROUPE', ''),
+                    "code": None,
+                    "fiche": row.get('FICHE', ''),
+                    "classification": classification,
+                    "etat_situation": None,
+                    "dob": row.get('DATE DE NAISSANCE', None),
+                    "lang": row.get('LANGUE PARLÉE À LA MAISON', ''),
+                    "is_student": True,  # Set to True for new students,
+                    "created_by": request.user,
+                    "date_created": timezone.now(),
+                    "date_is_student_changed": None,
+                }
 
+                
                 # Check if the fiche number already exists in the system
                 existing_student = Student.objects.filter(fiche=student_data['fiche']).first()
-                print("existing student:", existing_student)
-                print(student_data)
-                
 
                 if existing_student:
-                #     # Update the existing student's information
+                    # pass
+                    # Update the existing student's information
                     for field, value in student_data.items():
-                        setattr(existing_student, field, value)
-                #         # Update additional information
-                #         existing_student.date_is_student_changed = timezone.now() if not student_data['is_student'] else None
-                #         existing_student.save()
-                #         modified_students.append(existing_student)
+                        if getattr(existing_student, field) != value:
+                            setattr(existing_student, field, value)
+                            # Update additional information
+                            existing_student.date_is_student_changed = timezone.now() if not student_data['is_student'] else None
+                            existing_student.save()
+                            modified_students_list.append(existing_student)
                 else:
-                #     # Create a new student
-                    # student, created = Student.objects.get_or_create(fiche=student_data['fiche'], defaults=student_data)
-                    student = Student(**student_data)
-                    student.created_by = request.user  # Assuming you have access to the request object
-                    student.date_created = timezone.now()
-                #     student.save()
-                    new_students_to_create.append(student)  # Append new student data to the list
-                    print(student)
+                    # Create a new student
+                    student, create = Student.objects.get_or_create(fiche=student_data['fiche'], defaults=student_data)
+                    # student = Student(**student_data)
+                    # student.save()
+                    new_students_to_create_list.append(student)  # Append new student data to the list
+                    # new_students_to_create.append(StudentForm(student_data))
+                    # print(student)
 
-                # # Get students with is_active set to False
-                # inactive_students_to_update = Student.objects.filter(is_student=False).values()
+            # Build the Q object to exclude students based on fiche and active_status
+            exclude_condition = ~Q(fiche__in=[row.get('FICHE', '') for row in reader]) | Q(is_student=False)
+            # # Update is_student to False for students not in the extract
+            student_set_to_inactive_list = Student.objects.exclude(exclude_condition)
+            num_of_student_set_to_inactive= len(student_set_to_inactive_list)
+            # do it
+            student_set_to_inactive_list.update(is_student=False, date_is_student_changed=timezone.now())
+            
+            # Get the field names of the Student model for the table header
+            student_fields = Student._meta.fields
+            # Create a list of field names and their verbose names for use in the template
+            # field_data = [{'name': field.name, 'verbose_name': field.verbose_name} for field in student_fields]
 
-                # # Update is_student to False for students not in the extract
-                # Student.objects.exclude(fiche__in=[row.get('FICHE', '') for row in reader]).update(is_student=False, date_is_student_changed=timezone.now())
-
-
+            
             # Other existing code
             messages.success(request, 'CSV file uploaded and processed successfully.')
-            num_new_students = len(new_students_to_create)
-            num_inactive_students = Student.objects.exclude(fiche__in=[row.get('FICHE', '') for row in reader]).count()
+            # get the number of students created and set to inactive.
+            # num_new_students = len(new_students_to_create_list)
+            # num_inactive_students = Student.objects.exclude(exclude_condition).count()
 
             # Get the students for the summary
             # new_students = Student.objects.filter(date_created__gte=timezone.now() - timedelta(seconds=5))  # Assuming a recent timestamp for new students
             # inactive_students = Student.objects.filter(is_student=False)
             # print(len(new_students_to_create))
-            return render(request, 'review_changes.html', {
-                'new_students': new_students_to_create,
-                'inactive_students': Student.objects.exclude(fiche__in=[row.get('FICHE', '') for row in reader]),
-                'num_new_students': num_new_students,
-                'num_inactive_students': num_inactive_students
+            return render(request, 'summary_page.html', {
+                'table_header': student_fields,  # Pass the field data to the template
+                'new_students_to_create_list': new_students_to_create_list,
+                'inactive_students': student_set_to_inactive_list,
+                'num_new_students': len(new_students_to_create_list),
+                'num_inactive_students': student_set_to_inactive_list
             })
-            # return render(request, 'summary_page.html', {'new_students': new_students, 'inactive_students': inactive_students})
+            
     else:
         form = CSVUploadForm()
 

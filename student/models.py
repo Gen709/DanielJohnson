@@ -6,14 +6,15 @@ from problematiques.models import Item
 from school.models import Classification
 from django.contrib.auth.models import User
 
+from datetime import date, datetime
+import calendar
+
 
 def get_first_name(self):
     return self.first_name + " " + self.last_name
 
 
 User.add_to_class("__str__", get_first_name)
-
-# Create your models here.
 
 
 class CodeEtudiant(models.Model):
@@ -45,7 +46,37 @@ class Student(models.Model):
     date_created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     date_is_student_changed = models.DateTimeField(null=True, blank=True, default=None)
 
+    @property
+    def age_past_september(self):
+        return self._calculate_age_past_september()
     
+    def get_fields(self):
+        fields_data = []
+
+        for field in Student._meta.fields:
+            field_name = field.name
+            field_value = getattr(self, field_name)
+
+            # Check if the field is a date or datetime field
+            if isinstance(field_value, (date, datetime)):
+                field_value_str = field_value.isoformat()
+            else:
+                field_value_str = str(field_value)
+
+            fields_data.append((field_name, field_value_str))
+
+        return fields_data
+    
+    
+    def _age_at_past_september(self):
+        today = date.today()
+        september_last_year = date(today.year - 1, 9, 1)
+        if today < september_last_year:
+            age = today.year - self.dob.year - 2
+        else:
+            age = today.year - self.dob.year - 1
+        return age
+
     class Meta:
         ordering = ['nom', 'prenom']
 
@@ -61,6 +92,7 @@ class Student(models.Model):
     def get_active_problems_query_set(self):
         return self.problematique_set.filter(~Q(status__nom="réglé"))
     
+    
 class StatusProblematique(models.Model):
     nom = models.CharField(max_length=50)
     
@@ -73,7 +105,7 @@ class Problematique(models.Model):
     status = models.ForeignKey(StatusProblematique, on_delete=models.CASCADE)
     instigateur = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     detail = models.TextField(null=True, blank=True)
-    eleve = models.ForeignKey(Student, on_delete=models.SET_NULL, null=True)
+    eleve = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
     # action = models.ManyToManyField(Action, blank=True)
     
     class Meta:
@@ -89,7 +121,7 @@ class StatusAction(models.Model):
     def __str__(self):
         return self.nom
 
-        
+
 class Action(models.Model):
     createur = models.ForeignKey(User, related_name='createur_foreign_key', on_delete=models.SET_NULL, null=True)
     responsable = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
