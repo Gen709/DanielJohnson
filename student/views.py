@@ -129,7 +129,7 @@ def ajax_search_student(request):
         # input_str = request.GET.get('term', '')
         input_str = unquote(request.GET['term'])
         data_list = [{x.id: {'description': x.nom + " " + x.prenom + " - Group: " + x.groupe_repere,
-                             'url': x.get_absolute_url()}} for x in Student.objects.filter(nom__istartswith=input_str)]
+                             'url': x.get_absolute_url()}} for x in Student.objects.filter(nom__istartswith=input_str, is_student=True)]
 
         data = JsonResponse(data_list, safe=False)
 
