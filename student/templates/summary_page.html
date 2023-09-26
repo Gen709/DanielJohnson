@@ -8,7 +8,10 @@
     <h1>Create Students</h1>
         <form action="{% url 'csv-uplaod' %}" method="post">
             {% csrf_token %}
-            Number of new students: {{num_new_students}}
+            Number of newly created students: {{number_newly_created_student}}
+            Number of existing but updated students: {{number_existing_updated_student}}
+            Number of students set to inactive: {{number_of_inactivated_records}}
+
             <table class="table table-striped">
                 <thead>
                     <tr>
