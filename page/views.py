@@ -18,9 +18,9 @@ def index(request):
 
 def user_detail(request, pk):
     statusaction = StatusAction.objects.all()
-    action_resp = Action.objects.filter(~Q(status__nom="terminé"), responsable__id=pk).order_by("problematique__eleve__nom")
+    action_resp = Action.objects.filter(~Q(status__nom="terminé"), Q(responsable__id=1), Q(problematique__eleve__is_student=True)).order_by("problematique__eleve__nom")
     # action_createur = Action.objects.filter(~Q(status__nom="terminé"), createur__id=pk)
-    action_createur = Action.objects.filter(~Q(status__nom="terminé"), ~Q(responsable__id = pk), createur__id = pk).order_by("responsable__last_name")
+    action_createur = Action.objects.filter(~Q(status__nom="terminé"), ~Q(responsable__id = pk), Q(createur__id = pk), Q(problematique__eleve__is_student=True)).order_by("responsable__last_name")
     context = {'id': pk,
                'action_resp': action_resp,
                'action_createur': action_createur,
