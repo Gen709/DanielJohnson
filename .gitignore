@@ -18,6 +18,8 @@ mysite/settings.py
 /mysite/settings_local.py
 mysite/settings_local.py
 /data/
+/www_inforoutefpt_org/
+www_inforoutefpt_org/
 
 # macOS
 ._*
