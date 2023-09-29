@@ -4,7 +4,7 @@ from openpyxl.utils import get_column_letter
 
 from django.contrib.auth.models import User
 from django.utils import timezone
-from student.models import Student, Classification
+from student.models import Student
 from datetime import datetime
 
 class ExtractStudent():
@@ -70,13 +70,13 @@ class ExtractStudent():
                 # student_data['plan_intervention'] = plan_intervention_value == 'oui'
 
                 # Get or create Classification
-                classification_name = row.get('CLASSIFICATION', '')
+                # classification_name = row.get('CLASSIFICATION', '')
 
-                # print(nom_prenom, classification_name)
-                if classification_name:
-                    classification, _ = Classification.objects.get_or_create(nom=classification_name)
-                else:
-                    classification = None
+                # # print(nom_prenom, classification_name)
+                # if classification_name:
+                #     classification, _ = Classification.objects.get_or_create(nom=classification_name)
+                # else:
+                #     classification = None
                 
                 # Map CSV fields to model fields
                 student_data = {
@@ -89,7 +89,7 @@ class ExtractStudent():
                     "groupe_repere": row.get('GROUPE', ''),
                     "code": None,
                     "fiche": row.get('FICHE', ''),
-                    "classification": classification,
+                    # "classification": classification,
                     "etat_situation": None,
                     "dob": row.get('DATE DE NAISSANCE', None),
                     "lang": row.get('LANGUE PARLÉE À LA MAISON', ''),

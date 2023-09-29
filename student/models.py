@@ -1,9 +1,10 @@
 from django.db import models
 from django.db.models import Q
 from django.urls import reverse
+from django.utils import timezone
 
 from problematiques.models import Item
-from school.models import Classification
+# from school.models import Classification
 from django.contrib.auth.models import User
 
 from datetime import date, datetime
@@ -37,7 +38,7 @@ class Student(models.Model):
     groupe_repere = models.CharField(max_length=4)
     code = models.ForeignKey(CodeEtudiant, on_delete=models.SET_NULL, null=True, blank=True)
     fiche = models.CharField(max_length=20, null=True, unique=True)
-    classification = models.ForeignKey(Classification, on_delete=models.SET_NULL, null=True)
+    # classification = models.ForeignKey(Classification, on_delete=models.SET_NULL, null=True)
     etat_situation = models.TextField(null=True, blank=True)
     dob = models.DateField(null=True, blank=True)
     lang = models.CharField(max_length=100, blank=True, null=True, default=None)

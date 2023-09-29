@@ -87,7 +87,7 @@ def ajax_note_student(request):
     fiche = s.fiche
     # niveau de l'étudiant
 
-    niveau = s.classification
+    niveau = s.classification # s.group.classification
 
     data_dict["niveau"] = niveau.nom
 
@@ -437,7 +437,7 @@ def download_excel_data(request, user_id=None):
                         ws1['g' + str(i)].alignment = v_centerAlignment
                         ws1['h' + str(i)] = cleanhtml(student.etat_situation)
                         ws1['h' + str(i)].alignment = v_centerAlignment_large
-                        ws1['i' + str(i)] = student.classification.nom
+                        ws1['i' + str(i)] = student.classification.nom # s..group.classification.nom
                         ws1['i' + str(i)].alignment = v_centerAlignment
 
                         ws1['j' + str(i)] = problematique.nom.nom
@@ -469,7 +469,7 @@ def download_excel_data(request, user_id=None):
                     ws1['C' + str(i)].alignment = v_centerAlignment
                     ws1['D' + str(i)] = student.groupe_repere
                     ws1['D' + str(i)].alignment = v_centerAlignment
-                    ws1['E' + str(i)] = student.classification.nom
+                    ws1['E' + str(i)] = student.classification.nom # s.group.classification.nom
                     ws1['E' + str(i)].alignment = v_centerAlignment
                     ws1['F' + str(i)] = student.comite_clinique
                     ws1['F' + str(i)].alignment = v_centerAlignment
@@ -477,7 +477,7 @@ def download_excel_data(request, user_id=None):
                     ws1['g' + str(i)].alignment = v_centerAlignment
                     ws1['h' + str(i)] = cleanhtml(student.etat_situation)
                     ws1['h' + str(i)].alignment = v_centerAlignment_large
-                    ws1['i' + str(i)] = student.classification.nom
+                    ws1['i' + str(i)] = student.classification.nom # s.group.classification.nom
                     ws1['i' + str(i)].alignment = v_centerAlignment
 
                     ws1['j' + str(i)] = problematique.nom.nom
@@ -499,7 +499,7 @@ def download_excel_data(request, user_id=None):
             ws1['C' + str(i)].alignment = v_centerAlignment
             ws1['D' + str(i)] = student.groupe_repere
             ws1['D' + str(i)].alignment = v_centerAlignment
-            ws1['E' + str(i)] = student.classification.nom
+            ws1['E' + str(i)] = student.classification.nom # s.group.classification.nom
             ws1['E' + str(i)].alignment = v_centerAlignment
             ws1['F' + str(i)] = student.comite_clinique
             ws1['F' + str(i)].alignment = v_centerAlignment
@@ -507,7 +507,7 @@ def download_excel_data(request, user_id=None):
             ws1['g' + str(i)].alignment = v_centerAlignment
             ws1['h' + str(i)] = cleanhtml(student.etat_situation)
             ws1['h' + str(i)].alignment = v_centerAlignment_large
-            ws1['i' + str(i)] = student.classification.nom
+            ws1['i' + str(i)] = student.classification.nom # s.group.classification.nom
             ws1['i' + str(i)].alignment = v_centerAlignment
             i += 1
 
