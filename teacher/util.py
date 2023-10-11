@@ -62,7 +62,7 @@ class ExtractTeacher():
         updated_group_list = [Group.objects.update_or_create(nom=groupe_name) for groupe_name in group_name_list]
         return updated_group_list
     
-    def associate_classification_to_groupe(self):
+    def associate_classification_to_group(self):
         """Classification relates Administrators to cycles, and the second number
             in a group name relates the group to the cycle
         """
@@ -105,7 +105,7 @@ class ExtractTeacher():
     def update_regularteacher_data(self):
         reader = self.get_reader()
         updated_group_obj_list = self.create_group()
-        self.associate_classification_to_groupe()
+        self.associate_classification_to_group()
         updated_regular_teacher = self.create_regular_teacher(reader)
         return {"updated_group_obj_list": updated_group_obj_list,
                 "updated_regular_teacher": updated_regular_teacher}

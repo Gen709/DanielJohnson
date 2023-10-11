@@ -6,7 +6,11 @@
 {% block content %}
 <div class="container">
     <h1>Sommaire des operation mise a jour professeurs</h1>
-        
+    {{updated_group_obj_list}}
+    {% for tearcher in updated_regular_teacher %}
+        {{tearcher}}
+    {% endfor %}
     </div>
 </div>
 {% endblock %}
+
