@@ -6,7 +6,25 @@
 
 {% block content %}
   <div class="container">
-    <h2>Upload CSV</h2>
+    <h2>Mise à jour des étudiants</h2>
+
+    <div class="row">
+
+      <p> La mise à jour des étudiants peut se faire à partir d'un fichier .csv ou .xlsx. <br>
+        Le fichier doit contenir l'ensemble des éleves de l'école et doit contenir les colonnes suivantes:
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">FICHE	</li>
+          <li class="list-group-item">NOM	</li>
+          <li class="list-group-item">DATE DE NAISSANCE	</li>
+          <li class="list-group-item">LANGUE PARLÉ À LA MAISON	</li>
+          <li class="list-group-item">GROUPE	</li>
+          <li class="list-group-item">PLAN D'INTERVENTION	</li>
+          <li class="list-group-item">DIFFICULTÉ	</li>
+          <li class="list-group-item">CLASSIFICATION</li>
+        </ul>
+      </p>
+
+    </div>
 
     <form method="post" enctype="multipart/form-data" class="mt-4">
       {% csrf_token %}

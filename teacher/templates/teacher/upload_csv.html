@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% load bootstrap5 %}
+
+{% block title %}Upload CSV{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h2>Upload CSV</h2>
+
+    <form method="post" enctype="multipart/form-data" class="mt-4">
+      {% csrf_token %}
+      {% bootstrap_form form layout="horizontal" %}
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+{% endblock %}
+

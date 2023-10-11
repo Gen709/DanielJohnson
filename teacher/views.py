@@ -1,16 +1,18 @@
 from django.contrib.auth.views import LoginView
 from django.views.generic import TemplateView
 from django.urls import reverse_lazy
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
+from django.contrib.auth.decorators import login_required
 
-class CustomLoginView(LoginView):
-    redirect_authenticated_user = True
+from .forms import CSVUploadForm
+from .util import ExtractTeacher
+
+# class CustomLoginView(LoginView):
+#     redirect_authenticated_user = True
+#     def get_success_url(self):
+#         return reverse_lazy('index') 
     
-    
-    def get_success_url(self):
-        return reverse_lazy('index') 
-    
-    template_name = 'registration/login.html'
+#     template_name = 'registration/login.html'
 
 class CustomLoginView(LoginView):
     def form_valid(self, form):
@@ -29,8 +31,6 @@ class CustomLoginView(LoginView):
         if hasattr(user, 'professional'):
             return redirect('professional_profile')
 
-       
-
         # If user doesn't match any specific type, go to a default dashboard
         return redirect('index')
 
@@ -48,3 +48,15 @@ class SpecialtyTeacherProfileView(TemplateView):
 
 class ProfessionalProfileView(TemplateView):
     template_name = 'professional_profile.html'
+
+@login_required
+def upload_teacher_csv(request):
+    if request.method == 'POST':
+        form = CSVUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            es = ExtractTeacher(request)
+            context = es.update_data()
+            return render(request, 'teacher/summary_page.html', context)
+    else:
+        form = CSVUploadForm()
+    return render(request, 'teacher/upload_csv.html', {'form': form})

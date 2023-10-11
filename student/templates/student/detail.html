@@ -30,18 +30,13 @@
 	<!-- Section fiche étudiant	-->
 	<div class="row border rounded">
 		<!-- student column		-->
-		<div class="col">
+		<div class="col-12 col-sm-6">
 			<!--	titre	-->
-			<div class="row mt-3">
-				{% if student.grades_set%}
-					<h3>{{student.prenom}} {{student.nom}} <span class="badge badge-secondary">Grades</span></h3>
-				{% else %}
-					<h3>{{student.prenom}} {{student.nom}}</h3>
-				{% endif %}
+			<div class="row border bg-primary text-white pt-4 rounded pb-5 mt-3 mx-2">
+				<h6>{{student.prenom}} {{student.nom}}</h6>
 			</div>
 			<!-- tableau info -->
-			<div class="row mt-3">
-
+			<div class="row pt-4 rounded pb-5 mt-3 mx-2">
 				<form method="get" action="{% url 'ajax-update-student' %}">
 					{% csrf_token %}
 
@@ -129,11 +124,11 @@
 		<!--	intervenants	-->
 		<div class="col">
 			<!--tittre-->
-			<div class="row mt-3">
-				<h3>Partenaires / Intervenants</h3>
+			<div class="row border bg-primary text-white pt-4 rounded pb-5 mt-3 mx-2">
+				<h6>Partenaires / Intervenants</h6>
 			</div>
 			<!--table partenaires-->
-			<div class="row mt-3">
+			<div class="row pt-4 rounded pb-5 mt-3 mx-2">
 				<table class="table table-striped table-sm">
 						<tr>
 							<td>Direction</td>
@@ -149,7 +144,7 @@
 								<tr>
 									<td>{{pros.speciality}}</td>
 									<td><a href="mailto:{{pros.email}}?subject={{student.fiche}} / {{student.prenom}} {{student.nom}}">{{pros.get_full_name}}</a></td>
-									<td>{{pros.get_full_name}}</td>
+									{% comment %} <td>{{pros.get_full_name}}</td> {% endcomment %}
 								</tr>
 							{% endfor %}
 						{% endif %}
@@ -159,29 +154,28 @@
 	</div>
 
 	<!-- Section Profile academique	-->
-	<div class="row border rounded mt-5 px-5">
-		<!--  section titre-->
-		<div class="row mt-3">
-			<h4>Profile académique:</h4>
+	<div class="row border rounded mt-4">
+		<div class="row mt-2">
+			<!--  section titre-->
+			<div class="row border bg-primary text-white pt-4 rounded pb-5 mt-3 mx-2">
+				<h6>Profile académique:</h6>
+			</div>
+			<!--  graph -->
+			<div class="row mt-4 mb-4">
+				<div class="row" id="myDiv"></div>
+			</div>
 		</div>
-		<!--  graph -->
-		<div class="row border rounded mb-3 mt-3">
-			<div class="row" id="myDiv"></div>
-		</div>
-
-
-
 	</div>
 
 	<!-- Section etat de la situation -->
 	<div class="row border rounded mt-4">
 		<div class="row mt-2">
 			<!--  section titre-->
-			<div class="row">
-				<h4>État de la situation:</h4>
+			<div class="row border bg-primary text-white pt-4 rounded pb-5 mt-3 mx-2">
+				<h6>État de la situation:</h6>
 			</div>
 			<!-- section input -->
-			<div class="row mt-2 mb-4">
+			<div class="row mt-4 mb-4">
 				<form>
 				{% csrf_token %}<!-- min height ? -->
 					<div class="inline_textarea_etat_situation ms-3 bg-body border rounded pt-3 px-4" id="inline_textarea_etat_situation">
@@ -200,16 +194,18 @@
 	</div>
 
 	<!-- Section Problematiques en cours -->
-	<div class="row border rounded mt-4">
+	<div class="row border rounded mt-4 pb-4">
 		<!--  Entete section titre avec boutton -->
 		<div class="row mt-2">
-			<div class="col-sm-4">
-				<h4>Problématiques en cours:</h4>
+			<div class="row border bg-primary text-white pt-4 rounded pb-5 mb-3 mt-3 mx-2">
+				<h6>Problématiques en cours:</h6>
 			</div>
-			<div class="col">
-				<button type="button" class="btn btn-sm btn-primary float-end" data-bs-toggle="modal" data-bs-target="#exampleModal">
-				  + Ajout problématique
-				</button>
+			<div class="row pb-4 mt-3 mx-2">
+				<div class="col">
+					<button type="button" class="btn btn-sm btn-primary float-end" data-bs-toggle="modal" data-bs-target="#exampleModal">
+					+ Ajout problématique
+					</button>
+				</div>
 			</div>
 		</div>
 		<!-- Accordeon problemes-->

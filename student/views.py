@@ -243,14 +243,15 @@ def student_action_problematique_insert_view(request):
 def comitecliniquestudentlistview(request):
     # TODO la classification est maintenant atteinte a travers le groupe qui lui est relié a l'étudiant
     student_comite_clinique_dict = {
-        classification: [s for s in Student.objects.filter(classification=classification).filter(comite_clinique=True)]
+        classification: [s for s in Student.objects.filter(groupe_repere__classification=classification).filter(comite_clinique=True)]
         for classification in
-        {c for c in Classification.objects.filter(student__comite_clinique=True)}
+        {c for c in Classification.objects.filter(group__student__comite_clinique=True)}
     }
 
     context = {'student_comite_clinique_dict': student_comite_clinique_dict}
 
-    return render(request, "student/comite_clinique_list.html", context)
+    return render(request, "student/comite_clinique_accordeon.html", context)
+    # return render(request, "student/comite_clinique_list.html", context)
 
 
 @login_required
@@ -262,7 +263,7 @@ def cours_ete_list_view(request):
 @login_required
 def eleve_evaluation_list(request):
     suggestion_list = ActionSuggestion.objects.all()
-    a = Action.objects.filter(description__in=[x.nom for x in suggestion_list])
+    a = Action.objects.filter(description__in=[x.nom for x in suggestion_list]).exclude(status__id=4)
 
     context = {'evaluation_suggestion_list': suggestion_list,
                'evaluation_liste': a
@@ -276,8 +277,8 @@ def eleve_problematique_list_view(request):
     code_etudiant_qs = CodeEtudiant.objects.exclude(code=0).annotate(num_student=Count('student'))
 
     results = {code: {classification:
-                          [student for student in code.student_set.all().filter(classification=classification.id)]
-                      for classification in {etudiant.classification for etudiant in code.student_set.all()}
+                          [student for student in code.student_set.all().filter(groupe_repere__classification=classification.id)]
+                      for classification in {etudiant.groupe_repere.classification for etudiant in code.student_set.all()}
                       }
                for code in code_etudiant_qs
                }

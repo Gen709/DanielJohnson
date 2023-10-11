@@ -5,45 +5,14 @@
 
 {% block content %}
 <div class="container">
-    <h1>Create Students</h1>
-        <form action="{% url 'csv-uplaod' %}" method="post">
-            {% csrf_token %}
-            Number of newly created students: {{number_newly_created_student}}
-            Number of existing but updated students: {{number_existing_updated_student}}
-            Number of students set to inactive: {{number_of_inactivated_records}}
-
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        {% for field in table_header %}
-                            <th>{{ field }}</th>
-                        {% endfor %}
-                </tr>
-                </thead>
-                <tbody>
-                    {% comment %} {% for table_field in table_header %} {% endcomment %}
-                        {% for student in new_students_to_create_list%}
-                            <tr>
-                            {% for field, value in student.get_fields %}
-                                {% comment %} {% if field == table_field%} {% endcomment %}
-                                    <td>{{ value }}</td>
-                                {% comment %} {% endif %} {% endcomment %}
-                            {% endfor %}
-                            </tr>
-                        {% endfor %}
-                    {% comment %} {% endfor %} {% endcomment %}
-                    {% comment %} <tr>
-                        {% for field in form %}
-                            {% if not field.is_hidden %}
-                                <td>{{ field }}</td>
-                            {% endif %}
-                        {% endfor %}
-                    </tr>
-                    {% endfor %} {% endcomment %}
-                </tbody>
-            </table>
-            <button type="submit" class="btn btn-primary">Create Student</button>
-        </form>
+    
+    <h1>Somaire des changements aux étudiants</h1>
+        
+        Number of newly created students: {{number_newly_created_student}}<br>
+        Number of existing but updated students: {{number_existing_updated_student}}<br>
+        Number of students set to inactive: {{number_of_inactivated_records}}<br>
+        <button type="submit" class="btn btn-primary">Create Student</button>
+        
     </div>
 </div>
 {% endblock %}
