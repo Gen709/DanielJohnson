@@ -1,9 +1,9 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Classification
+from .models import Classification, Group, Local
  
-model_list = [Classification]
+model_list = [Classification, Group, Local]
 
 # Register your models here.
 
