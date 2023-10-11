@@ -67,17 +67,6 @@ class ExtractStudent():
                 else:
                     plan_intervention_value = None
                                                   
-                # student_data['plan_intervention'] = plan_intervention_value == 'oui'
-
-                # Get or create Classification
-                # classification_name = row.get('CLASSIFICATION', '')
-
-                # # print(nom_prenom, classification_name)
-                # if classification_name:
-                #     classification, _ = Classification.objects.get_or_create(nom=classification_name)
-                # else:
-                #     classification = None
-                
                 # Map CSV fields to model fields
                 student_data = {
                     # "id": "",

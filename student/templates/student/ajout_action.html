@@ -48,10 +48,31 @@
 				<label for="responsable_id">Responsable</label>
 				<!-- <input type="text" id="problematique_suggestion_box" class="form-control" value="n/a"> -->
 				<select class="form-select" name="responsable_id">
-					{% for responsable in responsable_qs %}
-						<option value="{{responsable.id}}" >
-							{{responsable.last_name}}	{{responsable.first_name}}
-						</option>
+					{% for responsable_type, responsable_details in responsable_qs.items %}
+						{% if responsable_type == "direction" %}
+							{% for responsable in responsable_details  %}
+							<option value="{{responsable.id}}" >
+								Direction - {{responsable.last_name}} {{responsable.first_name}}
+							</option>
+							{% endfor  %}
+						{% endif  %}
+
+						{% if responsable_type == "professionals" %}
+							{% for responsable in responsable_details  %}
+							<option value="{{responsable.id}}" >
+								{{responsable.speciality}} - {{responsable.last_name}} {{responsable.first_name}}
+							</option>
+							{% endfor  %}
+						{% endif  %}
+
+						{% if responsable_type == "regularteacher" %}
+							{% for responsable in responsable_details  %}
+							<option value="{{responsable.id}}" >
+								Professeur - {{responsable.last_name}} {{responsable.first_name}}
+							</option>
+							{% endfor  %}
+						{% endif  %}
+
 					{% endfor %}
 				</select>
 			</div>

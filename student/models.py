@@ -4,12 +4,38 @@ from django.urls import reverse
 from django.utils import timezone
 
 from problematiques.models import Item
-# from school.models import Classification
 from django.contrib.auth.models import User
 
 from datetime import date, datetime
-import calendar
 
+from django.shortcuts import get_object_or_404
+from teacher.models import RegularTeacher, SpecialtyTeacher, Professional, SchoolAdmin
+
+
+def get_staff_subclass_from_user_id(user_id):
+    
+    owner = get_object_or_404(User, id=user_id)
+    
+    try:
+        staff = owner.regularteacher
+    except RegularTeacher.DoesNotExist:
+        pass
+    try:
+        staff = owner.specialtyteacher
+    except SpecialtyTeacher.DoesNotExist:
+        pass
+    try:
+        staff = owner.professional
+    except Professional.DoesNotExist:
+        pass
+    try:
+        staff = owner.schooladmin
+    except SchoolAdmin.DoesNotExist:
+        pass
+
+    return staff
+
+# from .util import get_staff_subclass_from_user_id
 
 def get_first_name(self):
     return self.first_name + " " + self.last_name
@@ -35,7 +61,7 @@ class Student(models.Model):
     comite_clinique = models.BooleanField(default=False)
     date_ref_comite_clinique = models.DateField(null=True)
     plan_intervention = models.BooleanField(default=False)
-    groupe_repere = models.CharField(max_length=4)
+    groupe_repere = models.ForeignKey('school.Group', on_delete=models.SET_NULL, blank=True, null=True, default=None)
     code = models.ForeignKey(CodeEtudiant, on_delete=models.SET_NULL, null=True, blank=True)
     fiche = models.CharField(max_length=20, null=True, unique=True)
     # classification = models.ForeignKey(Classification, on_delete=models.SET_NULL, null=True)
@@ -68,8 +94,7 @@ class Student(models.Model):
 
         return fields_data
     
-    
-    def _age_at_past_september(self):
+    def _calculate_age_past_september(self):
         today = date.today()
         september_last_year = date(today.year - 1, 9, 1)
         if today < september_last_year:
@@ -77,12 +102,6 @@ class Student(models.Model):
         else:
             age = today.year - self.dob.year - 1
         return age
-
-    class Meta:
-        ordering = ['nom', 'prenom']
-
-    def __str__(self):
-        return self.nom + " - " + self.prenom + " gr." + self.groupe_repere + " ( Comité Clinique: " + str(self.comite_clinique) + " - PI: " + str(self.plan_intervention) + ")"
     
     def get_absolute_url(self):
         return reverse('student-detail', kwargs={'pk': self.pk})
@@ -93,7 +112,40 @@ class Student(models.Model):
     def get_active_problems_query_set(self):
         return self.problematique_set.filter(~Q(status__nom="réglé"))
     
+    @property
+    def get_professionals_from_actions(self):
+        intervenants_set = set()
+        class_set = set()
+        for problematique in self.problematique_set.all():
+            # print(problematique, problematique.action_set.all())
+            for action in problematique.action_set.exclude(status__id=4):
+                owner = get_staff_subclass_from_user_id(action.responsable.id)
+                if isinstance(owner, Professional):  
+                    intervenants_set.add(owner)
+                    # print(action.responsable.get_full_name())
+        return intervenants_set
     
+    @property
+    def responsible_personnel(self):
+        directions = self.groupe_repere.classification.owner.get_full_name()
+        regular_teachers = self.groupe_repere.regularteacher
+        professional_list = self.get_professionals_from_actions
+       
+
+        return {
+            'direction': directions,
+            'regular_teachers': regular_teachers,
+            # 'specialty_teachers': specialty_teachers,
+            'professional_list': professional_list,
+        }
+    
+    class Meta:
+        ordering = ['nom', 'prenom']
+
+    def __str__(self):
+        return self.nom + " - " + self.prenom + " gr." + self.groupe_repere.nom + " ( Comité Clinique: " + str(self.comite_clinique) + " - PI: " + str(self.plan_intervention) + ")"
+    
+
 class StatusProblematique(models.Model):
     nom = models.CharField(max_length=50)
     

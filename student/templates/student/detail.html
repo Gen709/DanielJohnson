@@ -116,7 +116,7 @@
 
 						<tr>
 							<td>Classification:</td>
-							<td>{{student.classification}}</td>
+							<td>{{student.groupe_repere.classification.nom}}</td>
 						</tr>
 
 					</table>
@@ -125,11 +125,35 @@
 
 			</div>
 		</div>
+
 		<!--	intervenants	-->
 		<div class="col">
 			<!--tittre-->
 			<div class="row mt-3">
-				<h4>Partenaires / Intervenants</h4>
+				<h3>Partenaires / Intervenants</h3>
+			</div>
+			<!--table partenaires-->
+			<div class="row mt-3">
+				<table class="table table-striped table-sm">
+						<tr>
+							<td>Direction</td>
+							<td><a href="mailto:{{student.responsible_personnel.direction.email}}?subject={{student.fiche}} / {{student.prenom}} {{student.nom}}">{{student.responsible_personnel.direction}}</a></td>
+						</tr>
+						<tr>
+							<td>Professeur</td>
+							<td><a href="mailto:{{student.responsible_personnel.regular_teachers.email}}?subject={{student.fiche}} / {{student.prenom}} {{student.nom}}">{{student.responsible_personnel.regular_teachers}}</a></td>
+							
+						</tr>
+						{% if student.responsible_personnel.professional_list%}
+							{% for pros in  student.responsible_personnel.professional_list%}
+								<tr>
+									<td>{{pros.speciality}}</td>
+									<td><a href="mailto:{{pros.email}}?subject={{student.fiche}} / {{student.prenom}} {{student.nom}}">{{pros.get_full_name}}</a></td>
+									<td>{{pros.get_full_name}}</td>
+								</tr>
+							{% endfor %}
+						{% endif %}
+				</table>
 			</div>
 		</div>
 	</div>

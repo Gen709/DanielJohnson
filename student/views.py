@@ -11,9 +11,9 @@ from django.utils import timezone
 from .models import Student, StatusAction, Problematique, StatusProblematique, Action, ActionSuggestion, CodeEtudiant, Grades
 from problematiques.models import Item
 from school.models import Classification
-from .forms import CSVUploadForm, StudentForm
+from teacher.models import Professional, RegularTeacher
+from .forms import CSVUploadForm
 from .util import ExtractStudent
-
 from datetime import datetime as dt, timedelta
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill, Border, Side, Alignment, Font, NamedStyle, Color, Fill
@@ -21,9 +21,6 @@ from openpyxl.worksheet.dimensions import ColumnDimension
 from openpyxl.utils import get_column_letter
 
 import re
-import csv
-# import chardet
-
 
 # Create your views here.
 @csrf_exempt
@@ -128,7 +125,7 @@ def ajax_search_student(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         # input_str = request.GET.get('term', '')
         input_str = unquote(request.GET['term'])
-        data_list = [{x.id: {'description': x.nom + " " + x.prenom + " - Group: " + x.groupe_repere,
+        data_list = [{x.id: {'description': x.nom + " " + x.prenom + " - Group: " + x.groupe_repere.nom,
                              'url': x.get_absolute_url()}} for x in Student.objects.filter(nom__istartswith=input_str, is_student=True)]
 
         data = JsonResponse(data_list, safe=False)
@@ -166,8 +163,15 @@ def ajax_update_student(request):
 def student_detail_view(request, pk):
     # a revoir
     staff = User.objects.get(username=request.user.get_username())
-    responsable_qs = User.objects.all()
     student = Student.objects.get(pk=pk)
+    # responsable_qs = User.objects.all()
+    pros = Professional.objects.all().order_by('speciality')
+    teacher = RegularTeacher.objects.filter(group__id=student.groupe_repere.id)
+    direction = User.objects.filter(id=student.groupe_repere.classification.owner.id)
+    responsable_qs_dict = {'professionals':pros, 
+                           "regularteacher":teacher, 
+                           "direction":direction}
+    
     problematiques = Item.objects.all()
     statusproblematique = StatusProblematique.objects.all()
     statusaction = StatusAction.objects.all()
@@ -178,7 +182,7 @@ def student_detail_view(request, pk):
                'problematiques': problematiques,
                'statusaction': statusaction,
                'statusproblematique': statusproblematique,
-               'responsable_qs': responsable_qs,
+               'responsable_qs': responsable_qs_dict,
                'code_etudiant': code_etudiant
                }
 
@@ -215,6 +219,7 @@ def student_problematique_update_status(request):
 
 @login_required
 def student_action_problematique_insert_view(request):
+    # TODO: staff is created 
     student = Student.objects.get(pk=request.POST.get("eleve_id"))
     staff = User.objects.get(pk=request.POST.get("staff_id"))
     problematique = Problematique.objects.get(pk=request.POST.get("problematique_id"))
@@ -236,6 +241,7 @@ def student_action_problematique_insert_view(request):
 
 @login_required
 def comitecliniquestudentlistview(request):
+    # TODO la classification est maintenant atteinte a travers le groupe qui lui est relié a l'étudiant
     student_comite_clinique_dict = {
         classification: [s for s in Student.objects.filter(classification=classification).filter(comite_clinique=True)]
         for classification in
