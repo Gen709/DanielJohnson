@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% load bootstrap5 %}
+
+{% block title %}Regular teacher dashboard{% endblock %}
+
+{% block content %}
+  <div class="container bg-light">
+    <h2 class="bg-primary text-white p-3">{{teacher.first_name}} {{teacher.last_name}}s dashboard</h2>
+
+    <h4 class="bg-info p-3 mb-3" >Étudiants du groupe {{teacher.group.nom}}:</h4>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Âge en septembre</th>
+                    <th>Comite Clinique</th>
+                    <th>Plan Intervention</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in teacher.responsible_children %}
+                    <tr>
+                        <td>{{ student.nom }} {{ student.prenom }}</td>
+                        <td>{{ student.age_past_september }}</td>
+                        <td>{{ student.comite_clinique }}</td>
+                        <td>{{ student.plan_intervention }}</td>
+                        <td><a href="{% url 'student-detail' pk=student.pk %}">View Details</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+  </div>
+{% endblock %}
