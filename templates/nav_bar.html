@@ -42,7 +42,16 @@
 					<li class="nav-item">
 						<a class="nav-link" href="{% url 'csv-uplaod' %}">Update Students</a>
 					</li>
-					
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownLocal" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Local
+						</a>
+						<div class="dropdown-menu" aria-labelledby="navbarDropdownLocal">
+							<a class="dropdown-item" href="{% url 'local_list' %}">Local List</a>
+							<a class="dropdown-item" href="{% url 'local_create' %}">Create Local</a>
+							<!-- Add more dropdown items for other "Local" URLs as needed -->
+						</div>
+					</li>
 	        		<li class="nav-item">
 						<a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
 					</li>
