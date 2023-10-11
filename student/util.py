@@ -5,6 +5,7 @@ from openpyxl.utils import get_column_letter
 from django.contrib.auth.models import User
 from django.utils import timezone
 from student.models import Student
+from school.models import Group
 from datetime import datetime
 
 class ExtractStudent():
@@ -66,6 +67,13 @@ class ExtractStudent():
                     plan_intervention_value = row.get("PLAN D'INTERVENTION", '').strip().lower()
                 else:
                     plan_intervention_value = None
+
+                # Handle GROUPE REPERE field
+                group_repere_name = row.get('GROUPE', '')
+                if group_repere_name:
+                    groupe_repere, _ = Group.objects.get_or_create(nom=group_repere_name)
+                else:
+                    groupe_repere = None
                                                   
                 # Map CSV fields to model fields
                 student_data = {
@@ -75,7 +83,7 @@ class ExtractStudent():
                     "comite_clinique": False,
                     "date_ref_comite_clinique": None,
                     "plan_intervention": plan_intervention_value == 'oui',
-                    "groupe_repere": row.get('GROUPE', ''),
+                    "groupe_repere": groupe_repere,
                     "code": None,
                     "fiche": row.get('FICHE', ''),
                     # "classification": classification,
