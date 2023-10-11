@@ -26,10 +26,8 @@ class Local(models.Model):
 #     classification = models.ForeignKey(Classification, on_delete=models.SET_NULL)
 
 class Group(models.Model):
-    nom = models.CharField(max_length=10)
-    regular_teacher = models.ForeignKey('teacher.RegularTeacher', on_delete=models.SET_NULL, null=True, related_name='groups_regular')
+    nom = models.CharField(max_length=10, unique=True)
     classification = models.ForeignKey(Classification, on_delete=models.SET_NULL, null=True, blank=True)
-    students = models.ManyToManyField('student.Student')
 
     def __str__(self):
-        return self.name
+        return self.nom
