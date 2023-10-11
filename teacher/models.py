@@ -18,7 +18,13 @@ class RegularTeacher(User):
         if self.group:
             return self.group.student_set.all()
         return []
-   
+    
+    def delete(self, *args, **kwargs):
+            # Delete the associated user
+            self.user.delete()
+            # Call the parent class's delete method to delete the subclass instance
+            super().delete(*args, **kwargs)
+
     def __str__(self):
         return self.first_name + " " + self.last_name 
 
