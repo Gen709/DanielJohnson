@@ -7,12 +7,6 @@ from django.contrib.auth.decorators import login_required
 from .forms import CSVUploadForm
 from .util import ExtractTeacher
 
-# class CustomLoginView(LoginView):
-#     redirect_authenticated_user = True
-#     def get_success_url(self):
-#         return reverse_lazy('index') 
-    
-#     template_name = 'registration/login.html'
 
 class CustomLoginView(LoginView):
     def form_valid(self, form):
@@ -46,8 +40,20 @@ class RegularTeacherProfileView(TemplateView):
 class SpecialtyTeacherProfileView(TemplateView):
     template_name = 'specialty_teacher_profile.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Assuming you pass the teacher instance to this view through the context
+        context['teacher'] = self.request.user.specialityteacher  # Assuming the teacher is associated with the logged-in user
+        return context
+
 class ProfessionalProfileView(TemplateView):
     template_name = 'professional_profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Assuming you pass the teacher instance to this view through the context
+        context['teacher'] = self.request.user.professional  # Assuming the teacher is associated with the logged-in user
+        return context
 
 @login_required
 def upload_teacher_csv(request):
