@@ -30,4 +30,4 @@ class Group(models.Model):
     classification = models.ForeignKey(Classification, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return self.nom
+        return self.nom + ' ' + self.classification
