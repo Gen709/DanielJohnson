@@ -275,7 +275,7 @@ def eleve_evaluation_list(request):
 @login_required
 def eleve_problematique_list_view(request):
 
-    code_etudiant_qs = CodeEtudiant.objects.exclude(code=0).annotate(num_student=Count('student'))
+    code_etudiant_qs = CodeEtudiant.objects.exclude(code=0).annotate(num_student=Count('student', filter=Q(student__is_student=True)))
 
     results = {code: {classification:
                           [student for student in code.student_set.filter(is_student=True, groupe_repere__classification=classification.id)]
