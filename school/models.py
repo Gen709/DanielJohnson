@@ -30,4 +30,8 @@ class Group(models.Model):
     classification = models.ForeignKey(Classification, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return self.nom + ' ' + self.classification
+        if self.classification:
+            b = self.classification.nom
+        else:
+            b="Unknown"
+        return self.nom + ' ' + b
