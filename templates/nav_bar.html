@@ -19,9 +19,25 @@
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			
 				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+					
+					{% if user.regularteacher %}
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'regular_teacher_profile' %}">Mon Profile</a>
+						</li>
+					{% elif user.specialtyteacher %}
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'specialty_teacher_profile' %}">Mon Profile</a>
+						</li>
+					{% elif user.professional %}
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'professional_profile' %}">Mon Profile</a>
+						</li>
+					{% endif %}
+				
 					
 					<li class="nav-item">
-						<a class="nav-link" href="{% url 'home' pk=user.pk %}">Mon profile</a>
+						<a class="nav-link" href="{% url 'home' pk=user.pk %}">Mes Actions</a>
 					</li>
 
 					<li class="nav-item dropdown">
