@@ -114,6 +114,9 @@ class Student(models.Model):
     
     @property
     def get_professionals_from_actions(self):
+        """Trouve les professionels impliqué dans les actions
+        associées aux problematiques de l'éleve 
+        """
         intervenants_set = set()
         class_set = set()
         for problematique in self.problematique_set.all():

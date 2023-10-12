@@ -274,10 +274,11 @@ def eleve_evaluation_list(request):
 
 @login_required
 def eleve_problematique_list_view(request):
+
     code_etudiant_qs = CodeEtudiant.objects.exclude(code=0).annotate(num_student=Count('student'))
 
     results = {code: {classification:
-                          [student for student in code.student_set.all().filter(groupe_repere__classification=classification.id)]
+                          [student for student in code.student_set.filter(is_student=True, groupe_repere__classification=classification.id)]
                       for classification in {etudiant.groupe_repere.classification for etudiant in code.student_set.all()}
                       }
                for code in code_etudiant_qs
