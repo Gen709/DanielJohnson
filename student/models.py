@@ -73,6 +73,10 @@ class Student(models.Model):
     date_created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     date_is_student_changed = models.DateTimeField(null=True, blank=True, default=None)
 
+    def get_queryset(self, request):
+        # Filter the queryset to include only instances with is_active=True
+        return super().get_queryset(request).filter(is_student=True)
+
     @property
     def age_past_september(self):
         return self._calculate_age_past_september()
