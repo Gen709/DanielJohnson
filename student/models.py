@@ -149,8 +149,8 @@ class Student(models.Model):
     class Meta:
         ordering = ['nom', 'prenom']
 
-    def __str__(self):
-        return self.nom + " - " + self.prenom + " gr." + self.groupe_repere.nom + " ( Comité Clinique: " + str(self.comite_clinique) + " - PI: " + str(self.plan_intervention) + ")"
+    # def __str__(self):
+    #     return self.nom + " - " + self.prenom + " gr." + self.groupe_repere.nom + " ( Comité Clinique: " + str(self.comite_clinique) + " - PI: " + str(self.plan_intervention) + ")"
     
 
 class StatusProblematique(models.Model):
