@@ -263,7 +263,7 @@ def cours_ete_list_view(request):
 @login_required
 def eleve_evaluation_list(request):
     suggestion_list = ActionSuggestion.objects.all()
-    a = Action.objects.filter(description__in=[x.nom for x in suggestion_list]).exclude(status__id=4)
+    a = Action.objects.filter(description__in=[x.nom for x in suggestion_list], problematique__eleve__is_student=True).exclude(status__id=4)
 
     context = {'evaluation_suggestion_list': suggestion_list,
                'evaluation_liste': a
