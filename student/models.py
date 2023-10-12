@@ -117,6 +117,9 @@ class Student(models.Model):
         return self.problematique_set.filter(~Q(status__nom="réglé"))
     
     @property
+    def get_etat_de_la_situation_entries(self):
+        self.etatdelasituation_set.all()
+    @property
     def get_professionals_from_actions(self):
         """Trouve les professionels impliqué dans les actions
         associées aux problematiques de l'éleve 
@@ -152,6 +155,21 @@ class Student(models.Model):
     # def __str__(self):
     #     return self.nom + " - " + self.prenom + " gr." + self.groupe_repere.nom + " ( Comité Clinique: " + str(self.comite_clinique) + " - PI: " + str(self.plan_intervention) + ")"
     
+class EtatDeLaSituation(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    text = models.TextField()
+    creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='created_entries')
+    creation_date = models.DateField(auto_now_add=True)  # Changed to DateField
+    modifier = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='modified_entries')
+    modification_date = models.DateField(auto_now=True)  # Changed to DateField
+
+    def __str__(self):
+        return f'Journal Entry by {self.creator}'
+
+    class Meta:
+        ordering = ['-modification_date']
+        unique_together = ('student', 'creator', 'creation_date') 
+
 
 class StatusProblematique(models.Model):
     nom = models.CharField(max_length=50)
