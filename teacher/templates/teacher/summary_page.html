@@ -6,6 +6,8 @@
 {% block content %}
 <div class="container">
     <h1>Sommaire des operation mise a jour professeurs</h1>
+    {{message}}<br>
+    Number of teachers in reader : {{number_teacher}}
     {{updated_group_obj_list}}
     {% for tearcher in updated_regular_teacher %}
         {{tearcher}}

@@ -56,6 +56,9 @@ def upload_teacher_csv(request):
         if form.is_valid():
             es = ExtractTeacher(request)
             context = es.update_data()
+            # if len(context["updated_regular_teacher"]) == 0:
+            #     message = "No teacher has been added"
+            # context["message"] = message
             return render(request, 'teacher/summary_page.html', context)
     else:
         form = CSVUploadForm()

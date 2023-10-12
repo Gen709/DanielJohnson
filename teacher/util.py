@@ -23,8 +23,8 @@ class ExtractTeacher():
         r = csv.DictReader(self.file_name.read().decode('utf-8-sig').splitlines())
         for row in r:
             capitalized_row = {key.upper(): value for key, value in row.items()}
-            reader.append(capitalized_row)
-                
+            print(capitalized_row)
+            reader.append(capitalized_row)       
         return reader         
     
     def identify_extract(self, reader):
@@ -51,6 +51,7 @@ class ExtractTeacher():
 
     def get_reader(self):
         if self.file_name.name.endswith('.csv'):
+            print("************csv reader selected****************************")
             reader = self.get_csv_reader()
         elif self.file_name.name.endswith('.xlsx'):
             reader = self.get_excel_reader()
@@ -68,11 +69,11 @@ class ExtractTeacher():
         """
         classification = Classification.objects.all()
         for classi in classification:
-            print(classi)
+            # print(classi)
             if len(classi.nom) == 1: # classification de JV
                 for g in Group.objects.all():
                     if string.ascii_lowercase.index(classi.nom.lower()) == int(g.nom[1]):
-                        print(classi.nom, g.nom, int(g.nom[1]))
+                        # print(classi.nom, g.nom, int(g.nom[1]))
                         g.classification = classi
                         g.save()
 
@@ -81,6 +82,7 @@ class ExtractTeacher():
         plain_text_password = "General-Vanier"
         hashed_password = make_password(plain_text_password)
         for regular_teacher_dict in reader:
+            # print(plain_text_password)
             prenom_nomfamille = regular_teacher_dict["NOM"].split()
             prenom = prenom_nomfamille[0]
             nom_famille = " ".join(prenom_nomfamille[1:])
@@ -90,30 +92,37 @@ class ExtractTeacher():
             except:
                 g = None
             # print(prenom_nomfamille, prenom, nom_famille, g)   
-            RegularTeacher.objects.update_or_create(
-                                                    password = hashed_password,
-                                                    username = prenom[:3]+nom_famille[:3], 
-                                                    first_name = prenom, 
-                                                    last_name = nom_famille, 
-                                                    email = "", 
-                                                    group = g, 
-                                                    matière = regular_teacher_dict["MATIERES"])
+            regular_teacher_dict = {"password":hashed_password, 
+                                    "username":prenom[:3]+nom_famille[:3],  
+                                    "first_name":prenom,  
+                                    "last_name":nom_famille,  
+                                    "email":"",  
+                                    "group":g,  
+                                    "matière":regular_teacher_dict["MATIERES"]
+                                   }
+            # print(regular_teacher_dict)
+            RegularTeacher.objects.update_or_create(username=regular_teacher_dict['username'], defaults=regular_teacher_dict)
             operation_list.append(RegularTeacher)
             
-        return operation_list            
+        return operation_list      
 
-    def update_regularteacher_data(self):
-        reader = self.get_reader()
-        updated_group_obj_list = self.create_group()
+    def update_regularteacher_data(self, reader):
+        print("*****************Updating data****************")
+        
+        print("r***************** Reader has", len(reader))
+        self.create_group()
         self.associate_classification_to_group()
-        updated_regular_teacher = self.create_regular_teacher(reader)
-        return {"updated_group_obj_list": updated_group_obj_list,
-                "updated_regular_teacher": updated_regular_teacher}
+        t = self.create_regular_teacher(reader)
+        print('operation_list', t)
+        
     
     def update_data(self):
+
         reader = self.get_reader()
+        print(len(reader))
         if self.identify_extract(reader) == "regular_teacher_extract":
-            self.update_regularteacher_data()
+            print("*****************getting update data****************")
+            self.update_regularteacher_data(reader)
         elif self.identify_extract(reader) == "specialty_teacher_extract":
             pass
         elif self.identify_extract(reader) == "schooladministrator_extract":
