@@ -249,10 +249,11 @@ def student_detail_view_2(request, pk):
 
         older_record_qs = EtatDeLaSituation.objects.filter(student=student)
 
-        if EtatDeLaSituation.objects.latest('id'):
+        try:
+            EtatDeLaSituation.objects.latest('id'):
             latest_object = EtatDeLaSituation.objects.latest('id')
             next_id = latest_object.id + 1
-        else:
+        except:
             next_id = 1
 
         try:
