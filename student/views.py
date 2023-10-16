@@ -250,7 +250,7 @@ def student_detail_view_2(request, pk):
         older_record_qs = EtatDeLaSituation.objects.filter(student=student)
 
         try:
-            EtatDeLaSituation.objects.latest('id'):
+            EtatDeLaSituation.objects.latest('id')
             latest_object = EtatDeLaSituation.objects.latest('id')
             next_id = latest_object.id + 1
         except:
