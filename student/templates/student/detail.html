@@ -177,7 +177,7 @@
 			<!-- section input -->
 			<div class="row mt-4 mb-4">
 				<form>
-				{% csrf_token %}<!-- min height ? -->
+				{% csrf_token %}
 					<div class="inline_textarea_etat_situation ms-3 bg-body border rounded pt-3 px-4" id="inline_textarea_etat_situation">
 						{% if student.etat_situation %}
 							{{student.etat_situation|safe}}
@@ -185,12 +185,11 @@
 							<p>Rien d'inscrit pour {{student.nom}}, {{student.prenom}} {{student.id}}</p>
 						{% endif %}
 					</div>
+
 					<input type="hidden" value="{{student.id}}" id="student_id">
 				</form>
 			</div>
-			
 		</div>
-
 	</div>
 
 	<!-- Section Problematiques en cours -->

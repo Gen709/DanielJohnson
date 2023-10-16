@@ -16,7 +16,7 @@ urlpatterns = [
 
     
     path('ajax/action/suggestions', views.ajax_search_probleme_action_sugestions, name='ajax-search-probleme-suggestions'),
-    path('detail/<int:pk>', views.student_detail_view, name='student-detail'),
+    path('detail/<int:pk>', views.student_detail_view_2, name='student-detail'),
     path('problematique/create', views.student_problematique_create_view, name='problematique-create'),
     path('problematique/action/create', views.student_action_problematique_insert_view, name='action-create'),
     # path('comite_clinique/list', views.ComiteCliniqueStudentListView.as_view(), name='comite-clinique-list'),
@@ -32,4 +32,6 @@ urlpatterns = [
     path('csv_uplaod', views.upload_csv, name='student-csv-uplaod'),
     path('review_changes/', views.review_changes, name='review_changes'),
     path('summary/', views.upload_summary, name='upload_summary'),
+
+    path('etat/<int:id>', views.test_eta_de_la_situation, name='test_etat'),
 ]

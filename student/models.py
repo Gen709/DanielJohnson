@@ -3,6 +3,7 @@ from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 
+
 from problematiques.models import Item
 from django.contrib.auth.models import User
 
@@ -56,6 +57,7 @@ class CodeEtudiant(models.Model):
 
 
 class Student(models.Model):
+    # TODO: change primary key to fiche
     nom = models.CharField(max_length=200)
     prenom = models.CharField(max_length=200)
     comite_clinique = models.BooleanField(default=False)
@@ -81,6 +83,9 @@ class Student(models.Model):
     def age_past_september(self):
         return self._calculate_age_past_september()
     
+    def get_full_name(self):
+        return self.prenom + " " + self.nom
+
     def get_fields(self):
         fields_data = []
 
@@ -168,7 +173,7 @@ class EtatDeLaSituation(models.Model):
 
     class Meta:
         ordering = ['-modification_date']
-        unique_together = ('student', 'creator', 'creation_date') 
+        # unique_together = ('student', 'creator', 'creation_date') 
 
 
 class StatusProblematique(models.Model):

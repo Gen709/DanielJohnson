@@ -1,0 +1,123 @@
+<!--  Entete section titre avec boutton -->
+<div class="row border bg-primary text-white pt-4 rounded pb-5 mt-3 mx-2">
+	<h6>Problématiques réglées:</h6>
+</div>
+
+<div class="accordion" id="accordionProblematiquesReglees">
+	{% if student.get_inactive_problems_query_set %}
+
+		{% for problematique in student.get_inactive_problems_query_set %}
+
+			<div class="accordion-item mb-2">
+				<!--entete -->
+				<h2 class="accordion-header" id="accordionProblematiquesReglees_heading_{{forloop.counter}}">
+					<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#accordionProblematiquesReglees_collapse_{{forloop.counter}}" aria-expanded="false" aria-controls="accordionProblematiquesReglees_collapse_{{forloop.counter}}">
+						{{ problematique.nom }}
+					</button>
+				</h2>
+
+				<div id="accordionProblematiquesReglees_collapse_{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="accordionProblematiquesReglees_heading_{{forloop.counter}}" data-bs-parent="#accordionProblematiquesReglees">
+					<div class="accordion-body bg-light ">
+
+						<div class="row">
+							<!--	inscrit par -->
+							<div class="row mt-3">
+								<div class="col-md-2">
+									<strong>Inscrit par:</strong>
+								</div>
+								<div class="col-md-2">
+									{{ problematique.instigateur.first_name }} {{ problematique.instigateur.last_name }}
+								</div>
+
+							</div>
+							<!-- detail de la problematique -->
+							<div class="row mt-3">
+								<div class="col-md-2">
+									<p><strong>Explications / Détail:</strong></p>
+								</div>
+								<div class="col">
+										{% if problematique.detail %}
+											{{ problematique.detail|safe }}
+										{%else%}
+											<p>Aucune Explication / Détail</p>
+										{%endif%}
+								</div>
+							</div>
+						</div>
+						<!-- actions posées	-->
+						<div class="row mt-3">
+							<div class="col-md-2">
+								<strong>Actions Posées:</strong>
+							</div>
+							<div class="col">
+								{% if problematique.action_set.all %}
+									<!--accordéon des actions posées-->
+									<div class="accordion" id="accordionActionPosees">
+										{% for x in problematique.action_set.all %}
+											<div class="accordion-item mb-2 mt-2">
+
+												<h2 class="accordion-header" id="accordionActionPosees_heading_{{forloop.counter}}">
+													<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#accordionActionPosees_collapse_{{forloop.counter}}" aria-expanded="false" aria-controls="accordionActionPosees_collapse_{{forloop.counter}}">
+														{{x.description}}
+													</button>
+												</h2>
+												<!-- -->
+												<div id="accordionActionPosees_collapse_{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="accordionActionPosees_heading_{{forloop.counter}}" data-bs-parent="#accordionActionPosees">
+													<div class="accordion-body bg-light">
+
+														<div class="row mt-2">
+															<div class="row mt-2">
+																<div class="col-md-2">
+																	Attitré par:
+																</div>
+																<div class="col-md-2">
+																	{{x.createur}}
+																</div>
+															</div>
+															<div class="row mt-2">
+																<div class="col-md-2">
+																	Responsable:
+																</div>
+																<div class="col-md-2">
+																	{{x.responsable}}
+																</div>
+															</div>
+															<div class="row mt-2">
+																<div class="col-md-2">
+																	Detail:
+																</div>
+																<div class="col">
+
+																	{% if x.detail %}
+																		{{ x.detail|safe }}
+																	{% else %}
+																		<p>Aucun détail</p>
+																	{% endif %}
+
+																</div>
+															</div>
+														</div>
+
+													</div>
+												</div>
+
+											</div>
+										{% endfor %}
+									</div>
+								{% else %}
+									<div class="bg-body border rounded pt-3 px-4 mt-3 mb-3">
+										Aucune action n'a été enregistrée
+									</div>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	{% else %}
+		<div class="bg-body border rounded pt-3 px-4 mt-3 mb-3">	
+			Aucun problème enregistré
+		</div>
+	{% endif %}
+</div>

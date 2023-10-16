@@ -1,0 +1,90 @@
+<div class="col-12 col-sm-6">
+	<!--	titre	-->
+	<div class="row border bg-primary text-white pt-4 rounded pb-5 mt-3 mx-2">
+		<h6>Fiche Étudiant</h6>
+	</div>
+	<div class="row pt-4 rounded pb-5 mt-3 mx-2">
+		<form method="get" action="{% url 'ajax-update-student' %}">
+			{% csrf_token %}
+
+			<input type="hidden" name="student_id" value={{student.id}}>
+
+			<table class="table table-striped table-sm">
+
+				<tr><td>Nom:</td><td>{{student.get_full_name}}</td></tr>
+				<tr><td>Langue:</td><td>{{student.lang}}</td></tr>
+				<tr><td>Âge au 30 sept:</td><td>{{student.age_past_september}} ans</td></tr>
+				<tr><td>Groupe repère:</td><td>{{student.groupe_repere}}</td></tr>
+
+				<tr>
+					<td>PI:</td>
+					<td>
+						{% if student.plan_intervention %}
+							<div class="form-check form-switch">
+								<input class="form-check-input" type="checkbox" id="plan_interventionRadioOptionsflexSwitchCheck" checked>
+								<label class="form-check-label" for="plan_interventionRadioOptionsflexSwitchCheck"></label>
+							</div>
+						{% else %}
+							<div class="form-check form-switch">
+								<input class="form-check-input" type="checkbox" id="plan_interventionRadioOptionsflexSwitchCheck">
+								<label class="form-check-label" for="plan_interventionRadioOptionsflexSwitchCheck"></label>
+							</div>
+						{% endif %}
+
+					</td>
+				</tr>
+
+				<tr>
+					<td>Comité clinique:</td>
+					<td>
+						{% if student.comite_clinique %}
+							<div class="form-check form-switch">
+								<input class="form-check-input" type="checkbox" id="comite_cliniqueflexSwitchCheck" checked>
+								<label class="form-check-label" for="comite_cliniqueflexSwitchCheck"></label>
+							</div>
+						{% else %}
+							<div class="form-check form-switch">
+								<input class="form-check-input" type="checkbox" id="comite_cliniqueflexSwitchCheck">
+								<label class="form-check-label" for="comite_cliniqueflexSwitchCheck"></label>
+							</div>
+						{% endif %}
+
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						Code:
+					</td>
+					<td>
+						<select class="form-select" aria-label="Default select example" name="student_code">
+							{% if student.code %}
+								{% for code in code_etudiant %}
+									{% if student.code == code %}
+										<option value="{{code.id}}" selected>{{code.definition}}</option>
+									{% else %}
+										<option value="{{code.id}}">{{code.definition}}</option>
+									{% endif %}
+								{% endfor %}
+
+							{% else %}
+								<option selected>No code</option>
+								{% for code in code_etudiant %}
+									<option value="{{code.id}}">{{code.definition}}</option>
+								{% endfor %}
+							{% endif %}
+						</select>
+					</td>
+				</tr>
+
+				<tr>
+					<td>Classification:</td>
+					<td>{{student.groupe_repere.classification.nom}}</td>
+				</tr>
+
+			</table>
+
+		</form>
+
+	</div>
+</div>

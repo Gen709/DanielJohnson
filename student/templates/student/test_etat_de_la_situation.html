@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% load bootstrap5 %}
+
+{% block js %}
+<script src="https://cdn.tiny.cloud/1/3uxow28ssthmenpgxa54gwbtdj7mdpjqzi8sprt26xpv0dcz/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="{% static 'student/js/inline.js' %}"> </script>
+{% endblock %}
+
+{% block extrahead %}
+	<link rel="stylesheet" type="text/css" href="{% static 'student/css/css.css' %}">
+{% endblock %}
+
+
+{% block title %}Test etat de la situation{% endblock %}
+
+{% block content %}
+ <h6>Test Etat de la situation</h6>
+		<!-- Section etat de la situation -->
+		<div class="row border rounded mt-4">
+			<div class="row mt-2">
+				<!--  section titre-->
+				<div class="row border bg-primary text-white pt-4 rounded pb-5 mt-3 mx-2">
+					<h6>État de la situation</h6>
+					<p>{{intervenant.get_full_name}} {{is_new_instance}}</p>
+
+				</div>
+				<!-- section input -->
+				<div class="row mt-4 mb-4">
+					<form>
+						{% csrf_token %}
+						<input type="hidden" name="student_id" value={{ student.id }}></input>
+						{% if is_new_instance %}
+							<div class="inline_textarea_etat_situation ms-3 border rounded pt-3 px-4" id="{{ next_id }}" data-creationdate="{% now "b. d, Y" %}"></div>
+						{% endif %}
+
+						{% for record in older_record %}
+						<div class=" ms-3 bg-body pt-3 px-4">
+							<div class="col text-muted text-sm">{{ record.creation_date }} - {{record.creator}}</div> 
+							<div class="col inline_textarea_etat_situation" id="{{ record.id }}" data-creationdate="{{record.creation_date}}">{{ record.text|safe }}</div>
+						</div>
+						{% endfor%}
+					</form>
+				</div>
+			</div>
+		</div>
+{% endblock %}

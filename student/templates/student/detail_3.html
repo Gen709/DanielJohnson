@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block js %}
+	<script src="https://cdn.tiny.cloud/1/3uxow28ssthmenpgxa54gwbtdj7mdpjqzi8sprt26xpv0dcz/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
+	<script src="{% static 'student/js/submit_student_detail_form.js' %}"> </script>
+
+	{% comment %} <script src="{% static 'page/js/inline_textarea_etat_situation.js' %}"> </script> {% endcomment %}
+	<script src="{% static 'student/js/inline.js' %}"> </script>
+	<script src="{% static 'student/js/inline_textarea_problematique.js' %}"> </script>
+	<script src="{% static 'student/js/action_inline_textarea.js' %}"> </script>
+
+	<script src="{% static 'student/js/set_problem_id.js' %}"> </script>
+
+
+	<script src="{% static 'student/js/problematic_status_submit.js' %}"> </script>
+	<script src="{% static 'student/js/action_status_submit.js' %}"> </script>
+	<!-- <script src="{% static 'page/js/search_student_name.js' %}"> </script> -->
+
+	<script src="https://cdn.plot.ly/plotly-2.14.0.min.js"></script>
+	<script src="{% static 'student/js/grades.js' %}"> </script>
+		
+{% endblock %}
+
+{% block content %}
+
+
+<div class="container-fluid">
+
+	<!-- Section fiche étudiant	-->
+	<div class="row border rounded mt-4">
+		<!-- Fiche Étudiant -->
+		{% include "student/detail_3_fiche_etudiant.html"%}
+		<!--	intervenants	-->
+		{% include "student/detail_3_intervenants.html"%}
+	</div>
+	<!-- Section Profile academique	-->
+	<div class="row border rounded mt-4">
+		{% comment %} {% include "student/detail_3_profile_academique.html"%} {% endcomment %}
+	</div>
+
+	<!-- Section etat de la situation -->
+	<div class="row border rounded mt-4">
+		{% include 'student/detail_3_etat_de_la_situation.html' %}
+	</div>
+
+	<!-- Section Problematiques en cours -->
+	<div class="row border rounded mt-4 pb-4">
+		{% include 'student/detail_3_problematiques_en_cours.html' %}
+	</div>
+
+	<!-- section problèmes réglés	-->
+	<div class="row border rounded mt-4 mb-7">
+		{% include 'student/detail_3_problematiques_terminees.html'%}
+	</div>
+
+
+
+</div>
+
+{% include 'student/ajout_problematique.html' %}
+{% include 'student/ajout_action.html' %}
+{% endblock %}

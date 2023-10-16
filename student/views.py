@@ -7,12 +7,13 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
+from django.shortcuts import get_object_or_404
 
-from .models import Student, StatusAction, Problematique, StatusProblematique, Action, ActionSuggestion, CodeEtudiant, Grades
+from .models import Student, StatusAction, Problematique, StatusProblematique, Action, ActionSuggestion, CodeEtudiant, Grades, EtatDeLaSituation
 from problematiques.models import Item
 from school.models import Classification
 from teacher.models import Professional, RegularTeacher
-from .forms import CSVUploadForm
+from .forms import CSVUploadForm, EtatDeLaSituationForm
 from .util import ExtractStudent
 from datetime import datetime as dt, timedelta
 from openpyxl import Workbook
@@ -23,6 +24,86 @@ from openpyxl.utils import get_column_letter
 import re
 
 # Create your views here.
+
+def test_eta_de_la_situation(request, id):
+    if request.user.is_authenticated:
+        intervenant = User.objects.get(id=request.user.id)
+        student = Student.objects.get(id=id)
+        creation_date = dt.strptime(request.POST.get("creationDateStr", dt.strftime(dt.today().date(),  "%b. %d, %Y")), "%b. %d, %Y").date()
+        id = request.POST.get("id")
+        try:
+            # Check if an EtatDeLaSituation instance exist with the given creator and date exists
+            etat_instance = EtatDeLaSituation.objects.get(id = id)
+
+            # etat_instance = EtatDeLaSituation.objects.get(creation_date = creation_date, creator=intervenant)
+            # Determine if it's a new instance or an existing one
+            is_new_instance = False
+        except:
+            is_new_instance = True
+        try:
+            # Check if an EtatDeLaSituation instance exist with the given creator and date exists
+            etat_instance = EtatDeLaSituation.objects.get(creator = intervenant, creation_date=dt.today().date())
+            # Determine if it's a new instance or an existing one
+            is_new_instance = False
+        except:
+            is_new_instance = True
+        
+
+
+        if request.method == 'POST':
+            # etat_de_la_situation_id = request.POST.get('etat_de_la_situation_id')
+            etat_situation_str = request.POST.get('etatdelasituation')
+            # Now you can use 'is_new_instance' to differentiate between new and existing instances
+            if is_new_instance:
+                # pass
+                # It's a new instance
+                # Perform actions for a new instance
+                EtatDeLaSituation.objects.create(student = student, 
+                                                creator = intervenant, 
+                                                text = etat_situation_str)
+            else:
+                # It's an existing instance
+                # Perform actions for an existing instance
+                # Update the attributes of the instance
+                etat_instance.text=etat_situation_str
+                etat_instance.modifier=intervenant
+                etat_instance.save() # Modify this with the new text
+                
+
+            print("******************************************************************")
+            print("New instance ?",is_new_instance)
+            print(" / by:", intervenant.get_full_name(), 'intervenant:', intervenant)
+            print(" / date:", creation_date, "/ id:", id)
+            print("str", etat_situation_str)
+            print("******************************************************************")
+
+
+            latest_object = EtatDeLaSituation.objects.latest('id')
+            next_id = latest_object.id + 1
+            older_record_qs = EtatDeLaSituation.objects.filter(student=student)
+            context = {'intervenant': intervenant,
+                    'student': student,
+                    'older_record': older_record_qs,
+                    'next_id': next_id,
+                    'is_new_instance': is_new_instance}
+            
+            return render(request, "student/test_detail_etat_de_la_situation.html", context)
+        else:
+            try:
+                latest_object = EtatDeLaSituation.objects.latest('id')
+                next_id = latest_object.id + 1
+            except:
+                next_id = 1
+
+            older_record_qs = EtatDeLaSituation.objects.filter(student=student)
+            context = {'intervenant': intervenant,
+                    'student': student,
+                    'older_record': older_record_qs,
+                    'next_id': next_id,
+                    'is_new_instance': is_new_instance}
+            return render(request, "student/test_detail_etat_de_la_situation.html", context)
+    
+
 @csrf_exempt
 def ajax_student_problematique_action_detail_update(request):
     if request.method == "POST":
@@ -83,38 +164,25 @@ def ajax_note_student(request):
     s = Student.objects.get(id=student_id)
     fiche = s.fiche
     # niveau de l'étudiant
-
-    niveau = s.classification # s.group.classification
-
+    niveau = s.groupe_repere.classification # s.group.classification
     data_dict["niveau"] = niveau.nom
-
     # notes de l'année en cour
-
     # n = Grades.objects.filter(student_id=student_id)
     n = Grades.objects.filter(no_fiche=fiche)
     # liste des notes de l'élève
-
     grades_list = [x.note for x in n]
-
     data_dict["grade_list"] = grades_list
-
     # liste des cours de l'élève
-
     class_name_list = [x.matiere for x in n]
-
     classification_className_tuple_list = [(x.classification, x.matiere) for x in n]
-
     data_dict["class_name_list"] = class_name_list
-
     data_dict["classification_className_tuple_list"] = classification_className_tuple_list
-
     # Notes de groupe
-
     data_dict["class_grades"] = {}
-
     for classification_className_tuple in data_dict["classification_className_tuple_list"]:
         data_dict["class_grades"][classification_className_tuple[1]] = [x.note for x in Grades.objects.filter(
             matiere=classification_className_tuple[1])]
+
 
     data = JsonResponse(data_dict, safe=False)
     mimetype = 'application/json'
@@ -160,10 +228,130 @@ def ajax_update_student(request):
 
 
 @login_required
+def student_detail_view_2(request, pk):
+    if request.user.is_authenticated:
+        intervenant = User.objects.get(id=request.user.id)
+        # staff = User.objects.get(username=request.user.get_username())
+        student = Student.objects.get(id=pk)
+
+        pros = Professional.objects.all().order_by('speciality')
+        teacher = RegularTeacher.objects.filter(group__id=student.groupe_repere.id)
+        direction = User.objects.filter(id=student.groupe_repere.classification.owner.id)
+        responsable_qs_dict = {'professionals':pros, 
+                                "regularteacher":teacher, 
+                                "direction":direction
+                                }
+        
+        problematiques = Item.objects.all()
+        statusproblematique = StatusProblematique.objects.all()
+        statusaction = StatusAction.objects.all()
+        code_etudiant = CodeEtudiant.objects.all()
+
+        older_record_qs = EtatDeLaSituation.objects.filter(student=student)
+
+        if EtatDeLaSituation.objects.latest('id'):
+            latest_object = EtatDeLaSituation.objects.latest('id')
+            next_id = latest_object.id + 1
+        else:
+            next_id = 1
+
+        try:
+            # has the intervenant already posted totady
+            etat_instance = EtatDeLaSituation.objects.get(student=student, creator=intervenant, creation_date=dt.today().date())
+            print('etat_instance', etat_instance)
+            if etat_instance:
+                is_new_instance = False
+            else:
+                is_new_instance = True
+        except:
+            is_new_instance = True
+
+        # print("******************** Is new instance", is_new_instance, "request method", request.method)
+        # print("******************** Student", student, "number of records", len(older_record_qs))
+        # print("******************** today's records", older_record_qs.filter(student=student, creator=intervenant, creation_date=dt.today().date()).text)
+
+        context = {'student': student, 
+                    # 'staff': staff, 
+                    'intervenant': intervenant,
+                    'problematiques': problematiques, 
+                    'statusaction': statusaction, 
+                    'statusproblematique': statusproblematique, 
+                    'responsable_qs': responsable_qs_dict, 
+                    'code_etudiant': code_etudiant, 
+                    'older_record_qs': older_record_qs,
+                    'is_new_instance': is_new_instance,
+                    'next_id':next_id
+                    }
+        
+        if request.method == 'POST':
+            post_id = request.POST.get("post_id")
+            etat_situation_str = request.POST.get('etatdelasituation')
+
+            print("******************** Is new instance", is_new_instance, "request method", request.method)
+            print("******************** Student", student, "number of records", len(older_record_qs))
+            print("******************** today's records", older_record_qs.filter(student=student, creator=intervenant, creation_date=dt.today().date()))
+            
+            etat_instance = EtatDeLaSituation.objects.get(id=post_id)
+            
+            if not is_new_instance:
+                # It's an existing instance
+                # Perform actions for an existing instance
+                # Update the attributes of the instance
+                etat_instance.text=etat_situation_str
+                etat_instance.modifier=intervenant
+                etat_instance.save() # Modify this with the new text
+            else:
+                # maybe it's not a new instance but an old instance
+                
+                print(etat_instance)
+                print(etat_situation_str)
+                if etat_instance:
+                    etat_instance.text=etat_situation_str
+                    etat_instance.modifier=intervenant
+                    etat_instance.save()
+                else:
+                    EtatDeLaSituation.objects.create(student = student, 
+                                                    creator = intervenant, 
+                                                    text = etat_situation_str)
+                
+
+            # print("******************************************************************")
+            # print("New instance ?",is_new_instance)
+            # print(" / by:", intervenant.get_full_name(), 'intervenant:', intervenant)
+            # # print(" / date:", creation_date, "/ id:", id)
+            # print("str", etat_situation_str)
+            # print("******************************************************************")
+
+            context["older_record_qs"] = EtatDeLaSituation.objects.filter(student=student)
+            latest_object = EtatDeLaSituation.objects.latest('id')
+            context["next_id"] = latest_object.id + 1
+
+            # context = {'student': student, 
+            #             # 'staff': staff, 
+            #             'intervenant': intervenant,
+            #             'problematiques': problematiques, 
+            #             'statusaction': statusaction, 
+            #             'statusproblematique': statusproblematique, 
+            #             'responsable_qs': responsable_qs_dict, 
+            #             'code_etudiant': code_etudiant, 
+            #             # 'etat_de_la_situation': etat_de_la_situation, 
+            #             'older_record_qs': older_record_qs,
+            #             'is_new_instance': is_new_instance,
+            #             'next_id': next_id
+            #         }
+
+            return render(request, 'student/detail_3.html', context)
+        else:
+            return render(request, 'student/detail_3.html', context)
+
+
+
+@login_required
 def student_detail_view(request, pk):
     # a revoir
     staff = User.objects.get(username=request.user.get_username())
     student = Student.objects.get(pk=pk)
+    # etat_de_la_situation = EtatDeLaSituation.objects.filter(student=student)
     # responsable_qs = User.objects.all()
     pros = Professional.objects.all().order_by('speciality')
     teacher = RegularTeacher.objects.filter(group__id=student.groupe_repere.id)
@@ -183,7 +371,8 @@ def student_detail_view(request, pk):
                'statusaction': statusaction,
                'statusproblematique': statusproblematique,
                'responsable_qs': responsable_qs_dict,
-               'code_etudiant': code_etudiant
+               'code_etudiant': code_etudiant,
+            #    'etat_de_la_situation': etat_de_la_situation
                }
 
     return render(request, 'student/detail.html', context)
@@ -241,7 +430,6 @@ def student_action_problematique_insert_view(request):
 
 @login_required
 def comitecliniquestudentlistview(request):
-    # TODO la classification est maintenant atteinte a travers le groupe qui lui est relié a l'étudiant
     student_comite_clinique_dict = {
         classification: [s for s in Student.objects.filter(groupe_repere__classification=classification).filter(comite_clinique=True)]
         for classification in

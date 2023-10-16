@@ -27,11 +27,11 @@ $(document).ready(function(){
 						 csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
 						 };
 
-        console.log(myContent);
+        console.log("Data Received from the html page", myContent);
 
 		$.ajax({
             method:"POST",
-            url: "http://127.0.0.1:8000/etudiant/ajax/etatdelasituation/",
+            url: "http://127.0.0.1:8000/page/etudiant/ajax/etatdelasituation/",
             dataType: "json",
             //data:'etatdelasituation='+myContent,
             data:myContent,

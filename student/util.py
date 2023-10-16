@@ -125,7 +125,10 @@ class ExtractStudent():
                         existing_student.save()
                         existing_updated_student_list.append(existing_student)
             else:
-                student = Student.objects.create(**student_data)
+                student = Student.objects.update_or_create(
+                                                            fiche=student_data.pop('fiche', None),
+                                                            defaults=student_data  # Use defaults instead of **
+                                                        )
                 newly_created_student_list.append(student)
 
         return newly_created_student_list, existing_updated_student_list
