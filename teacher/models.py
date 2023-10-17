@@ -33,7 +33,7 @@ class RegularTeacher(User):
             super().delete(*args, **kwargs)
 
     def __str__(self):
-        return self.first_name + " " + self.last_name 
+        return self.get_full_name()  
     
     class Meta:
         verbose_name = 'Enseignant Généraliste'
@@ -52,7 +52,7 @@ class SpecialtyTeacher(User):
             super().delete(*args, **kwargs)
 
     def __str__(self):
-        return self.name + " " + self.matière
+        return self.get_full_name() + " " + self.matière
     
     class Meta:
         verbose_name = 'Enseignant Spécialisé'

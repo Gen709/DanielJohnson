@@ -8,61 +8,45 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from django.utils import timezone
 
-from .models import RegularTeacher, SchoolAdmin, SpecialtyTeacher
+from teacher.models import RegularTeacher, SchoolAdmin, SpecialtyTeacher, Professional
 from school.models import Group, Classification
 from datetime import datetime
 
+
 class ExtractTeacher():
-    def __init__(self, request):
-        self.request = request
-        self.file_name = request.FILES['csv_file'] 
-
-    def get_csv_reader(self):
-        reader = []
-        # with open(self.file_name, mode='r', newline='', encoding='utf-8-sig') as file:
-        r = csv.DictReader(self.file_name.read().decode('utf-8-sig').splitlines())
-        for row in r:
-            capitalized_row = {key.upper(): value for key, value in row.items()}
-            print(capitalized_row)
-            reader.append(capitalized_row)       
-        return reader         
+    def __init__(self, file_name):
+        self.filename = file_name
+        self.hashed_password = make_password("General-Vanier")
+              
     
-    def identify_extract(self, reader):
-        teacher_extract_row_list = ['GROUPE', 'NOM', 'LOCAUX', 'MATIERES']
-        if [k for k in reader[0].keys()] == teacher_extract_row_list:
+    def identify_extract(self):
+        # TODO: need to add the email when available
+        reader = self.get_reader()
+        regular_teacher_extract_row_list = ['GROUPE', 'NOM', 'LOCAUX', 'MATIERES']
+        professional_extract_row_list = ['PRENOM NOMFAMILLE', 'LOCAL', 'SPECIALITÉ']
+        specialty_extract_row_list = ["TYPE", "GROUPE", "NOM", "LOCAUX", "SPÉCIALITÉ"]
+        
+        this_extract_row_list = [k for k in reader[0].keys()]
+        
+        if  this_extract_row_list == regular_teacher_extract_row_list:
             return "regular_teacher_extract"
+        elif this_extract_row_list == professional_extract_row_list:
+            return "professional_extract"
+        elif this_extract_row_list == specialty_extract_row_list:
+            return "specialist_extract"
 
-    def get_excel_reader(self):
-        workbook = openpyxl.load_workbook(self.file_name)
-        sheet = workbook.active
-        reader = []
-        header = [cell.value for cell in sheet[1]]
-        print(header)
-        for row in sheet.iter_rows(min_row=2):
-            row_data = {}
-            for idx, cell in enumerate(row):
-                if header[idx]:
-                    row_data[header[idx].upper()] = cell.value
-                else:
-                    row_data[header[idx]] = " "
-            reader.append(row_data)
-            
-        return reader
 
     def get_reader(self):
-        if self.file_name.name.endswith('.csv'):
-            print("************csv reader selected****************************")
-            reader = self.get_csv_reader()
-        elif self.file_name.name.endswith('.xlsx'):
-            reader = self.get_excel_reader()
+        reader = []
+        with open(self.filename, 'r') as csvfile:
+            r = csv.DictReader(csvfile.read().splitlines())
+            for row in r:
+                # cleaned_row = {key: value.replace('\ufe', '') for key, value in row.items()}
+                cleaned_row = {key.replace('\ufeff', ''): value for key, value in row.items()}
+                capitalized_row = {key.upper(): value for key, value in cleaned_row.items()}
+                reader.append(capitalized_row)
         return reader
 
-    def create_group(self):
-        reader = self.get_reader()
-        group_name_list = [teacher_dict["GROUPE"] for teacher_dict in reader if '-' not in teacher_dict["GROUPE"]]
-        updated_group_list = [Group.objects.update_or_create(nom=groupe_name) for groupe_name in group_name_list]
-        return updated_group_list
-    
     def create_or_update_group(self):
         reader = self.get_reader()
         created_or_updated_group_list = []
@@ -81,70 +65,121 @@ class ExtractTeacher():
                         g, created = Group.objects.update_or_create(nom=group_name, 
                                                                     defaults={"classification":classi})
                         created_or_updated_group_list.append((g, created))
-                        
+
         return created_or_updated_group_list
-    
-    def associate_classification_to_group(self):
-        """Classification relates Administrators to cycles, and the second number
-            in a group name relates the group to the cycle
-        """
-        classification = Classification.objects.all()
-        for classi in classification:
-            # print(classi)
-            if len(classi.nom) == 1: # classification de JV
-                for g in Group.objects.all():
-                    if string.ascii_lowercase.index(classi.nom.lower()) == int(g.nom[1]):
-                        # print(classi.nom, g.nom, int(g.nom[1]))
-                        g.classification = classi
-                        g.save()
 
     def create_or_update_regular_teacher(self):
+        #TODO: Utiliser le courriel pour la mise a jour ou la création
         reader = self.get_reader()
-        # TODO: Utiliser le courriel pour la mise a jour ou la création
         operation_list = []
-        plain_text_password = "General-Vanier"
-        hashed_password = make_password(plain_text_password)
-        for regular_teacher_dict in reader:
-            prenom_nomfamille = regular_teacher_dict["NOM"].split()
+        # plain_text_password = "General-Vanier"
+        # hashed_password = make_password(plain_text_password)
+        for row in reader:
+            prenom_nomfamille = row["NOM"].split()
             prenom = prenom_nomfamille[0]
             nom_famille = " ".join(prenom_nomfamille[1:])
             try:
-                g = Group.objects.get(nom=regular_teacher_dict["GROUPE"])
+                g = Group.objects.get(nom=row["GROUPE"])
             except:
                 g = None
             try:
-                courriel = regular_teacher_dict["COURRIEL"]
+                courriel = row["COURRIEL"]
             except:
                 courriel = ""
             # print(prenom_nomfamille, prenom, nom_famille, g)   
             teacher_obj, created = RegularTeacher.objects.update_or_create(username = prenom[:3]+nom_famille[:3],
-                                                                            defaults = {"password": hashed_password, 
+                                                                            defaults = {"password": self.hashed_password, 
                                                                                         "first_name": prenom, 
                                                                                         "last_name": nom_famille, 
                                                                                         "email": courriel, 
                                                                                         "group": g, 
-                                                                                        "matière": regular_teacher_dict["MATIERES"]})
+                                                                                        "matière": row["MATIERES"]})
             operation_list.append((teacher_obj, created))
-            
-        return operation_list     
 
-    def update_regularteacher_data(self, reader):
-        print("*****************Updating data****************")
-        print("r***************** Reader has", len(reader))
-        created_or_updated_regular_group_list = self.create_or_update_group()
-        created_or_updated_regular_teacher_list = self.create_or_update_regular_teacher()
-        return {'created_or_updated_regular_group_list': created_or_updated_regular_group_list,
-                'created_or_updated_regular_teacher_list': created_or_updated_regular_teacher_list}
+        return operation_list
+    
+    def create_or_update_professionals(self):
+        reader = self.get_reader()
+        professional_list = []
+        for row in reader:
+            prenom_nomfamille = row['PRENOM NOMFAMILLE'].split()
+            prenom = prenom_nomfamille[0]
+            nom_famille = " ".join(prenom_nomfamille[1:])
+            local = row['LOCAL' ]
+            speciality = row['SPECIALITÉ']
+            try:
+                courriel = row["COURRIEL"]
+            except:
+                courriel = ""
+
+            pro_dict = {"password": self.hashed_password,
+                        "first_name": prenom,  
+                        "last_name": nom_famille,  
+                        "email": "",  
+                        "local": local,  
+                        "speciality": speciality}
+            a, b = Professional.objects.update_or_create(username = prenom[:3]+nom_famille[:3],
+                                                         defaults = pro_dict)
+            professional_list.append((a, b))
+
+        return professional_list
+    
+    
+    def create_or_update_specialist(self):
+        reader = self.get_reader()
+        # plain_text_password = "General-Vanier"
+        # hashed_password = make_password(plain_text_password)
+        specialist_list = []
+        for row in reader:
+            prenom_nomfamille = row['NOM'].split()
+            prenom = prenom_nomfamille[0]
+            nom_famille = " ".join(prenom_nomfamille[1:])
+            local = row['LOCAUX' ]
+            speciality = row['SPÉCIALITÉ']
+
+            try:
+                courriel = row["COURRIEL"]
+            except:
+                courriel = ""
+
+            speciality_dict = {"password": self.hashed_password, 
+                               "first_name": prenom, 
+                               "last_name": nom_famille, 
+                               "email": courriel, 
+                               "matière": speciality,
+                               "local": local
+                              }
+
+            specialist, created = SpecialtyTeacher.objects.update_or_create(username = prenom[:3]+nom_famille[:3],
+                                                                            defaults = speciality_dict)
+            specialist_list.append((specialist, created))
+            
+        return specialist_list
         
+        
+
+    def update_regularteacher_data(self):
+        reader = self.get_reader()
+        updated_or_created_group_obj_list = self.create_or_update_group()
+        updated_or_created_regular_teacher_obj_list = self.create_or_update_regular_teacher()
+        context = {"updated_or_created_group_obj_list": updated_or_created_group_obj_list, 
+                   "updated_or_created_regular_teacher_obj_list": updated_or_created_regular_teacher_obj_list, 
+                  }
+        
+        return context
+    
+    def update_professional_data(self):
+        return self.create_or_update_professionals()
+    
+    def update_specialist_data(self):
+        return self.create_or_update_specialist()
+    
     
     def update_data(self):
-
         reader = self.get_reader()
-        print(len(reader))
-        if self.identify_extract(reader) == "regular_teacher_extract":
-            print("*****************getting update data****************")
-            self.update_regularteacher_data(reader)
-        elif self.identify_extract(reader) == "specialty_teacher_extract":
-            pass
-        elif self.identify_extract(reader) == "schooladministrator_extract":
-            pass
+        if self.identify_extract() == "regular_teacher_extract":
+            return self.update_regularteacher_data()
+        elif self.identify_extract() == "professional_extract":
+            return self.update_professional_data()
+        elif self.identify_extract() == "specialist_extract":
+            return self.update_specialist_data()
