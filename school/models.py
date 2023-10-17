@@ -7,7 +7,7 @@ class Classification(models.Model):
     nom = models.CharField(max_length=5)
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     def __str__(self):
-        return self.nom + " - Resp: " + str(self.owner)
+        return "Nom: " + self.nom + " - Resp: " + str(self.owner)
     
 class Local(models.Model):
     nom = models.CharField(max_length=15, unique=True)
@@ -26,6 +26,7 @@ class Local(models.Model):
 #     classification = models.ForeignKey(Classification, on_delete=models.SET_NULL)
 
 class Group(models.Model):
+    # TODO: Ajouter établissement le temps venu
     nom = models.CharField(max_length=10, unique=True)
     classification = models.ForeignKey(Classification, on_delete=models.SET_NULL, null=True, blank=True)
 
@@ -34,4 +35,5 @@ class Group(models.Model):
             b = self.classification.nom
         else:
             b="Unknown"
-        return self.nom + ' ' + b
+       
+        return "Nom: " + self.nom + ' Classification: ' + b

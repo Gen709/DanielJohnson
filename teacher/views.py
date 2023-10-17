@@ -8,6 +8,7 @@ from school.models import Group, Classification
 from .forms import CSVUploadForm
 from .util import ExtractTeacher
 
+import csv 
 
 class CustomLoginView(LoginView):
     def form_valid(self, form):
@@ -65,12 +66,22 @@ def upload_teacher_csv(request):
     if request.method == 'POST':
         form = CSVUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            es = ExtractTeacher(request)
-            context = es.update_data()
-            # if len(context["updated_regular_teacher"]) == 0:
-            #     message = "No teacher has been added"
-            # context["message"] = message
-            return render(request, 'teacher/summary_page.html', context)
+            is_empty = is_csv_empty(request.FILES['csv_file'])
+            print("############# IS EMPTY: ", is_empty)
+            if not is_empty:
+                es = ExtractTeacher(request)
+                context = {"data":es.update_data(),
+                           "message": "Success"}
+                return render(request, 'teacher/summary_page.html', context)
+            
+            else:
+                context = {'form': form,
+                        'orphan_groups_qs': Group.objects.filter(classification=None),
+                        'orphan_classifications_qs': Classification.objects.filter(owner=None),
+                         "message": "Could not read the file"}
+            return render(request, 'teacher/upload_csv.html', context)
+            
+            
     else:
         
         orphan_groups = Group.objects.filter(classification=None)
@@ -80,3 +91,14 @@ def upload_teacher_csv(request):
                    'orphan_classifications_qs': Classification.objects.filter(owner=None)
                    }
     return render(request, 'teacher/upload_csv.html', context)
+
+def is_csv_empty(file):
+    try:
+        # Read the CSV file and check if it's empty
+        csv_reader = csv.reader(file.read().decode('utf-8').splitlines())
+        for row in csv_reader:
+            if any(field for field in row if field.strip()):
+                return False  # CSV is not empty
+        return True  # CSV is empty
+    except csv.Error:
+        return True  # Invalid CSV format
