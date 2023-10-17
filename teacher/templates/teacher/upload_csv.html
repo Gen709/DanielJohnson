@@ -2,17 +2,70 @@
 
 {% load bootstrap5 %}
 
-{% block title %}Upload CSV{% endblock %}
+{% block title %}Mise à jour professeurs{% endblock %}
 
 {% block content %}
   <div class="container">
-    <h2>Upload CSV</h2>
+    <div class="row border rounded mt-4 pb-4">
+      <div class="row border bg-primary text-white pt-4 rounded pb-5 mt-3 mx-2">
+        <h6>Misa à jour des employés</h6>
+      </div>
+      
 
-    <form method="post" enctype="multipart/form-data" class="mt-4">
-      {% csrf_token %}
-      {% bootstrap_form form layout="horizontal" %}
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
+      <form method="post" enctype="multipart/form-data" class="mt-4">
+        {% csrf_token %}
+        {% bootstrap_form form layout="horizontal" %}
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+      <div class="row text-muted mt-4 mx-3 px-3">
+        <p>Le fichier pour la mise a jour des professeurs généralistes doit comporter les colonnes suivante:</p>
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <td>Nom</td>
+              <td>Instructions</td>
+            </th>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Groupe</td>
+              <td>
+                <p>le groupe associe les élèves et un professeur, il est également utilisé pour déterminer la classification, à qui est associé une direction</p>
+                <p class="text-warning">Un seul groupe doit apparaire dans la colonne </p>
+                <p>Les groupes qui sont dans l'extraction et qui ne sont pas déjà dans la base de données seront créés. Cependant ils ne seront pas automatiquement associés à une classification. Cette situation est problématique, tout comme les classifications qui n'ont pas de direction associées </p>
+                <p>Liste des groupes sans classification: </p>
+                <ul>
+                  {% if orphan_groups_qs %}
+                    {% for orphan_groups in orphan_groups_qs %}
+                      <li class="text-danger">{{orphan_groups}}</li>
+                    {% endfor %}
+                  {% else %}
+                    <div class="text-success"> Tous les groupes ont une classifiaction</div>
+                  {% endif %}
+                </ul>
+                <p>Liste des classifications sans direction: </p>
+                <ul>
+                  {% if orphan_groups_qs %}
+                    {% for orphan_classifications in orphan_classifications_qs %}
+                      <li class="text-danger">{{orphan_classifications}}</li>
+                    {% endfor %}
+                  {% else %}
+                    <div class="text-success"> Tous les groupes ont une classifiaction</div>
+                  {% endif %}
+                </ul>
+              </td>
+            </tr>
+            <tr><td>Nom</td><td>Prénom Nom, le premier espace vide est utilisé pour déterminer la partie nom et la partie prénom</td></tr>
+            <tr><td>Locaux</td><td>Le local </td></tr>
+            <tr><td>matieres</td><td>Le champs matière doit être mis à Général</td></tr>
+          </tbody>
+        </table>
+        <p>Pour faire une maj individuelle aller dans Admin/Teacher/Enseignants Généralistes</p>
+        <p>Il est important que chacun des groupes dans l'extraction soit associé à une classification</p>
+        
+        <p>Il est important que chacun des groupes dans l'extraction soit associé à une classification</p>
+      </div>
+    </div>
   </div>
 {% endblock %}
 

@@ -11,6 +11,10 @@ class SchoolAdmin(User):
     def get_teacher(self):
         self.classification
 
+    class Meta:
+        verbose_name = 'Administrateur'
+        verbose_name_plural = 'Administrateurs'
+
 class RegularTeacher(User):
     group = models.OneToOneField(Group, on_delete=models.SET_NULL, null=True)
     matière = models.CharField(max_length=30, blank=True, null=True)
@@ -39,6 +43,7 @@ class RegularTeacher(User):
 class SpecialtyTeacher(User):
     all_groups = models.ManyToManyField(Group)
     matière = models.CharField(max_length=30, blank=True, null=True)
+    local =  models.CharField(max_length=30, blank=True, null=True, default=None)
 
     def delete(self, *args, **kwargs):
             # Delete the associated user

@@ -63,6 +63,27 @@ class ExtractTeacher():
         updated_group_list = [Group.objects.update_or_create(nom=groupe_name) for groupe_name in group_name_list]
         return updated_group_list
     
+    def create_or_update_group(self):
+        reader = self.get_reader()
+        created_or_updated_group_list = []
+        classification = Classification.objects.all()
+        # print(classification)
+        group_name_list = [teacher_dict["GROUPE"] for teacher_dict in reader if '-' not in teacher_dict["GROUPE"]]
+        for classi in classification:
+            # print(classi)
+            for group_name in group_name_list:
+                # print(group_name)
+                # print(classi.nom, len(classi.nom))
+                if len(classi.nom) == 1:
+                    # print(string.ascii_lowercase.index(classi.nom.lower()), int(group_name[1])) # classification de GV
+                    if string.ascii_lowercase.index(classi.nom.lower()) == int(group_name[1]):
+                        # print(classi.nom, group_name, int(group_name[1]))
+                        g, created = Group.objects.update_or_create(nom=group_name, 
+                                                                    defaults={"classification":classi})
+                        created_or_updated_group_list.append((g, created))
+                        
+        return created_or_updated_group_list
+    
     def associate_classification_to_group(self):
         """Classification relates Administrators to cycles, and the second number
             in a group name relates the group to the cycle
@@ -77,43 +98,43 @@ class ExtractTeacher():
                         g.classification = classi
                         g.save()
 
-    def create_regular_teacher(self, reader):
+    def create_or_update_regular_teacher(self):
+        reader = self.get_reader()
+        # TODO: Utiliser le courriel pour la mise a jour ou la création
         operation_list = []
         plain_text_password = "General-Vanier"
         hashed_password = make_password(plain_text_password)
         for regular_teacher_dict in reader:
-            # print(plain_text_password)
             prenom_nomfamille = regular_teacher_dict["NOM"].split()
             prenom = prenom_nomfamille[0]
             nom_famille = " ".join(prenom_nomfamille[1:])
             try:
                 g = Group.objects.get(nom=regular_teacher_dict["GROUPE"])
-        
             except:
                 g = None
+            try:
+                courriel = regular_teacher_dict["COURRIEL"]
+            except:
+                courriel = ""
             # print(prenom_nomfamille, prenom, nom_famille, g)   
-            regular_teacher_dict = {"password":hashed_password, 
-                                    "username":prenom[:3]+nom_famille[:3],  
-                                    "first_name":prenom,  
-                                    "last_name":nom_famille,  
-                                    "email":"",  
-                                    "group":g,  
-                                    "matière":regular_teacher_dict["MATIERES"]
-                                   }
-            # print(regular_teacher_dict)
-            RegularTeacher.objects.update_or_create(username=regular_teacher_dict['username'], defaults=regular_teacher_dict)
-            operation_list.append(RegularTeacher)
+            teacher_obj, created = RegularTeacher.objects.update_or_create(username = prenom[:3]+nom_famille[:3],
+                                                                            defaults = {"password": hashed_password, 
+                                                                                        "first_name": prenom, 
+                                                                                        "last_name": nom_famille, 
+                                                                                        "email": courriel, 
+                                                                                        "group": g, 
+                                                                                        "matière": regular_teacher_dict["MATIERES"]})
+            operation_list.append((teacher_obj, created))
             
-        return operation_list      
+        return operation_list     
 
     def update_regularteacher_data(self, reader):
         print("*****************Updating data****************")
-        
         print("r***************** Reader has", len(reader))
-        self.create_group()
-        self.associate_classification_to_group()
-        t = self.create_regular_teacher(reader)
-        print('operation_list', t)
+        created_or_updated_regular_group_list = self.create_or_update_group()
+        created_or_updated_regular_teacher_list = self.create_or_update_regular_teacher()
+        return {'created_or_updated_regular_group_list': created_or_updated_regular_group_list,
+                'created_or_updated_regular_teacher_list': created_or_updated_regular_teacher_list}
         
     
     def update_data(self):

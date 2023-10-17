@@ -3,6 +3,7 @@ from django.views.generic import TemplateView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
+from school.models import Group, Classification
 
 from .forms import CSVUploadForm
 from .util import ExtractTeacher
@@ -28,6 +29,7 @@ class CustomLoginView(LoginView):
         # If user doesn't match any specific type, go to a default dashboard
         return redirect('index')
 
+
 class RegularTeacherProfileView(TemplateView):
     template_name = 'regular_teacher_profile.html'
 
@@ -36,6 +38,7 @@ class RegularTeacherProfileView(TemplateView):
         # Assuming you pass the teacher instance to this view through the context
         context['teacher'] = self.request.user.regularteacher  # Assuming the teacher is associated with the logged-in user
         return context
+
 
 class SpecialtyTeacherProfileView(TemplateView):
     template_name = 'specialty_teacher_profile.html'
@@ -46,6 +49,7 @@ class SpecialtyTeacherProfileView(TemplateView):
         context['teacher'] = self.request.user.specialityteacher  # Assuming the teacher is associated with the logged-in user
         return context
 
+
 class ProfessionalProfileView(TemplateView):
     template_name = 'professional_profile.html'
 
@@ -54,6 +58,7 @@ class ProfessionalProfileView(TemplateView):
         # Assuming you pass the teacher instance to this view through the context
         context['teacher'] = self.request.user.professional  # Assuming the teacher is associated with the logged-in user
         return context
+
 
 @login_required
 def upload_teacher_csv(request):
@@ -67,5 +72,11 @@ def upload_teacher_csv(request):
             # context["message"] = message
             return render(request, 'teacher/summary_page.html', context)
     else:
+        
+        orphan_groups = Group.objects.filter(classification=None)
         form = CSVUploadForm()
-    return render(request, 'teacher/upload_csv.html', {'form': form})
+        context = {'form': form,
+                   'orphan_groups_qs': orphan_groups,
+                   'orphan_classifications_qs': Classification.objects.filter(owner=None)
+                   }
+    return render(request, 'teacher/upload_csv.html', context)
