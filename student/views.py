@@ -292,7 +292,7 @@ def student_detail_view_2(request, pk):
 
             print("******************** Is new instance", is_new_instance, "request method", request.method)
             print("******************** Student", student, "number of records", len(older_record_qs))
-            print("******************** today's records", older_record_qs.filter(student=student, creator=intervenant, creation_date=dt.today().date()))
+            print("******************** today's records for this student by this intervenant", older_record_qs.filter(student=student, creator=intervenant, creation_date=dt.today().date()))
             
             try:
                 etat_instance = EtatDeLaSituation.objects.get(id=post_id)
