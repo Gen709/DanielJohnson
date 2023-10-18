@@ -29,16 +29,16 @@
 	
 	<body>
 		
-			<div class="container d-grid">
+			<div class="container-fluid">
 				<!--- BEGINNING OF NAVBAR -->
 				{% include "nav_bar.html" %}
 				<!--- END OF NAVBAR -->
 								
-				<div class="row mt-4">
+				{% comment %} <div class="row mt-4 d-flex justify-content-center align-items-center border rounded mb-4 pb-5" style="max-width: 800px;"> {% endcomment %}
 				{% block content %}
 
 				{% endblock %}
-				</div>
+				{% comment %} </div> {% endcomment %}
 				<footer class="page-footer text-center w-100">
 				<!-- Copyright -->
 						<!--© 2021 Copyright:Louis-Philippe David-->

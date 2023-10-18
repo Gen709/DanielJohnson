@@ -20,44 +20,70 @@
 
 	<script src="https://cdn.plot.ly/plotly-2.14.0.min.js"></script>
 	<script src="{% static 'student/js/grades.js' %}"> </script>
+
+	<script>
+		function setCardWidth() {
+		  const cards = document.querySelectorAll('.top-card');
+		  let maxWidth = 0;
+	  
+		  cards.forEach(card => {
+			const cardWidth = card.offsetWidth;
+			if (cardWidth > maxWidth) {
+			  maxWidth = cardWidth;
+			}
+		  });
+	  
+		  cards.forEach(card => {
+			card.style.width = `${maxWidth}px`;
+		  });
+		}
+	  
+		// Call the function when the window has finished loading
+		window.onload = setCardWidth;
+		// Call the function when the window is resized (optional)
+		window.onresize = setCardWidth;
+	  </script>
 		
 {% endblock %}
 
 {% block content %}
 
 
-<div class="container-fluid">
+{% comment %} <div class="container"> {% endcomment %}
+	{% comment %} <div class="row  d-flex justify-content-center align-items-center" style="max-width: 800px;"> {% endcomment %}
+	<div class="row  d-flex justify-content-center align-items-center px-4">	
+		<!-- Section fiche étudiant	-->
+		<div class="row">
+			<!-- Fiche Étudiant -->
+			<div class="col col-md-6 mt-5">
+				{% include "student/detail_3_fiche_etudiant.html"%}
+			</div>
+			<!--	intervenants	-->
+			<div class="col col-md-6 mt-5">
+				{% include "student/detail_3_intervenants.html"%}
+			</div>
+		</div>
+		<!-- Section Profile academique	-->
+		<div class="row mt-5">
+			{% include "student/detail_3_profile_academique.html"%}
+		</div>
 
-	<!-- Section fiche étudiant	-->
-	<div class="row border rounded mt-4">
-		<!-- Fiche Étudiant -->
-		{% include "student/detail_3_fiche_etudiant.html"%}
-		<!--	intervenants	-->
-		{% include "student/detail_3_intervenants.html"%}
+		<!-- Section etat de la situation -->
+		<div class="row mt-5">
+			{% include 'student/detail_3_etat_de_la_situation.html' %}
+		</div>
+
+		<!-- Section Problematiques en cours -->
+		<div class="row mt-5 pb-4">
+			{% include 'student/detail_3_problematiques_en_cours.html' %}
+		</div>
+
+		<!-- section problèmes réglés	-->
+		<div class="row mt-4 mb-7">
+			{% include 'student/detail_3_problematiques_terminees.html'%}
+		</div>
 	</div>
-	<!-- Section Profile academique	-->
-	<div class="row border rounded mt-4">
-		{% include "student/detail_3_profile_academique.html"%}
-	</div>
-
-	<!-- Section etat de la situation -->
-	<div class="row border rounded mt-4">
-		{% include 'student/detail_3_etat_de_la_situation.html' %}
-	</div>
-
-	<!-- Section Problematiques en cours -->
-	<div class="row border rounded mt-4 pb-4">
-		{% include 'student/detail_3_problematiques_en_cours.html' %}
-	</div>
-
-	<!-- section problèmes réglés	-->
-	<div class="row border rounded mt-4 mb-7">
-		{% include 'student/detail_3_problematiques_terminees.html'%}
-	</div>
-
-
-
-</div>
+{% comment %} </div> {% endcomment %}
 
 {% include 'student/ajout_problematique.html' %}
 {% include 'student/ajout_action.html' %}

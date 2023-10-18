@@ -7,7 +7,7 @@
 
 <div class="row">
 	{% if user.is_authenticated %}
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
 		<div class="container-fluid">
 
 		    <a class="navbar-brand" href="#">Général-Vanier</a>
@@ -32,6 +32,10 @@
 					{% elif user.professional %}
 						<li class="nav-item">
 							<a class="nav-link" href="{% url 'professional_profile' %}">Mon Profile</a>
+						</li>
+					{% elif user.schooladmin %}
+						<li class="nav-item">
+							<a class="nav-link" href="{% url 'schooladmin_profile' %}">Mon Profile</a>
 						</li>
 					{% endif %}
 				

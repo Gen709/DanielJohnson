@@ -26,13 +26,16 @@ class CustomLoginView(LoginView):
         
         if hasattr(user, 'professional'):
             return redirect('professional_profile')
+        
+        if hasattr(user, 'schooladmin'):
+            return redirect('schooladmin_profile')
 
         # If user doesn't match any specific type, go to a default dashboard
         return redirect('index')
 
 
 class RegularTeacherProfileView(TemplateView):
-    template_name = 'regular_teacher_profile.html'
+    template_name = 'teacher/regular_teacher_profile.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -52,12 +55,21 @@ class SpecialtyTeacherProfileView(TemplateView):
 
 
 class ProfessionalProfileView(TemplateView):
-    template_name = 'professional_profile.html'
+    template_name = 'teacher/professional_profile.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Assuming you pass the teacher instance to this view through the context
-        context['teacher'] = self.request.user.professional  # Assuming the teacher is associated with the logged-in user
+        # context['teacher'] = self.request.user.professional  # Assuming the teacher is associated with the logged-in user
+        return context
+    
+class SchoolAdminProfileView(TemplateView):
+    template_name = 'teacher/admin_profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Assuming you pass the teacher instance to this view through the context
+        context['teacher'] = self.request.user.schooladmin  # Assuming the teacher is associated with the logged-in user
         return context
 
 

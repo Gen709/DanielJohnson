@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from school.models import Group
+from itertools import chain
 
 
 # Create your models here.
@@ -9,7 +10,11 @@ class SchoolAdmin(User):
 
     @property
     def get_teacher(self):
-        self.classification
+        group = [[g.regularteacher for g in classification.group_set.all()] for classification in self.classification_set.all() if classification.group_set.all()]
+
+        group = flattened_list = list(chain(*group))
+
+        return group
 
     class Meta:
         verbose_name = 'Administrateur'

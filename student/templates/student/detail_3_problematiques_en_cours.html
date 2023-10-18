@@ -1,8 +1,10 @@
 <!--  Entete section titre avec boutton -->
-<div class="row mt-2">
+{% comment %} <div class="row mt-2">
 	<div class="row border bg-primary text-white pt-4 rounded pb-5 mb-3 mt-3 mx-2">
 		<h6>Problématiques en cours:</h6>
-	</div>
+	</div> {% endcomment %}
+<div class="card h-100 p-3 shadow">
+	<h4 class="text-center p-3">Problématiques en cours</h4>	
 	<div class="row pb-4 mt-3 mx-2">
 		<div class="col">
 			<button type="button" class="btn btn-sm btn-primary float-end" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -10,139 +12,138 @@
 			</button>
 		</div>
 	</div>
-</div>
-<!-- Accordeon problemes-->
-<div class="accordion" id="accordionProblematiques">
-	{% if student.get_active_problems_query_set %}
 
-		{% for problematique in student.get_active_problems_query_set %}
+	<!-- Accordeon problemes-->
+	<div class="accordion" id="accordionProblematiques">
+		{% if student.get_active_problems_query_set %}
 
-			<div class="accordion-item mb-2">
+			{% for problematique in student.get_active_problems_query_set %}
 
-				<h2 class="accordion-header" id="accordionProblematiques_heading_{{forloop.counter}}">
-					<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#accordionProblematiques_collapse_{{forloop.counter}}" aria-expanded="false" aria-controls="collapse_{{forloop.counter}}">
-						{{ problematique.nom }} | statut: {{ problematique.status }} | inscrit par :  {{ problematique.instigateur.first_name }} {{ problematique.instigateur.last_name }}
-					</button>
-				</h2>
+				<div class="accordion-item mb-2">
 
-				<div id="accordionProblematiques_collapse_{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="accordionProblematiques_heading_{{forloop.counter}}" data-bs-parent="#accordionProblematiques">
-					<div class="accordion-body bg-light ">
+					<h2 class="accordion-header" id="accordionProblematiques_heading_{{forloop.counter}}">
+						<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#accordionProblematiques_collapse_{{forloop.counter}}" aria-expanded="false" aria-controls="collapse_{{forloop.counter}}">
+							{{ problematique.nom }} | statut: {{ problematique.status }} | inscrit par :  {{ problematique.instigateur.first_name }} {{ problematique.instigateur.last_name }}
+						</button>
+					</h2>
 
-						<div class="row">
-							<div class="row mt-3">
-								<div class="col-md-2">
-									<strong>Statut:</strong>
+					<div id="accordionProblematiques_collapse_{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="accordionProblematiques_heading_{{forloop.counter}}" data-bs-parent="#accordionProblematiques">
+						<div class="accordion-body bg-light ">
+
+							<div class="row">
+								<div class="row mt-3">
+									<div class="col-md-2">
+										<strong>Statut:</strong>
+									</div>
+									<div class="col-md-2">
+										<select class="form-select" name="problematique-status" id="select_status_{{ problematique.id }}">
+											{% for status in statusproblematique %}
+												{% if status.nom == problematique.status.nom %}
+													<option value="{{ status.id }}" selected>{{ status.nom }}</option>
+												{% else %}
+													<option value="{{ status.id }}">{{ status.nom }}</option>
+												{% endif %}
+											{% endfor %}
+										</select>
+									</div>
+
 								</div>
-								<div class="col-md-2">
-									<select class="form-select" name="problematique-status" id="select_status_{{ problematique.id }}">
-										{% for status in statusproblematique %}
-											{% if status.nom == problematique.status.nom %}
-												<option value="{{ status.id }}" selected>{{ status.nom }}</option>
-											{% else %}
-												<option value="{{ status.id }}">{{ status.nom }}</option>
-											{% endif %}
-										{% endfor %}
-									</select>
-								</div>
 
-							</div>
-
-							<div class="row mt-3">
-								<div class="col-md-2">
-									<strong>Explications / Détail:</strong>
-								</div>
-								<div class="col">
-									<div class="inline_textarea_problematique bg-body border rounded pt-3 px-4 " id="{{problematique.id}}">
-										{% if problematique.detail %}
-											{{ problematique.detail|safe }}
-										{%else%}
-											<p>Aucune Explication / Détail</p>
-										{%endif%}
+								<div class="row mt-3">
+									<div class="col-md-2">
+										<strong>Explications / Détail:</strong>
+									</div>
+									<div class="col">
+										<div class="inline_textarea_problematique bg-body border rounded pt-3 px-4 " id="{{problematique.id}}">
+											{% if problematique.detail %}
+												{{ problematique.detail|safe }}
+											{%else%}
+												<p>Aucune Explication / Détail</p>
+											{%endif%}
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
 
-						<div class="row mt-3">
-							<div class="col-md-2">
-								<strong>Actions:</strong>
-							</div>
-							<div class="col">
-								{% if problematique.action_set.all %}
-									<div class="accordion" id="accordionAction">
-										{% for x in problematique.action_set.all %}
-											<div class="accordion-item mb-2 mt-2">
+							<div class="row mt-3">
+								<div class="col-md-2">
+									<strong>Actions:</strong>
+								</div>
+								<div class="col">
+									{% if problematique.action_set.all %}
+										<div class="accordion" id="accordionAction">
+											{% for x in problematique.action_set.all %}
+												<div class="accordion-item mb-2 mt-2">
 
-												<h2 class="accordion-header" id="accordionAction_heading_{{forloop.counter}}">
-													<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#accordionAction_collapse_{{forloop.counter}}" aria-expanded="false" aria-controls="accordionAction_collapse_{{forloop.counter}}">
-														{{x.description}} | Attitré par {{x.createur}} à {{x.responsable}}
-													</button>
-												</h2>
-												<!-- -->
-												<div id="accordionAction_collapse_{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="accordionAction_heading_{{forloop.counter}}" data-bs-parent="#accordionAction">
-													<div class="accordion-body bg-light">
+													<h2 class="accordion-header" id="accordionAction_heading_{{forloop.counter}}">
+														<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#accordionAction_collapse_{{forloop.counter}}" aria-expanded="false" aria-controls="accordionAction_collapse_{{forloop.counter}}">
+															{{x.description}} | Attitré par {{x.createur}} à {{x.responsable}}
+														</button>
+													</h2>
+													<!-- -->
+													<div id="accordionAction_collapse_{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="accordionAction_heading_{{forloop.counter}}" data-bs-parent="#accordionAction">
+														<div class="accordion-body bg-light">
 
-														<div class="row mt-2">
 															<div class="row mt-2">
-																<div class="col-md-2">
-																	Statut:
+																<div class="row mt-2">
+																	<div class="col-md-2">
+																		Statut:
+																	</div>
+																	<div class="col-md-4">
+																		<select class="form-select action-status-select-js" name="action-status-select" id="select_status_{{ x.id }}">
+																			{% for status in statusaction %}
+																				{% if status.nom == x.status.nom %}
+																					<option value="{{ status.id }}" selected>{{ status.nom }}</option>
+																				{% else %}
+																					<option value="{{ status.id }}">{{ status.nom }}</option>
+																				{% endif %}
+																			{% endfor %}
+																		</select>
+																	</div>
 																</div>
-																<div class="col-md-4">
-																	<select class="form-select action-status-select-js" name="action-status-select" id="select_status_{{ x.id }}">
-																		{% for status in statusaction %}
-																			{% if status.nom == x.status.nom %}
-																				<option value="{{ status.id }}" selected>{{ status.nom }}</option>
+																<div class="row mt-2">
+																	<div class="col-md-2">
+																		Detail:
+																	</div>
+																	<div class="col">
+																		<div class="inline_textarea_action_detail bg-body border rounded pt-3 px-4" id="action_detail_{{x.id}}">
+																			{% if x.detail %}
+																				{{ x.detail|safe }}
 																			{% else %}
-																				<option value="{{ status.id }}">{{ status.nom }}</option>
+																				<p>Aucun détail</p>
 																			{% endif %}
-																		{% endfor %}
-																	</select>
-																</div>
-															</div>
-															<div class="row mt-2">
-																<div class="col-md-2">
-																	Detail:
-																</div>
-																<div class="col">
-																	<div class="inline_textarea_action_detail bg-body border rounded pt-3 px-4" id="action_detail_{{x.id}}">
-																		{% if x.detail %}
-																			{{ x.detail|safe }}
-																		{% else %}
-																			<p>Aucun détail</p>
-																		{% endif %}
+																		</div>
 																	</div>
 																</div>
 															</div>
+
 														</div>
-
 													</div>
-												</div>
 
-											</div>
-										{% endfor %}
-									</div>
-								{% else %}
-									Aucune action n'a été enregistrée
-								{% endif %}
-								<div class="row float-right">
-									<div class="col-md-4 sm-12 float-right">
-										<button type="button" class="btn btn-link open-action" data-id="{{problematique.id}}" data-bs-toggle="modal" data-bs-target="#Modalaction">
-											+ Ajout action
-										</button>
+												</div>
+											{% endfor %}
+										</div>
+									{% else %}
+										Aucune action n'a été enregistrée
+									{% endif %}
+									<div class="row float-right">
+										<div class="col-md-4 sm-12 float-right">
+											<button type="button" class="btn btn-link open-action" data-id="{{problematique.id}}" data-bs-toggle="modal" data-bs-target="#Modalaction">
+												+ Ajout action
+											</button>
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
+
 				</div>
-
+			{% endfor %}
+		{% else %}
+			<div class="bg-body border rounded pt-3 px-4 mt-3 mb-3">
+					<p>Aucune problématique en cours pour {{student.prenom}} {{student.nom}} </p>
 			</div>
-		{% endfor %}
-	{% else %}
-		<div class="bg-body border rounded pt-3 px-4 mt-3 mb-3">
-
-				<p>Aucune problématique en cours pour {{student.prenom}} {{student.nom}} </p>
-
-		</div>
-	{% endif %}
+		{% endif %}
+	</div>
 </div>
