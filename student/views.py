@@ -249,6 +249,8 @@ def student_detail_view_2(request, pk):
 
         older_record_qs = EtatDeLaSituation.objects.filter(student=student)
 
+        etat_instance = None
+
         try:
             EtatDeLaSituation.objects.latest('id')
             latest_object = EtatDeLaSituation.objects.latest('id')
@@ -292,8 +294,12 @@ def student_detail_view_2(request, pk):
             print("******************** Student", student, "number of records", len(older_record_qs))
             print("******************** today's records", older_record_qs.filter(student=student, creator=intervenant, creation_date=dt.today().date()))
             
-            etat_instance = EtatDeLaSituation.objects.get(id=post_id)
-            
+            try:
+                etat_instance = EtatDeLaSituation.objects.get(id=post_id)
+                is_new_instance = False
+            except:
+                pass
+
             if not is_new_instance:
                 # It's an existing instance
                 # Perform actions for an existing instance
