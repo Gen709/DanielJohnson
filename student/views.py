@@ -2,16 +2,19 @@ from django.shortcuts import render, redirect
 from django.db.models import Count, Q
 from urllib.parse import unquote
 from django.http.response import JsonResponse, HttpResponse
-from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 
+from django.core.mail import send_mail, EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+
 from .models import Student, StatusAction, Problematique, StatusProblematique, Action, ActionSuggestion, CodeEtudiant, Grades, EtatDeLaSituation
 from problematiques.models import Item
-from school.models import Classification
+from school.models import Group
 from teacher.models import Professional, RegularTeacher
 from .forms import CSVUploadForm, EtatDeLaSituationForm
 from .util import ExtractStudent
@@ -352,7 +355,6 @@ def student_detail_view_2(request, pk):
             return render(request, 'student/detail_3.html', context)
 
 
-
 @login_required
 def student_detail_view(request, pk):
     # a revoir
@@ -437,10 +439,16 @@ def student_action_problematique_insert_view(request):
 
 @login_required
 def comitecliniquestudentlistview(request):
+    # student_comite_clinique_dict = {
+    #     classification: [s for s in Student.objects.filter(groupe_repere__classification=classification).filter(comite_clinique=True)]
+    #     for classification in
+    #     {c for c in Classification.objects.filter(group__student__comite_clinique=True)}
+    # }
+
     student_comite_clinique_dict = {
-        classification: [s for s in Student.objects.filter(groupe_repere__classification=classification).filter(comite_clinique=True)]
-        for classification in
-        {c for c in Classification.objects.filter(group__student__comite_clinique=True)}
+        groupe: [s for s in Student.objects.filter(groupe_repere=groupe).filter(comite_clinique=True).order_by('nom')]
+        for groupe in
+        {g for g in Group.objects.filter(student__comite_clinique=True).order_by('nom')}
     }
 
     context = {'student_comite_clinique_dict': student_comite_clinique_dict}
@@ -501,11 +509,11 @@ def download_excel_data(request, user_id=None):
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename="Comité_Clinique_Daniel_Johnson_' + dt.now().strftime(
         "%Y-%m-%d %H:%M:%S") + ".xlsx"
-
+    # cell.alignment = Alignment(vertical='center')
     wb = Workbook()
     # small text
-    v_centerAlignment = Alignment(horizontal='left', 
-                                  vertical='top', 
+    v_centerAlignment = Alignment(horizontal='center', 
+                                  vertical='center', 
                                   text_rotation=0, 
                                   wrap_text=False, 
                                   shrink_to_fit=False, 
@@ -565,6 +573,12 @@ def download_excel_data(request, user_id=None):
 
     ws1 = wb.active
 
+    column_width_list = [('H', 45), ('M', 45)]
+
+    for column_letter, width in column_width_list:
+        ws1.column_dimensions[column_letter].width = width
+
+
     ws1.title = "Comité Clinique"
     ws1['A1'] = "Étudiant"
     ws1['A1'].style = bigTitleStyle
@@ -619,7 +633,7 @@ def download_excel_data(request, user_id=None):
 
    
 
-    for student in Student.objects.filter(comite_clinique=True).order_by('classification', 'nom'):
+    for student in Student.objects.filter(comite_clinique=True).order_by('groupe_repere', 'nom'):
         if student.problematique_set.all():
             for problematique in student.problematique_set.all():
                 if problematique.action_set.all():
@@ -630,21 +644,22 @@ def download_excel_data(request, user_id=None):
                         ws1['B' + str(i)].alignment = v_centerAlignment
                         ws1['C' + str(i)] = student.prenom
                         ws1['C' + str(i)].alignment = v_centerAlignment
-                        ws1['D' + str(i)] = student.groupe_repere
+                        ws1['D' + str(i)] = student.groupe_repere.nom
                         ws1['D' + str(i)].alignment = v_centerAlignment
-                        ws1['E' + str(i)] = student.classification.nom
+                        ws1['E' + str(i)] = student.groupe_repere.classification.nom
                         ws1['E' + str(i)].alignment = v_centerAlignment
                         ws1['F' + str(i)] = student.comite_clinique
                         ws1['F' + str(i)].alignment = v_centerAlignment
                         ws1['g' + str(i)] = student.plan_intervention
                         ws1['g' + str(i)].alignment = v_centerAlignment
-                        ws1['h' + str(i)] = cleanhtml(student.etat_situation)
+                        etat_de_la_situation_str = " ".join([x.text.replace("</p>", "\n") for x in student.etatdelasituation_set.all()])
+                        ws1['h' + str(i)] = cleanhtml(etat_de_la_situation_str) 
                         ws1['h' + str(i)].alignment = v_centerAlignment_large
-                        ws1['i' + str(i)] = student.classification.nom # s..group.classification.nom
+                        ws1['i' + str(i)] = student.groupe_repere.classification.nom # s..group.classification.nom
                         ws1['i' + str(i)].alignment = v_centerAlignment
 
                         ws1['j' + str(i)] = problematique.nom.nom
-                        ws1['j' + str(i)].alignment = v_centerAlignment_large
+                        ws1['j' + str(i)].alignment = v_centerAlignment
                         ws1['k' + str(i)] = problematique.status.nom
                         ws1['k' + str(i)].alignment = v_centerAlignment
                         ws1['l' + str(i)] = problematique.instigateur.first_name
@@ -670,21 +685,23 @@ def download_excel_data(request, user_id=None):
                     ws1['B' + str(i)].alignment = v_centerAlignment
                     ws1['C' + str(i)] = student.prenom
                     ws1['C' + str(i)].alignment = v_centerAlignment
-                    ws1['D' + str(i)] = student.groupe_repere
+                    ws1['D' + str(i)] = student.groupe_repere.nom
                     ws1['D' + str(i)].alignment = v_centerAlignment
-                    ws1['E' + str(i)] = student.classification.nom # s.group.classification.nom
+                    ws1['E' + str(i)] = student.groupe_repere.classification.nom # s.group.classification.nom
                     ws1['E' + str(i)].alignment = v_centerAlignment
                     ws1['F' + str(i)] = student.comite_clinique
                     ws1['F' + str(i)].alignment = v_centerAlignment
                     ws1['g' + str(i)] = student.plan_intervention
                     ws1['g' + str(i)].alignment = v_centerAlignment
-                    ws1['h' + str(i)] = cleanhtml(student.etat_situation)
+                    etat_de_la_situation_str = " ".join([x.text.replace("</p>", "\n") for x in student.etatdelasituation_set.all()])
+                    ws1['h' + str(i)] = cleanhtml(etat_de_la_situation_str) 
+                    # ws1['h' + str(i)] = cleanhtml(student.etat_situation)
                     ws1['h' + str(i)].alignment = v_centerAlignment_large
-                    ws1['i' + str(i)] = student.classification.nom # s.group.classification.nom
+                    ws1['i' + str(i)] = student.groupe_repere.classification.nom # s.group.classification.nom
                     ws1['i' + str(i)].alignment = v_centerAlignment
 
                     ws1['j' + str(i)] = problematique.nom.nom
-                    ws1['j' + str(i)].alignment = v_centerAlignment_large
+                    ws1['j' + str(i)].alignment = v_centerAlignment
                     ws1['k' + str(i)] = problematique.status.nom
                     ws1['k' + str(i)].alignment = v_centerAlignment
                     ws1['l' + str(i)] = problematique.instigateur.first_name
@@ -700,17 +717,19 @@ def download_excel_data(request, user_id=None):
             ws1['B' + str(i)].alignment = v_centerAlignment
             ws1['C' + str(i)] = student.prenom
             ws1['C' + str(i)].alignment = v_centerAlignment
-            ws1['D' + str(i)] = student.groupe_repere
+            ws1['D' + str(i)] = student.groupe_repere.nom
             ws1['D' + str(i)].alignment = v_centerAlignment
-            ws1['E' + str(i)] = student.classification.nom # s.group.classification.nom
+            ws1['E' + str(i)] = student.groupe_repere.classification.nom # s.group.classification.nom
             ws1['E' + str(i)].alignment = v_centerAlignment
             ws1['F' + str(i)] = student.comite_clinique
             ws1['F' + str(i)].alignment = v_centerAlignment
             ws1['g' + str(i)] = student.plan_intervention
             ws1['g' + str(i)].alignment = v_centerAlignment
-            ws1['h' + str(i)] = cleanhtml(student.etat_situation)
+            etat_de_la_situation_str = " ".join([x.text.replace("</p>", "\n") for x in student.etatdelasituation_set.all()])
+            ws1['h' + str(i)] = cleanhtml(etat_de_la_situation_str) 
+            # ws1['h' + str(i)] = cleanhtml(student.etat_situation)
             ws1['h' + str(i)].alignment = v_centerAlignment_large
-            ws1['i' + str(i)] = student.classification.nom # s.group.classification.nom
+            ws1['i' + str(i)] = student.groupe_repere.classification.nom # s.group.classification.nom
             ws1['i' + str(i)].alignment = v_centerAlignment
             i += 1
 
@@ -732,13 +751,26 @@ def download_excel_data(request, user_id=None):
     fit_col_width(ws1)
 
     ws1.auto_filter.ref = "A2:R"+str(i)
+    import io
 
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    # response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    # response['Content-Disposition'] = 'attachment; filename=Comité_Clinique_Daniel_Johnson_' + dt.now().strftime(
+    #     "%Y-%m-%d %H:%M:%S")+'.xlsx'
+    # wb.save(filename=response)
+
+    # Save the workbook to an in-memory binary stream
+    output = io.BytesIO()
+    wb.save(output)
+    output.seek(0)
+
+    # Create the HttpResponse object with the appropriate content type and headers
+    response = HttpResponse(output, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename=Comité_Clinique_Daniel_Johnson_' + dt.now().strftime(
-        "%Y-%m-%d %H:%M:%S")+'.xlsx'
-    wb.save(filename=response)
-    return response
+        "%Y-%m-%d %H:%M:%S") + '.xlsx'
 
+    # Return the response
+    return response
+    
 
 @login_required
 def upload_csv(request):
@@ -777,3 +809,31 @@ def review_changes(request):
 
     else:
         return HttpResponse("GET request to the review_changes page is not supported.")
+
+
+def send_email(request):
+    # retrieve the etat de la situation that changed whitin a certain time frame:
+
+    # Retrieve mailing list (you would replace this with your own logic to fetch the mailing list)
+    recipients = ['recipient1@example.com', 'recipient2@example.com']
+
+    # Retrieve content (you would replace this with your own logic to fetch content)
+    email_content = 'This is the email content.'
+
+    # Generate the email content
+    email_subject = 'Your Subject Here'
+    email_from = 'your-email@example.com'
+
+    # Create the email message using a template (optional)
+    html_content = render_to_string('student/comite_clinique_email_update.html', {'content': email_content})
+    text_content = strip_tags(html_content)
+
+    # Create the email message
+    email = EmailMultiAlternatives(email_subject, text_content, email_from, recipients)
+    # email = EmailMessage(email_subject, text_content, email_from, recipients)
+    email.attach_alternative(html_content, "text/html")
+
+    # Send the email
+    email.send()
+
+    return render(request, 'student/comite_clinique_email_update.html')

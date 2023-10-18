@@ -23,6 +23,8 @@ urlpatterns = [
     path('comite_clinique/list', views.comitecliniquestudentlistview, name='comite-clinique-list'),
     path('comite_clinique/data/excel_download', views.download_excel_data, name='comite-clinique-excel-download-data'),
 
+    path('comite_clinique/data/send_mail', views.send_email, name='send-update-email'),
+
 
     path('evaluation/list', views.eleve_evaluation_list, name='evaluation-list'),
     path('problematiques/list', views.eleve_problematique_list_view, name='problematique-list'),
@@ -33,5 +35,5 @@ urlpatterns = [
     path('review_changes/', views.review_changes, name='review_changes'),
     path('summary/', views.upload_summary, name='upload_summary'),
 
-    path('etat/<int:id>', views.test_eta_de_la_situation, name='test_etat'),
+    # path('etat/<int:id>', views.test_eta_de_la_situation, name='test_etat'),
 ]

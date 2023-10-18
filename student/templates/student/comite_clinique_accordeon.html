@@ -7,128 +7,150 @@
 {% endblock %}
 
 {% block content %}
-	<div class="row">
-		<div class="row text-muted mb-2">
-			<h6> Comité Clinique </h6>
-		</div>
-		{% for classification, student_list in student_comite_clinique_dict.items %}
-			<div class="row border bg-gradient-primary text-muted pt-4 rounded pb-5 mt-3 mx-2">
-				<!-- Nom de la classification -->
-				<div class="col mb-1 text-muted border-bottom border-muted">
-					<h6>Classification : {{ classification.nom }}<br> 
-						Responsable : {{ classification.owner }} 
-					</h6>
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="card h-100 p-3 shadow mt-5" style="max-width: 900px;">
+				<div class="card-title">
+					<h4 class="text-center p-3 ">Comité Clinique</h4>
 				</div>
-				<!-- Début acordéon -->
-				<div class="accordion " id="accordion{{ n.nom }}">
-					{% for s in student_list %}
-						<!--  Accordeon Étudiant-->
-						<div class="accordion-item mt-3">
-							<h2 class="accordion-header" id="heading{{s.fiche}}">
-							<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{s.fiche}}" aria-expanded="true" aria-controls="collapse{{s.fiche}}">
-								{{s.nom}} {{s.prenom}} - {{s.code}}
-							</button>
-							</h2>
 
-							<div id="collapse{{s.fiche}}" class="accordion-collapse collapse" aria-labelledby="heading{{s.fiche}}" data-bs-parent="#accordion{{ n.nom }}">
-								<div class="accordion-body mx-4 mb-4">
-							
-									<a href="{{s.get_absolute_url}}"> Voir profile </a>
+				<div class="card-body">
 
-									<!--  section Etat de la situation -->
-									<div class="row border bg-light rounded mt-3 pt-2">
-										<!--  section titre -->
-										<div class="row mt-2 justify-content-center">
-											<div class="col-11 bg-primary text-white rounded pt-2">
-												<h5>État de la situation:</h5>
-											</div>
-										</div>
-										<!-- section accordéon -->
-										<div class="row mt-2 mb-2 justify-content-center"> 
-											<div class="col-11">
-												<form>
-													{% csrf_token %}<!-- min height ? -->
-													<div class="inline_textarea ms-3" id="inline_textarea">
-														{% if s.etat_situation %}
-															{{s.etat_situation|safe}}
-														{% else %}
-															<p>Rien d'inscrit pour {{s.nom}}, {{s.prenom}}</p>
-														{% endif %}
-													</div>
-													<input type="hidden" value="{{s.id}}" id="student_id">
-												</form>
-											</div>
-										</div>
-									</div>
+					<div class="row justify-content-end ">
+						<div class="col col-md-3">
+							<a href={% url 'comite-clinique-excel-download-data' %} class="btn btn-sm btn-primary col-sm-3 float-end w-100 d-block" role="button">
+								Créé Fichier Excel
+							</a>
+						</div>
+					</div>
 
-									<!-- Section Problemes -->
-									<div class="row border rounded bg-light mt-3 pt-2">
-										<!--  section titre-->
-										<div class="row mt-2 justify-content-center">
-											<div class="col-11 bg-primary text-white rounded pt-2"> 
-												<h5>Problématiques:</h5>
-											</div>
-										</div>
-										<!-- section accordéon des problemes-->
-										<div class="row mb-2 justify-content-center">
-											<div class="col-11">
-												<div class="accordion" id="accordionEtatDeLaSituation">
-													{% if s.problematique_set.all %}
-														{% for problematique in s.problematique_set.all %}
-															<div class="accordion-item mb-2 mt-3">
-																<h2 class="accordion-header" id="heading_{{forloop.counter}}">
-																	<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{forloop.counter}}" aria-expanded="false" aria-controls="collapse_{{forloop.counter}}">
-																		{{ problematique.nom }} | statut: {{ problematique.status }} | inscrit par :  {{ problematique.instigateur.first_name }} {{ problematique.instigateur.last_name }}
-																	</button>
-																</h2>
-																<div id="collapse_{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="heading_{{forloop.counter}}" data-bs-parent="#accordionEtatDeLaSituation">
-																	<div class="accordion-body">
-																	
-																		<strong>Explications / Détail:</strong>
-																			{% if problematique.detail %}
-																				<p>{{ problematique.detail }}</p>
-																			{%else%}
-																				<p>Aucune Explication / Détail</p>
-																			{%endif%}
-																		<strong>Actions:</strong>
-																		<ul class="list-group list-group-flush">
-																		{% if problematique.action_set.all %}
-																			{%for action in problematique.action_set.all %}
-																				<li class="list-group-item">
-																					{{action.description}} | {{action.responsable}} | {{action.status}}
-																				</li>
-																			{% endfor %}
-																		{% else %}
-																			<li class="list-group-item">Aucune Action n'a été planifiée </li>
-																		{% endif %}
-																		</ul>
-																		<a href="#">+ ajouter une action</a>
-																	</div>
-																</div>
-															</div>
-														{% endfor %}
-													{% else %}
-														<div class="row ms-3 mt-2">
-															Aucune problématique n'est associée avec {{s.nom}}, {{s.prenom}}
+					<div class="row mt-1 pb-4 justify-content-end border-bottom">
+						<div class="col col-md-3">
+							<a href="{% url 'send-update-email' %}" class="btn btn-sm btn-primary col-sm-3 float-end w-100 d-block" role="button" target="_blank">
+								Envoyer m-a-j
+							</a>
+						</div>
+					</div>
+				
+				
+				
+					{% for groupe, student_list in student_comite_clinique_dict.items %}
+						<div class="row text-muted pt-2 rounded mt-3 mx-2">
+							<!-- Nom de la classification -->
+							<div class="col mb-1 text-muted border-bottom border-muted">
+								<h6>Groupe : {{ groupe.nom }}<br> 
+									Responsable : {{ groupe.classification.owner }} 
+								</h6>
+							</div>
+							<!-- Début acordéon -->
+							<div class="accordion " id="accordion{{ n.nom }}">
+								{% for s in student_list %}
+									<!--  Accordeon Étudiant-->
+									<div class="accordion-item mt-3">
+										<h2 class="accordion-header" id="heading{{s.fiche}}">
+										<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{s.fiche}}" aria-expanded="true" aria-controls="collapse{{s.fiche}}">
+											{{s.nom}} {{s.prenom}} {% if s.code %} - {{s.code}} {% endif %}
+										</button>
+										</h2>
+
+										<div id="collapse{{s.fiche}}" class="accordion-collapse collapse" aria-labelledby="heading{{s.fiche}}" data-bs-parent="#accordion{{ n.nom }}">
+											<div class="accordion-body mx-4 mb-4">
+										
+												<a href="{{s.get_absolute_url}}"> Voir profile </a>
+
+												<!--  section Etat de la situation -->
+												<div class="row border bg-light rounded mt-3 pt-2">
+													<!--  section titre -->
+													<div class="row mt-2 justify-content-center">
+														<div class="col-11 bg-primary text-white rounded pt-2">
+															<h5>État de la situation:</h5>
 														</div>
-													{%endif%}
+													</div>
+													<!-- section accordéon -->
+													<div class="row mt-2 mb-2 justify-content-center"> 
+														<div class="col-11">
+															<form>
+																{% csrf_token %}<!-- min height ? -->
+																<div class="inline_textarea ms-3" id="inline_textarea">
+																	{% if s.etat_situation %}
+																		{{s.etat_situation|safe}}
+																	{% else %}
+																		<p>Rien d'inscrit pour {{s.nom}}, {{s.prenom}}</p>
+																	{% endif %}
+																</div>
+																<input type="hidden" value="{{s.id}}" id="student_id">
+															</form>
+														</div>
+													</div>
+												</div>
+
+												<!-- Section Problemes -->
+												<div class="row border rounded bg-light mt-3 pt-2">
+													<!--  section titre-->
+													<div class="row mt-2 justify-content-center">
+														<div class="col-11 bg-primary text-white rounded pt-2"> 
+															<h5>Problématiques:</h5>
+														</div>
+													</div>
+													<!-- section accordéon des problemes-->
+													<div class="row mb-2 justify-content-center">
+														<div class="col-11">
+															<div class="accordion" id="accordionEtatDeLaSituation">
+																{% if s.problematique_set.all %}
+																	{% for problematique in s.problematique_set.all %}
+																		<div class="accordion-item mb-2 mt-3">
+																			<h2 class="accordion-header" id="heading_{{forloop.counter}}">
+																				<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{forloop.counter}}" aria-expanded="false" aria-controls="collapse_{{forloop.counter}}">
+																					{{ problematique.nom }} | statut: {{ problematique.status }} | inscrit par :  {{ problematique.instigateur.first_name }} {{ problematique.instigateur.last_name }}
+																				</button>
+																			</h2>
+																			<div id="collapse_{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="heading_{{forloop.counter}}" data-bs-parent="#accordionEtatDeLaSituation">
+																				<div class="accordion-body">
+																				
+																					<strong>Explications / Détail:</strong>
+																						{% if problematique.detail %}
+																							<p>{{ problematique.detail|safe }}</p>
+																						{%else%}
+																							<p>Aucune Explication / Détail</p>
+																						{%endif%}
+																					<strong>Actions:</strong>
+																					<ul class="list-group list-group-flush">
+																						{% if problematique.action_set.all %}
+																							{%for action in problematique.action_set.all %}
+																								<li class="list-group-item">
+																									{{action.description}} | {{action.responsable}} | {{action.status}}
+																								</li>
+																							{% endfor %}
+																						{% else %}
+																							<li class="list-group-item">Aucune Action n'a été planifiée </li>
+																						{% endif %}
+																					</ul>
+																					{% comment %} <a href="#">+ ajouter une action</a> {% endcomment %}
+																				</div>
+																			</div>
+																		</div>
+																	{% endfor %}
+																{% else %}
+																	<div class="row ms-3 mt-2">
+																		Aucune problématique n'est associée avec {{s.nom}}, {{s.prenom}}
+																	</div>
+																{% endif %}
+															</div>
+														</div>
+													</div>
 												</div>
 											</div>
 										</div>
-									
-									
-									{% comment %} </div>   {% endcomment %}
-								</div>
+									</div>	    
+								{% comment %} </div>	 {% endcomment %}
+								{% endfor %}
 							</div>
 						</div>
-					<!--  si l etudiant est dans le groupe -->			    
-					</div>	
-				{% endfor %}
+					{% endfor %}
+				</div>
+
 			</div>
-		
-		<!-- fin de la boite pour le niveau  -->
 		</div>
-		{% endfor %}
 	</div>
 	
 	
