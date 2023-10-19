@@ -7,7 +7,7 @@
 			{% csrf_token %}
 			<input type="hidden" name="student_id" value={{ student.id }}></input>
 			{% if is_new_instance %}
-				<div class="inline_textarea_etat_situation ms-3 border rounded pt-3 px-4" id="{{ next_id }}" data-creationdate="{% now "b. d, Y" %}"></div>
+				<div class="inline_textarea_etat_situation ms-3 border rounded pt-3 px-4" id="{{ next_id }}" data-creationdate="{% now "b. d, Y" %}"  style="min-height: 150px;"></div>
 			{% endif %}
 
 			{% for record in older_record_qs %}
