@@ -71,7 +71,7 @@ class ExtractStudent():
                 # Handle GROUPE REPERE field
                 group_repere_name = row.get('GROUPE', '')
                 if group_repere_name:
-                    groupe_repere, _ = Group.objects.get_or_create(nom=group_repere_name)
+                    groupe_repere = Group.objects.get(nom=group_repere_name)
                 else:
                     groupe_repere = None
                                                   
