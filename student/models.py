@@ -142,9 +142,14 @@ class Student(models.Model):
     
     @property
     def responsible_personnel(self):
-        directions = self.groupe_repere.classification.owner.get_full_name()
-        regular_teachers = self.groupe_repere.regularteacher
-        professional_list = self.get_professionals_from_actions
+        try:
+            directions = self.groupe_repere.classification.owner.get_full_name()
+            regular_teachers = self.groupe_repere.regularteacher
+            professional_list = self.get_professionals_from_actions
+        except:
+            directions = []
+            regular_teachers = []
+            professional_list = []
        
 
         return {
@@ -159,7 +164,8 @@ class Student(models.Model):
 
     # def __str__(self):
     #     return self.nom + " - " + self.prenom + " gr." + self.groupe_repere.nom + " ( Comité Clinique: " + str(self.comite_clinique) + " - PI: " + str(self.plan_intervention) + ")"
-    
+
+
 class EtatDeLaSituation(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     text = models.TextField()
