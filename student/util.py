@@ -68,8 +68,7 @@ class ExtractStudent():
                 group_repere_name = row.get('GROUPE', None)
                 if group_repere_name:
                     groupe_repere, create = Group.objects.get_or_create(nom=group_repere_name)
-                if nom == "Ben Younes":
-                    print("-----------", prenom, nom, groupe_repere)                                 
+                                              
                 # Map CSV fields to model fields
                 student_data = {
                     # "id": "",
@@ -143,7 +142,7 @@ class ExtractStudent():
         reader = self.get_reader()
         gv_all_new_student_list = self.get_student_data_dict_list(reader)
         for student in gv_all_new_student_list:
-            fiche = int(student.get('fiche'))
+            fiche = student.get('fiche') # la fiche est une chaine de charateres
             # print("+++++++++++++++++++", student.get('groupe_repere'))
             groupe = student.get('groupe_repere')
             # student_obj = Student.objects.get(fiche=fiche)
@@ -152,6 +151,8 @@ class ExtractStudent():
                 student_obj = Student.objects.get(fiche=fiche)
                 student_obj.groupe_repere = groupe
                 student_obj.save()
+                if student_obj.nom == "Ben Younes":
+                    print("-----------Fuck Yea", student_obj.prenom, student_obj.nom, student_obj.groupe_repere)   
                 # print(student_obj)
             except:
                 print("Does not exists")
