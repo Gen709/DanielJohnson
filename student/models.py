@@ -36,7 +36,6 @@ def get_staff_subclass_from_user_id(user_id):
 
     return staff
 
-# from .util import get_staff_subclass_from_user_id
 
 def get_first_name(self):
     return self.first_name + " " + self.last_name
@@ -162,8 +161,8 @@ class Student(models.Model):
     class Meta:
         ordering = ['nom', 'prenom']
 
-    # def __str__(self):
-    #     return self.nom + " - " + self.prenom + " gr." + self.groupe_repere.nom + " ( Comité Clinique: " + str(self.comite_clinique) + " - PI: " + str(self.plan_intervention) + ")"
+    def __str__(self):
+        return self.nom + " - " + self.prenom + " gr." + self.groupe_repere.nom if self.groupe_repere else "No group" + " ( Comité Clinique: " + str(self.comite_clinique) + " - PI: " + str(self.plan_intervention) + ")"
 
 
 class EtatDeLaSituation(models.Model):
