@@ -655,7 +655,7 @@ def download_excel_data(request, user_id=None):
                         etat_de_la_situation_str = " ".join([x.text.replace("</p>", "\n") for x in student.etatdelasituation_set.all()])
                         ws1['h' + str(i)] = cleanhtml(etat_de_la_situation_str) 
                         ws1['h' + str(i)].alignment = v_centerAlignment_large
-                        ws1['i' + str(i)] = student.groupe_repere.classification.nom # s..group.classification.nom
+                        ws1['i' + str(i)] = student.groupe_repere.classification.nom if student.groupe_repere else None
                         ws1['i' + str(i)].alignment = v_centerAlignment
 
                         ws1['j' + str(i)] = problematique.nom.nom
