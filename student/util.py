@@ -89,6 +89,10 @@ class ExtractStudent():
                     "date_created": timezone.now(),
                     "date_is_student_changed": None,
                 }
+                if student_data.get(nom) == "Ben Younes":
+                    print("$$$$$$$$$$$$$$$$$$$$$$ fucking groupe:", groupe_repere)
+                if student_data.get(nom) == "Ben Younes":
+                    print("$$$$$$$$$$$$$$$$$$$$$ Fuck Yea", student_data.get("groupe_repere"))
                 # print(student_data)
                 all_student_data_dict_list.append(student_data)
 
@@ -145,8 +149,7 @@ class ExtractStudent():
             fiche = student.get('fiche') # la fiche est une chaine de charateres
             # print("+++++++++++++++++++", student.get('groupe_repere'))
             groupe = student.get('groupe_repere')
-            # student_obj = Student.objects.get(fiche=fiche)
-            # student_obj.groupe_repere = groupe
+            
             try:
                 student_obj = Student.objects.get(fiche=fiche)
                 if student_obj.nom == "Ben Younes":
