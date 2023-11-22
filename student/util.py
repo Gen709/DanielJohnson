@@ -68,6 +68,11 @@ class ExtractStudent():
                 group_repere_name = row.get('GROUPE', None)
                 if group_repere_name:
                     groupe_repere, create = Group.objects.get_or_create(nom=group_repere_name)
+
+                if nom == "Ben Younes":
+                    print("$$$$$$$$$$$$$$$$$$$$$$ before dict:", groupe_repere)
+                if nom == "Ben Younes":
+                    print("$$$$$$$$$$$$$$$$$$$$$ before dict", student_data.get("groupe_repere"))
                                               
                 # Map CSV fields to model fields
                 student_data = {
