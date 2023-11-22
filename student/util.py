@@ -54,7 +54,9 @@ class ExtractStudent():
         all_student_data_dict_list = []
 
         for row in reader:
+            
             if row['FICHE']:
+                student_data={}
                 # print(row['FICHE'])
                 nom_prenom = row.get('NOM', '').split(',')
                 nom = nom_prenom[0].strip() if nom_prenom else ''
@@ -71,32 +73,29 @@ class ExtractStudent():
 
                 if nom == "Ben Younes":
                     print("$$$$$$$$$$$$$$$$$$$$$$ before dict:",prenom, groupe_repere)
-                
-                              
+
                 # Map CSV fields to model fields
-                student_data = {
-                    # "id": "",
-                    "nom": nom,
-                    "prenom": prenom,
-                    "comite_clinique": False,
-                    "date_ref_comite_clinique": None,
-                    "plan_intervention": plan_intervention_value == 'oui',
-                    "groupe_repere": groupe_repere,
-                    "code": None,
-                    "fiche": row.get('FICHE', ''),
-                    # "classification": classification,
-                    "etat_situation": None,
-                    "dob": row.get('DATE DE NAISSANCE', None),
-                    "lang": row.get('LANGUE PARLÉE À LA MAISON', ''),
-                    "is_student": True,  # Set to True for new students,
-                    "created_by": self.request.user,
-                    "date_created": timezone.now(),
-                    "date_is_student_changed": None,
-                }
-                if student_data.get(nom) == "Ben Younes":
-                    print("$$$$$$$$$$$$$$$$$$$$$$ groupe reperes before dict:", student_data.get(nom), groupe_repere)
-                if student_data.get(nom) == "Ben Younes":
-                    print("$$$$$$$$$$$$$$$$$$$$$ groupe repere in dict", student_data.get(nom), student_data.get("groupe_repere"))
+                student_data = {"nom": nom, 
+                                "prenom": prenom, 
+                                "comite_clinique": False, 
+                                "date_ref_comite_clinique": None, 
+                                "plan_intervention": plan_intervention_value == 'oui', 
+                                "groupe_repere": groupe_repere, 
+                                "code": None, 
+                                "fiche": row.get('FICHE', ''), 
+                                "etat_situation": None, 
+                                "dob": row.get('DATE DE NAISSANCE', None), 
+                                "lang": row.get('LANGUE PARLÉE À LA MAISON', ''), 
+                                "is_student": True,  # Set to True for new students, 
+                                "created_by": self.request.user, 
+                                "date_created": timezone.now(), 
+                                "date_is_student_changed": None
+                                }
+                
+                if student_data.get("nom") == "Ben Younes":
+                    print("$$$$$$$$$$$$$$$$$$$$$$ groupe reperes before dict:", student_data.get("nom"), groupe_repere)
+                if student_data.get("nom") == "Ben Younes":
+                    print("$$$$$$$$$$$$$$$$$$$$$ groupe repere in dict", student_data.get("nom"), student_data.get("groupe_repere"))
                 # print(student_data)
                 all_student_data_dict_list.append(student_data)
 
