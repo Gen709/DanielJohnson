@@ -69,6 +69,7 @@
 								<div class="col-md-2">
 									<strong>Actions:</strong>
 								</div>
+
 								<div class="col">
 									{% if problematique.action_set.all %}
 										<div class="accordion" id="accordionAction">
@@ -86,9 +87,11 @@
 
 															<div class="row mt-2">
 																<div class="row mt-2">
+
 																	<div class="col-md-2">
 																		Statut:
 																	</div>
+
 																	<div class="col-md-4">
 																		<select class="form-select action-status-select-js" name="action-status-select" id="select_status_{{ x.id }}">
 																			{% for status in statusaction %}
@@ -100,7 +103,9 @@
 																			{% endfor %}
 																		</select>
 																	</div>
+
 																</div>
+
 																<div class="row mt-2">
 																	<div class="col-md-2">
 																		Detail:
@@ -115,11 +120,11 @@
 																		</div>
 																	</div>
 																</div>
-															</div>
 
+															</div>
 														</div>
 													</div>
-
+													
 												</div>
 											{% endfor %}
 										</div>
@@ -135,9 +140,9 @@
 									</div>
 								</div>
 							</div>
+
 						</div>
 					</div>
-
 				</div>
 			{% endfor %}
 		{% else %}

@@ -55,21 +55,19 @@ class ExtractStudent():
 
         for row in reader:
             if row['FICHE']:
-                print(row['FICHE'])
+                # print(row['FICHE'])
                 nom_prenom = row.get('NOM', '').split(',')
                 nom = nom_prenom[0].strip() if nom_prenom else ''
                 prenom = nom_prenom[1].strip() if len(nom_prenom) > 1 else ''
-                # print(nom_prenom, nom, prenom)
                 
-                # Handle PLAN D'INTERVENTION field
-                print(row.get("PLAN D'INTERVENTION", None))
-                if row.get("PLAN D'INTERVENTION", ''):
-                    plan_intervention_value = row.get("PLAN D'INTERVENTION", '').strip().lower()
+                plan_intervention_value = row.get("PLAN D'INTERVENTION", None)
+                if plan_intervention_value:
+                    plan_intervention_value = plan_intervention_value.strip().lower()
 
                 # Handle GROUPE REPERE field
                 group_repere_name = row.get('GROUPE', None)
                 if group_repere_name:
-                    groupe_repere = Group.objects.get(nom=group_repere_name)
+                    groupe_repere, create = Group.objects.get_or_create(nom=group_repere_name)
                                                   
                 # Map CSV fields to model fields
                 student_data = {
@@ -144,11 +142,22 @@ class ExtractStudent():
         reader = self.get_reader()
         gv_all_new_student_list = self.get_student_data_dict_list(reader)
         for student in gv_all_new_student_list:
-            fiche = int(student.get('FICHE'))
-            groupe = Group.objects.get(nom=student.get('groupe_repere'))
+            fiche = int(student.get('fiche'))
+            # print("+++++++++++++++++++", student.get('groupe_repere'))
+            groupe = student.get('groupe_repere')
+            # student_obj = Student.objects.get(fiche=fiche)
+            # student_obj.groupe_repere = groupe
             try:
-                student = Student.objects.get(fiche=fiche)
-                student.groupe_repere=groupe
-                student.save()
+                student_obj = Student.objects.get(fiche=fiche)
+                student_obj.groupe_repere = groupe
+                student_obj.save()
+                print(student_obj)
             except:
-                print(fiche)
+                print("Does not exists")
+
+        return {"number_of_inactivated_records": "N/A",
+                "newly_created_student_list": "N/A",
+                "existing_updated_student_list": "N/A",
+                "number_newly_created_student":"N/A",
+                "number_existing_updated_student":"N/A"
+                }

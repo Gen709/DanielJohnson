@@ -775,10 +775,15 @@ def download_excel_data(request, user_id=None):
 @login_required
 def upload_csv(request):
     if request.method == 'POST':
+        action = request.POST.get('update_groupe', None)
         form = CSVUploadForm(request.POST, request.FILES)
         if form.is_valid():
             es = ExtractStudent(request)
-            context = es.update_data()
+            if action:
+                context = es.update_student_group()
+            else:
+                context = es.update_data()
+
             return render(request, 'summary_page.html', context)
     else:
         form = CSVUploadForm()

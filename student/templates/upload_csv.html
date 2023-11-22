@@ -29,6 +29,15 @@
     <form method="post" enctype="multipart/form-data" class="mt-4">
       {% csrf_token %}
       {% bootstrap_form form layout="horizontal" %}
+      <div class="row mt-2 mb-4">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="True" id="update_group" name="update_groupe">
+            <label class="form-check-label" for="update_groupe">
+                Mise à jour du groupe repère
+            </label>
+        </div>
+      </div>
+      
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
   </div>
