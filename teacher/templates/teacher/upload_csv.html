@@ -46,12 +46,12 @@
                 </ul>
                 <p>Liste des classifications sans direction: </p>
                 <ul>
-                  {% if orphan_groups_qs %}
+                  {% if orphan_classifications_qs %}
                     {% for orphan_classifications in orphan_classifications_qs %}
                       <li class="text-danger">{{orphan_classifications}}</li>
                     {% endfor %}
                   {% else %}
-                    <div class="text-success"> Tous les groupes ont une classifiaction</div>
+                    <div class="text-success"> Toutes les classification ont une direction</div>
                   {% endif %}
                 </ul>
               </td>
