@@ -669,7 +669,7 @@ def download_excel_data(request, user_id=None):
 
                         ws1['n' + str(i)] = action.createur.first_name
                         ws1['n' + str(i)].alignment = v_centerAlignment
-                        ws1['o' + str(i)] = action.responsable.first_name
+                        ws1['o' + str(i)] = action.responsable.first_name if action.responsable else None
                         ws1['o' + str(i)].alignment = v_centerAlignment
                         ws1['p' + str(i)] = action.description
                         ws1['p' + str(i)].alignment = v_centerAlignment_large
