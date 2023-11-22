@@ -8,11 +8,13 @@
 			<table class="table table-striped table-sm">
 					<tr>
 						<td>Direction</td>
-						<td><a href="mailto:#">{{student.responsible_personnel.direction}}</a></td>
+						<td><a href="#">{{student.responsible_personnel.direction}}</a></td>
+						<td><a href="mailto:{{student.responsible_personnel.regular_teachers.email}}?subject={{student.fiche}} / {{student.prenom}} {{student.nom}}"><i class="far fa-envelope"></i></a></td>
 					</tr>
 					<tr>
 						<td>Professeur</td>
-						<td><a href="mailto:{{student.responsible_personnel.regular_teachers.email}}?subject={{student.fiche}} / {{student.prenom}} {{student.nom}}">{{student.responsible_personnel.regular_teachers}}</a></td>
+						<td><a href="">{{student.responsible_personnel.regular_teachers}}</a></td>
+						<td><a href="mailto:{{student.responsible_personnel.regular_teachers.email}}?subject={{student.fiche}} / {{student.prenom}} {{student.nom}}"><i class="far fa-envelope"></i></a></td>
 						
 					</tr>
 					{% if student.responsible_personnel.professional_list%}
