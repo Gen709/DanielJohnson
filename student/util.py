@@ -149,11 +149,12 @@ class ExtractStudent():
             # student_obj.groupe_repere = groupe
             try:
                 student_obj = Student.objects.get(fiche=fiche)
+                if student_obj.nom == "Ben Younes":
+                    print("----------- fucking groupe:", groupe)
                 student_obj.groupe_repere = groupe
                 student_obj.save()
                 if student_obj.nom == "Ben Younes":
-                    print("-----------Fuck Yea", student_obj.prenom, student_obj.nom, student_obj.groupe_repere)   
-                # print(student_obj)
+                    print("-----------Fuck Yea", student_obj.prenom, student_obj.nom, student_obj.groupe_repere, groupe)
             except:
                 print("Does not exists")
 
