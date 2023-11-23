@@ -73,7 +73,7 @@ class ExtractStudent():
                     # groupe_repere = groupe_repere.strip()
 
                 if nom == "Ben Younes":
-                    print(f"---------Before the info is stored in the dict for {prenom} le GROUPE est {groupe_repere}")
+                    print(f"--------- In the get_student_data_dict_list BEFORE the info is stored in the dict for {prenom} the groupe_repere is {groupe_repere}")
 
                 # Map CSV fields to model fields
                 student_data = {"nom": nom, 
@@ -94,7 +94,7 @@ class ExtractStudent():
                                 }
                 
                 if student_data.get("nom") == "Ben Younes":
-                    print(f"--------- AFTER the info has been stored in the dict for {prenom} le GROUPE est {student_data.get('groupe_repere')}")
+                    print(f"--------- In the get_student_data_dict_list AFTER the info has been stored in the dict for {prenom} the groupe_repere is {student_data.get('groupe_repere')}")
                 
                 # print(student_data)
                 all_student_data_dict_list.append(student_data)
@@ -156,7 +156,7 @@ class ExtractStudent():
                 student_obj = Student.objects.get(fiche=fiche)
 
                 if student_obj.nom == "Ben Younes":
-                    print(f"--------- Once in the update_student_group {student_obj.prenom} the groupe repere is {groupe}")
+                    print(f"--------- In the update_student_group BEFORE saving in the information retreived for {student_obj.prenom} the groupe_repere is {groupe}")
 
                 # print("Updating student:", student_obj.nom, student_obj.prenom, "with groupe_repere:", groupe)
                 
@@ -167,7 +167,7 @@ class ExtractStudent():
                 student_obj.save()
 
                 if student_obj.nom == "Ben Younes":
-                    print(f"--------- After the student objects has been saved {student_obj.prenom} the groupe repere is {student_obj.groupe_repere.nom}")
+                    print(f"--------- In the update_student_group AFTER saving the information for {student_obj.prenom} the groupe_repere is {student_obj.groupe_repere}")
 
                 # Add more print statements to debug
                 # print("After update - Groupe Repere:", student_obj.groupe_repere)
