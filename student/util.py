@@ -74,6 +74,7 @@ class ExtractStudent():
 
                 if nom == "Ben Younes":
                     print(f"--------- In the get_student_data_dict_list BEFORE the info is stored in the dict for {prenom} the groupe_repere is {groupe_repere}")
+                    print(f"---------  {prenom} the groupe_repere is {row.get('FICHE', '')}")
 
                 # Map CSV fields to model fields
                 student_data = {"nom": nom, 
@@ -93,8 +94,8 @@ class ExtractStudent():
                                 "date_is_student_changed": None
                                 }
                 
-                if student_data.get("nom") == "Ben Younes":
-                    print(f"--------- In the get_student_data_dict_list AFTER the info has been stored in the dict for {prenom} the groupe_repere is {student_data.get('groupe_repere')}")
+                # if student_data.get("nom") == "Ben Younes":
+                #     print(f"--------- In the get_student_data_dict_list AFTER the info has been stored in the dict for {prenom} the groupe_repere is {student_data.get('groupe_repere')}")
                 
                 # print(student_data)
                 all_student_data_dict_list.append(student_data)
@@ -156,7 +157,9 @@ class ExtractStudent():
                 student_obj = Student.objects.get(fiche=fiche)
 
                 if student_obj.nom == "Ben Younes":
-                    print(f"--------- In the update_student_group BEFORE saving in the information retreived for {student_obj.prenom} the groupe_repere is {groupe}")
+                    print(f"--------- In the update_student_group BEFORE saving in the information retreived for {student_obj.prenom} the groupe_repere is {student_obj.fiche}")
+                    # print("Before Update - Student Object:", student_obj)
+                    # print("Before Update - Groupe Repere:", student_obj.groupe_repere)
 
                 # print("Updating student:", student_obj.nom, student_obj.prenom, "with groupe_repere:", groupe)
                 
@@ -166,8 +169,10 @@ class ExtractStudent():
                 student_obj.groupe_repere = groupe
                 student_obj.save()
 
-                if student_obj.nom == "Ben Younes":
-                    print(f"--------- In the update_student_group AFTER saving the information for {student_obj.prenom} the groupe_repere is {student_obj.groupe_repere}")
+                # if student_obj.nom == "Ben Younes":
+                #     print(f"--------- In the update_student_group AFTER saving the information for {student_obj.prenom} the groupe_repere is {student_obj.groupe_repere}")
+                #     print("After Update - Student Object:", student_obj)
+                #     print("After Update - Groupe Repere:", student_obj.groupe_repere)
 
                 # Add more print statements to debug
                 # print("After update - Groupe Repere:", student_obj.groupe_repere)
