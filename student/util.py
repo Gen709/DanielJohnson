@@ -68,8 +68,9 @@ class ExtractStudent():
                 # Handle GROUPE REPERE field
                 group_repere_name = row.get('GROUPE', None)
                 if group_repere_name:
+                    group_repere_name = group_repere_name.strip()
                     groupe_repere, create = Group.objects.get_or_create(nom=group_repere_name)
-                    groupe_repere = groupe_repere.strip()
+                    # groupe_repere = groupe_repere.strip()
 
                 if nom == "Ben Younes":
                     print(f"---------Before the info is stored in the dict for {prenom} le GROUPE est {groupe_repere}")
