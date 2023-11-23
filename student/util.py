@@ -152,10 +152,13 @@ class ExtractStudent():
         for student in gv_all_new_student_list:
             fiche = student.get('fiche')
             groupe = student.get('groupe_repere')
-
             try:
                 student_obj = Student.objects.get(fiche=fiche)
-                print("Updating student:", student_obj.nom, student_obj.prenom, "with groupe_repere:", groupe)
+                
+                if student_obj.nom == "Ben Younes":
+                    print(f"--------- AFTER the info has been stored in the dict for {student_obj} le GROUPE est {groupe}")
+
+                # print("Updating student:", student_obj.nom, student_obj.prenom, "with groupe_repere:", groupe)
                 
                 # Add more print statements to debug
                 # print("Before update - Groupe Repere:", student_obj.groupe_repere)
