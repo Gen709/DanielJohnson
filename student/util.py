@@ -56,7 +56,6 @@ class ExtractStudent():
         for row in reader:
             
             if row['FICHE']:
-                student_data={}
                 # print(row['FICHE'])
                 nom_prenom = row.get('NOM', '').split(',')
                 nom = nom_prenom[0].strip() if nom_prenom else ''
@@ -148,25 +147,27 @@ class ExtractStudent():
     def update_student_group(self):
         reader = self.get_reader()
         gv_all_new_student_list = self.get_student_data_dict_list(reader)
+
         for student in gv_all_new_student_list:
-            fiche = student.get('fiche') # la fiche est une chaine de charateres
-            # print("+++++++++++++++++++", student.get('groupe_repere'))
+            fiche = student.get('fiche')
             groupe = student.get('groupe_repere')
-            
+
             try:
                 student_obj = Student.objects.get(fiche=fiche)
-                if student_obj.nom == "Ben Younes":
-                    print("----------- fucking groupe:", groupe)
+                print("Updating student:", student_obj.nom, student_obj.prenom, "with groupe_repere:", groupe)
+                
+                # Add more print statements to debug
+                print("Before update - Groupe Repere:", student_obj.groupe_repere)
+                
                 student_obj.groupe_repere = groupe
                 student_obj.save()
-                if student_obj.nom == "Ben Younes":
-                    print("-----------Fuck Yea", student_obj.prenom, student_obj.nom, student_obj.groupe_repere, groupe)
-            except:
-                print("Does not exists")
 
-        return {"number_of_inactivated_records": "N/A",
-                "newly_created_student_list": "N/A",
-                "existing_updated_student_list": "N/A",
-                "number_newly_created_student":"N/A",
-                "number_existing_updated_student":"N/A"
-                }
+                # Add more print statements to debug
+                print("After update - Groupe Repere:", student_obj.groupe_repere)
+            except Student.DoesNotExist:
+                print(f"Student with fiche {fiche} does not exist.")
+
+        return {"status": "Update complete"}
+
+
+        
