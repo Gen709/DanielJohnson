@@ -154,9 +154,9 @@ class ExtractStudent():
             groupe = student.get('groupe_repere')
             try:
                 student_obj = Student.objects.get(fiche=fiche)
-                
+
                 if student_obj.nom == "Ben Younes":
-                    print(f"--------- AFTER the info has been stored in the dict for {student_obj} le GROUPE est {groupe}")
+                    print(f"--------- Once in the update_student_group {student_obj.prenom} the groupe repere is {groupe}")
 
                 # print("Updating student:", student_obj.nom, student_obj.prenom, "with groupe_repere:", groupe)
                 
@@ -166,10 +166,14 @@ class ExtractStudent():
                 student_obj.groupe_repere = groupe
                 student_obj.save()
 
+                if student_obj.nom == "Ben Younes":
+                    print(f"--------- After the student objects has been saved {student_obj.prenom} the groupe repere is {student_obj.groupe_repere.nom}")
+
                 # Add more print statements to debug
                 # print("After update - Groupe Repere:", student_obj.groupe_repere)
             except Student.DoesNotExist:
-                print(f"Student with fiche {fiche} does not exist.")
+                # print(f"Student with fiche {fiche} does not exist.")
+                pass
 
         return {"status": "Update complete"}
 
