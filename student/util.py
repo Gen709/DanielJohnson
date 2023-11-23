@@ -157,13 +157,13 @@ class ExtractStudent():
                 print("Updating student:", student_obj.nom, student_obj.prenom, "with groupe_repere:", groupe)
                 
                 # Add more print statements to debug
-                print("Before update - Groupe Repere:", student_obj.groupe_repere)
+                # print("Before update - Groupe Repere:", student_obj.groupe_repere)
                 
                 student_obj.groupe_repere = groupe
                 student_obj.save()
 
                 # Add more print statements to debug
-                print("After update - Groupe Repere:", student_obj.groupe_repere)
+                # print("After update - Groupe Repere:", student_obj.groupe_repere)
             except Student.DoesNotExist:
                 print(f"Student with fiche {fiche} does not exist.")
 
