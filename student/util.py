@@ -69,9 +69,10 @@ class ExtractStudent():
                 group_repere_name = row.get('GROUPE', None)
                 if group_repere_name:
                     groupe_repere, create = Group.objects.get_or_create(nom=group_repere_name)
+                    groupe_repere = groupe_repere.strip()
 
                 if nom == "Ben Younes":
-                    print("$$$$$$$$$$$$$$$$$$$$$$ before dict:",prenom, groupe_repere)
+                    print(f"---------Before the info is stored in the dict for {prenom} le GROUPE est {groupe_repere}")
 
                 # Map CSV fields to model fields
                 student_data = {"nom": nom, 
@@ -92,9 +93,8 @@ class ExtractStudent():
                                 }
                 
                 if student_data.get("nom") == "Ben Younes":
-                    print("$$$$$$$$$$$$$$$$$$$$$$ groupe reperes before dict:", student_data.get("nom"), groupe_repere)
-                if student_data.get("nom") == "Ben Younes":
-                    print("$$$$$$$$$$$$$$$$$$$$$ groupe repere in dict", student_data.get("nom"), student_data.get("groupe_repere"))
+                    print(f"--------- AFTER the info has been stored in the dict for {prenom} le GROUPE est {student_data.get('groupe_repere')}")
+                
                 # print(student_data)
                 all_student_data_dict_list.append(student_data)
 
