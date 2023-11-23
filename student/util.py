@@ -152,21 +152,13 @@ class ExtractStudent():
 
         for student in gv_all_new_student_list:
             fiche = student.get('fiche')
+            nom = student.get('nom')
+            prenom = student.get("prenom")
             groupe = student.get('groupe_repere')
             try:
-                student_obj = Student.objects.get(fiche=fiche)
-
-                if student_obj.nom == "Ben Younes":
-                    print(f"--------- In the update_student_group BEFORE saving in the information retreived for {student_obj.prenom} the groupe_repere is {student_obj.fiche}")
-                    # print("Before Update - Student Object:", student_obj)
-                    # print("Before Update - Groupe Repere:", student_obj.groupe_repere)
-
-                # print("Updating student:", student_obj.nom, student_obj.prenom, "with groupe_repere:", groupe)
-                
-                # Add more print statements to debug
-                # print("Before update - Groupe Repere:", student_obj.groupe_repere)
-                
+                student_obj = Student.objects.get(nom=nom, prenom=prenom)
                 student_obj.groupe_repere = groupe
+                student_obj.fiche = fiche
                 student_obj.save()
 
                 # if student_obj.nom == "Ben Younes":
