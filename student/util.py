@@ -149,8 +149,8 @@ class ExtractStudent():
     def update_student_group(self):
         reader = self.get_reader()
         gv_all_new_student_list = self.get_student_data_dict_list(reader)
-        inactive_student = Student.objects.filter(is_student=False)
-        inactive_student.delete()
+        # inactive_student = Student.objects.filter(is_student=False)
+        # inactive_student.delete()
         for student in gv_all_new_student_list:
             fiche = student.get('fiche')
             nom = student.get('nom')
