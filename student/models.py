@@ -65,8 +65,6 @@ class Student(models.Model):
     groupe_repere = models.ForeignKey('school.Group', on_delete=models.SET_NULL, blank=True, null=True, default=None)
     code = models.ForeignKey(CodeEtudiant, on_delete=models.SET_NULL, null=True, blank=True)
     fiche = models.CharField(max_length=20, null=True, unique=True)
-    # fiche = models.CharField(max_length=20, null=True)
-    # classification = models.ForeignKey(Classification, on_delete=models.SET_NULL, null=True)
     etat_situation = models.TextField(null=True, blank=True)
     dob = models.DateField(null=True, blank=True)
     lang = models.CharField(max_length=100, blank=True, null=True, default=None)

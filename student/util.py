@@ -121,7 +121,7 @@ class ExtractStudent():
             if student_data['fiche'] in existing_active_student_in_db_fiche_list:
                 existing_student = Student.objects.get(fiche=student_data['fiche'])
                 for field, value in student_data.items():
-                    if getattr(existing_student, field) != value and field in ['classification', 'plan_intervention', 'groupe_repere']:
+                    if getattr(existing_student, field) != value and field in ['classification', 'plan_intervention', 'groupe_repere', 'lang']:
                         setattr(existing_student, field, value)
                         setattr(existing_student, "date_is_student_cha  nged", timezone.now())
                         existing_student.save()
