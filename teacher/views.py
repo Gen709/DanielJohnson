@@ -62,6 +62,7 @@ class ProfessionalProfileView(TemplateView):
         # Assuming you pass the teacher instance to this view through the context
         # context['teacher'] = self.request.user.professional  # Assuming the teacher is associated with the logged-in user
         return context
+  
     
 class SchoolAdminProfileView(TemplateView):
     template_name = 'teacher/admin_profile.html'

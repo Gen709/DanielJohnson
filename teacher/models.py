@@ -20,6 +20,7 @@ class SchoolAdmin(User):
         verbose_name = 'Administrateur'
         verbose_name_plural = 'Administrateurs'
 
+
 class RegularTeacher(User):
     group = models.OneToOneField(Group, on_delete=models.SET_NULL, null=True)
     matière = models.CharField(max_length=30, blank=True, null=True)
@@ -63,7 +64,7 @@ class SpecialtyTeacher(User):
         verbose_name = 'Enseignant Spécialisé'
         verbose_name_plural = 'Enseignants Spécialisés'
 
-   
+
 class Professional(User):
     speciality = models.CharField(max_length=100, blank=True, null=True, default=None)
     local =  models.CharField(max_length=30, blank=True, null=True, default=None)
@@ -81,3 +82,27 @@ class Professional(User):
             verbose_name = 'Professionel'
             verbose_name_plural = 'Professionels'
     
+
+# class TeacherSubject(models.Model):
+#     ecole = models.CharField(max_length=50)
+#     matiere = models.CharField(max_length=50)
+#     grp = models.IntegerField()
+#     description = models.CharField(max_length=255)
+#     categorie = models.CharField(max_length=5)
+#     visible_aux_parents_eleves = models.BooleanField()
+#     enseignant_name = models.CharField(max_length=100)  # Assuming a reasonable max length
+#     modele_etapes = models.CharField(max_length=50)
+#     sanct_ind = models.IntegerField()
+#     enseignant = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+
+#     def save(self, *args, **kwargs):
+#         # Try to find the User based on the last name and first name
+#         if self.enseignant_name:
+#             last_name, first_name = map(str.strip, self.enseignant_name.split(','))
+#             user = User.objects.filter(last_name=last_name, first_name=first_name).first()
+#             if user:
+#                 self.enseignant = user
+#         super().save(*args, **kwargs)
+
+#     def __str__(self):
+#         return f"{self.ecole} - {self.matiere} - {self.grp}"

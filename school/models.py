@@ -20,10 +20,16 @@ class Local(models.Model):
 #     end_period = models.TimeField(null=True, blank=True)
 #     # subject + group -> teacher 
 
-# class subject(models.Model):
-#     code = models.CharField(max_length=10)
-#     name = models.CharField(max_length=100)
-#     classification = models.ForeignKey(Classification, on_delete=models.SET_NULL)
+# class Subject(models.Model):
+#     ecole = models.CharField(max_length=50)
+#     matiere = models.CharField(max_length=50)
+#     description = models.CharField(max_length=255)
+#     categorie = models.CharField(max_length=5)
+#     visible_aux_parents_eleves = models.BooleanField()
+#     mat_2ieme = models.CharField(max_length=50)
+
+#     def __str__(self):
+#         return f"{self.ecole} - {self.matiere}"
 
 class Group(models.Model):
     # TODO: Ajouter établissement le temps venu
