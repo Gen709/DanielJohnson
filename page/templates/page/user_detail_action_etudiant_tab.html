@@ -1,0 +1,46 @@
+
+<div class="nav nav-tabs" id="myTabs">
+    {% for responsable_full_name in etudiants %}
+    <a class="nav-item nav-link" id="{{ responsable_full_name.0 }}-tab" data-bs-toggle="tab" href="#{{ responsable_full_name.0 }}" role="tab" aria-controls="{{ responsable_full_name.0 }}" aria-selected="false">{{ responsable_full_name.0 }}</a>
+    {% endfor %}
+</div>
+
+<div class="tab-content mt-3" id="myTabsContent">
+    {% for responsable_full_name in etudiants %}
+        <div class="tab-pane fade" id="{{ responsable_full_name.0 }}" role="tabpanel" aria-labelledby="{{ responsable_full_name.0 }}-tab">
+            <div class="accordion" id="accordionAttribution">
+                {% for action in action_createur %}
+                    {% if action.problematique.eleve.prenom == responsable_full_name.0 and action.problematique.eleve.nom == responsable_full_name.1 %}
+                        <div class="accordion-item mb-2">
+                            <h2 class="accordion-header" id="heading{{forloop.counter}}">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{forloop.counter}}" aria-expanded="false" aria-controls="collapse{{forloop.counter}}">
+                                    dossier: {{action.problematique.eleve.nom}} {{action.problematique.eleve.prenom}} Gr. {{action.problematique.eleve.grouperepere}} | {{action.description}} | Attitrée à: {{action.responsable}}
+                                </button>
+                            </h2>
+                            <div id="collapse{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="heading{{forloop.counter}}" data-bs-parent="#accordionAttribution">
+                                <div class="accordion-body">
+                                    <div class="row mt-2">
+                                        Pour la problematique: {{action.problematique.nom}}
+                                    </div>
+                                    <div class="row mt-2 border rounded px-3 pt-3 pb-3">
+                                        {% if action.problematique.detail %}
+                                            {{action.problematique.detail}}
+                                        {% else %}
+                                            Aucun détail n'est insctit
+                                        {% endif %}
+                                    </div>
+                                    <div class="row mt-2">
+                                        status: {{action.status}}
+                                    </div>
+                                    <div class="row mt-2">
+                                        <a href="{% url 'student-detail' action.problematique.eleve.id %}">Voir fiche de l'élève</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+</div>

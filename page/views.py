@@ -20,14 +20,16 @@ def user_detail(request, pk):
     statusaction = StatusAction.objects.all()
     action_resp = Action.objects.filter(~Q(status__nom="terminé"), Q(responsable__id=1), Q(problematique__eleve__is_student=True)).order_by("problematique__eleve__nom")
     # Your queryset to group by 'responsable'
-    grouped_actions = Action.objects.values('responsable').annotate(action_count=Count('id'))
+    # grouped_actions = Action.objects.values('responsable').annotate(action_count=Count('id'))
     action_createur = Action.objects.filter(~Q(status__nom="terminé"), ~Q(responsable__id = pk), Q(createur__id = pk), Q(problematique__eleve__is_student=True)).order_by("responsable__last_name")
     responsables = action_createur.values_list('responsable__first_name', "responsable__last_name").distinct()
+    etudiants = {(x.problematique.eleve.prenom, x.problematique.eleve.nom) for x in action_createur}
     context = {'id': pk,
                'action_resp': action_resp,
                'action_createur': action_createur,
                'statusaction': statusaction,
-               'responsables': responsables
+               'responsables': responsables,
+               'etudiants': etudiants
                }
 
     return render(request, 'page/user_detail.html', context)
