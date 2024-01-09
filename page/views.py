@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from django.http.response import JsonResponse, HttpResponse
 
-from django.db.models import Q
+from django.db.models import Q, Count
 
 
 # Create your views here.
@@ -19,12 +19,15 @@ def index(request):
 def user_detail(request, pk):
     statusaction = StatusAction.objects.all()
     action_resp = Action.objects.filter(~Q(status__nom="terminé"), Q(responsable__id=1), Q(problematique__eleve__is_student=True)).order_by("problematique__eleve__nom")
-    # action_createur = Action.objects.filter(~Q(status__nom="terminé"), createur__id=pk)
+    # Your queryset to group by 'responsable'
+    grouped_actions = Action.objects.values('responsable').annotate(action_count=Count('id'))
     action_createur = Action.objects.filter(~Q(status__nom="terminé"), ~Q(responsable__id = pk), Q(createur__id = pk), Q(problematique__eleve__is_student=True)).order_by("responsable__last_name")
+    responsables = action_createur.values_list('responsable__first_name', "responsable__last_name").distinct()
     context = {'id': pk,
                'action_resp': action_resp,
                'action_createur': action_createur,
-               'statusaction': statusaction
+               'statusaction': statusaction,
+               'responsables': responsables
                }
 
     return render(request, 'page/user_detail.html', context)
