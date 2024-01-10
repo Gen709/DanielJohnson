@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% load bootstrap5 %}
+
+{% block title %}Matieres liste{% endblock %}
+
+{% block content %}
+  <h2>Matieres List</h2>
+  <!-- Your content here -->
+  <div class="row">
+    <div class="col">École</div>
+    <div class="col">Matière</div>
+    <div class="col">Description</div>
+    <div class="col">Catégorie</div>
+    <div class="col">Visible aux parents/élèves</div>
+    <div class="col">Mat 2ième</div>
+  </div>
+  {% for item in matiere_list %}
+    <!-- Your code to display each item -->
+    <div class="row">
+      <div class="col">
+        {{item.school_code}}
+      </div>  
+      <div class="col">
+        {{item.subject_code}}
+      </div>  
+      <div class="col">
+        {{item.description}}
+      </div>  
+      <div class="col">
+        {{item.category}}
+      </div>  
+      <div class="col">
+        {{item.visible_to_parents}}
+      </div>  
+      <div class="col">
+        {{item.mat_2nd}}
+      </div>  
+    </div>
+  {% endfor %}
+
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% load bootstrap5 %}
+
+{% block title %}Upload matiere excel{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h2>Mise à jour des Matières enseignées</h2>
+
+    <div class="row">
+
+      <p> Mettre explication et instruction sur le processus d'upload</p>
+
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="mt-4">
+      {% csrf_token %}
+      {% bootstrap_form form layout="horizontal" %}
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+{% endblock %}
+
