@@ -1,7 +1,21 @@
+{% load custom_filters %}
+
+{% comment %} <div class="nav nav-tabs" id="myTabs">
+    {% for responsable_full_name in etudiants %}
+    <a class="nav-item nav-link" id="{{ responsable_full_name.0 }}-tab" data-bs-toggle="tab" href="#{{ responsable_full_name.0 }}" role="tab" aria-controls="{{ responsable_full_name.0 }}" aria-selected="false">{{ responsable_full_name.0 }}</a>
+    {% endfor %}
+</div> {% endcomment %}
 
 <div class="nav nav-tabs" id="myTabs">
     {% for responsable_full_name in etudiants %}
-    <a class="nav-item nav-link" id="{{ responsable_full_name.0 }}-tab" data-bs-toggle="tab" href="#{{ responsable_full_name.0 }}" role="tab" aria-controls="{{ responsable_full_name.0 }}" aria-selected="false">{{ responsable_full_name.0 }}</a>
+        {% with actions_for_student=action_createur|filter_student:responsable_full_name.0 %}
+            <a class="nav-item nav-link position-relative" id="{{ responsable_full_name.0 }}-tab" data-bs-toggle="tab" href="#{{ responsable_full_name.0 }}" role="tab" aria-controls="{{ responsable_full_name.0 }}" aria-selected="false">
+                {{ responsable_full_name.0 }}
+                {% if actions_for_student.count > 0 %}
+                    <span class="badge rounded-pill bg-danger position-absolute top-0 end-0">{{ actions_for_student.count }}</span>
+                {% endif %}
+            </a>
+        {% endwith %}
     {% endfor %}
 </div>
 
