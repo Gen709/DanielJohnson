@@ -1,0 +1,113 @@
+
+
+
+<div class="card h-100 p-3 shadow">
+	<h4 class="text-center p-3 text-secondary">Notes</h4>	
+	<!-- section input -->
+	<div class="row mb-4">
+		<form>
+			{% csrf_token %}
+			<input type="hidden" name="student_id" value={{ student.id }}></input>
+			
+			<div class="ms-3 bg-body pt-3 px-4">
+				<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false">
+
+					<div class="carousel-indicators">
+						{% for semester, subject_competence_grades in grades.items %}
+							<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{ forloop.counter0 }}" class="active" aria-current="true" aria-label="Slide {{ forloop.counter }}"></button>
+						{% endfor %}
+					</div>
+
+					<div class="carousel-inner bg-secondary rounded">
+						{% for semester, subject_competence_grades in grades.items %}
+							{% if semester == 1 %}
+								<div class="carousel-item active">
+									<div class="row justify-content-center align-items-center pt-5 pb-5">
+										<div class="col-7">
+											<div class="row text-light">
+												<h3> Étape {{semester}} </h3>
+											</div>
+											<div class="row mt-2">
+												<div class="col-2"></div>
+												<div class="col">
+													{% for subject, competence_grades in subject_competence_grades.items %}
+														<div class="row text-light border-bottom border-ligth mt-3 pb-3 ">
+															<div class="col-4">
+																{{subject}}
+															</div>
+															<div class="col">
+																{% for competence, grades in competence_grades.items%}
+																	<div class="row">
+																		<div class="col">
+																			{{competence}}
+																		</div>
+																		<div class="col text-end">
+																			{{grades}}
+																		</div>
+																	</div>
+																{% endfor %}
+															</div>
+														</div>
+													{% endfor %}
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							{% elif semester != 4 %}
+								<div class="carousel-item">
+									<div class="row justify-content-center align-items-center pt-5 pb-5">
+										<div class="col-6">
+											<div class="row text-light">
+												<h3> Étape {{semester}} </h3>
+											</div>
+											<div class="row mt-2">
+												<div class="col-2"></div>
+												<div class="col">
+													{% for subject, competence_grades in subject_competence_grades.items %}
+														<div class="row text-light border-bottom border-ligth mt-3 pb-3 ">
+															<div class="col-4">
+																{{subject}}
+															</div>
+															<div class="col">
+																{% for competence, grades in competence_grades.items%}
+																	<div class="row">
+																		<div class="col">
+																			{{competence}}
+																		</div>
+																		<div class="col text-end">
+																			{{grades}}
+																		</div>
+																	</div>
+																{% endfor %}
+															</div>
+														</div>
+													{% endfor %}
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							{% endif %}
+							
+
+						{% endfor%}
+					</div>
+						
+						
+					
+
+					<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+						<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+						<span class="visually-hidden">Previous</span>
+					</button>
+					<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+						<span class="carousel-control-next-icon" aria-hidden="true"></span>
+						<span class="visually-hidden">Next</span>
+					</button>
+				</div>
+			</div>
+			
+		</form>
+	</div>
+</div>

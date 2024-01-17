@@ -176,4 +176,18 @@ class ExtractStudent():
         return {"status": "Update complete"}
 
 
-        
+def get_student_grade_dict(evaluation_qs):
+    data_dict = {}
+    for e in evaluation_qs:
+        if e.etape in data_dict.keys():
+            if e.competence_evaluee.matiere.description in data_dict[e.etape].keys():
+                if e.competence_evaluee.competence.nom in data_dict[e.etape][e.competence_evaluee.matiere.description].keys():
+                    pass
+                else:
+                    data_dict[e.etape][e.competence_evaluee.matiere.description][e.competence_evaluee.competence.nom] = e.note
+            else:
+                data_dict[e.etape][e.competence_evaluee.matiere.description ] = {}
+        else:
+            data_dict[e.etape] = {}      
+    
+    return data_dict

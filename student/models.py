@@ -3,7 +3,6 @@ from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 
-
 from problematiques.models import Item
 from django.contrib.auth.models import User
 
@@ -11,6 +10,7 @@ from datetime import date, datetime
 
 from django.shortcuts import get_object_or_404
 from teacher.models import RegularTeacher, SpecialtyTeacher, Professional, SchoolAdmin
+from school.models import Group, CompetencesEvaluees
 
 
 def get_staff_subclass_from_user_id(user_id):
@@ -62,7 +62,7 @@ class Student(models.Model):
     comite_clinique = models.BooleanField(default=False)
     date_ref_comite_clinique = models.DateField(null=True)
     plan_intervention = models.BooleanField(default=False)
-    groupe_repere = models.ForeignKey('school.Group', on_delete=models.SET_NULL, blank=True, null=True, default=None)
+    groupe_repere = models.ForeignKey(Group, on_delete=models.SET_NULL, blank=True, null=True, default=None)
     code = models.ForeignKey(CodeEtudiant, on_delete=models.SET_NULL, null=True, blank=True)
     fiche = models.CharField(max_length=20, null=True, unique=True)
     etat_situation = models.TextField(null=True, blank=True)
@@ -122,6 +122,7 @@ class Student(models.Model):
     @property
     def get_etat_de_la_situation_entries(self):
         self.etatdelasituation_set.all()
+    
     @property
     def get_professionals_from_actions(self):
         """Trouve les professionels impliqué dans les actions
@@ -252,12 +253,21 @@ class Grades(models.Model):
     
     # class Meta:
     #     unique_together = ('no_fiche', 'field2',)
+
+
+class Evaluation(models.Model):
+    etudiant = models.ForeignKey(Student, on_delete=models.CASCADE)
+    competence_evaluee = models.ForeignKey(CompetencesEvaluees, on_delete=models.CASCADE)
+    etape = models.SmallIntegerField()
+    note = models.SmallIntegerField()
+
+    def __str__(self):
+        return f"{self.etudiant.nom} - {self.etudiant.prenom} - {self.competence_evaluee} - {self.etape} - {self.note}"
     
-    
-# class ActionDiscussion(models):
-#     action = models.ForeignKey(Action, on_delete=models.CASCADE)
-#     auteur = models.ForeignKey(User, on_delete=models.CASCADE)
-#     date = models.DateField()
-#     lft = models.IntegerField()
-#     rgt = models.IntegerField()
-#     content = models.TextField()
+    class Meta:
+        ordering = ['etudiant__nom', 
+                    'etudiant__prenom', 
+                    'etape',
+                    'competence_evaluee__matiere__subject_code',
+                    ]
+        unique_together = ['etudiant', 'competence_evaluee', 'etape']

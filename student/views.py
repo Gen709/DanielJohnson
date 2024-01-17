@@ -12,12 +12,12 @@ from django.core.mail import send_mail, EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
-from .models import Student, StatusAction, Problematique, StatusProblematique, Action, ActionSuggestion, CodeEtudiant, Grades, EtatDeLaSituation
+from .models import Student, StatusAction, Problematique, StatusProblematique, Action, ActionSuggestion, CodeEtudiant, Grades, EtatDeLaSituation, Evaluation
 from problematiques.models import Item
 from school.models import Group
 from teacher.models import Professional, RegularTeacher
 from .forms import CSVUploadForm, EtatDeLaSituationForm
-from .util import ExtractStudent
+from .util import ExtractStudent, get_student_grade_dict
 from datetime import datetime as dt, timedelta
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill, Border, Side, Alignment, Font, NamedStyle, Color, Fill
@@ -191,6 +191,39 @@ def ajax_note_student(request):
     mimetype = 'application/json'
     return HttpResponse(data, mimetype)
 
+@csrf_exempt
+def ajax_note_student_2(request):
+    student_id = request.POST.get("student_id")
+    data_dict = {}
+    # etudiant
+    s = Student.objects.get(id=student_id)
+    fiche = s.fiche
+    # niveau de l'étudiant
+    niveau = s.groupe_repere.classification # s.group.classification
+    data_dict["niveau"] = niveau.nom
+    # notes de l'année en cour
+    # n = Grades.objects.filter(student_id=student_id)
+    # n = Grades.objects.filter(no_fiche=fiche)
+    n = Evaluation.objects.filter(etudiant=s)
+    # liste des notes de l'élève
+    grades_list = [x.note for x in n]
+    data_dict["grade_list"] = grades_list
+    # liste des cours de l'élève
+    class_name_list = [x.matiere for x in n]
+    classification_className_tuple_list = [(x.classification, x.matiere) for x in n]
+    data_dict["class_name_list"] = class_name_list
+    data_dict["classification_className_tuple_list"] = classification_className_tuple_list
+    # Notes de groupe
+    data_dict["class_grades"] = {}
+    for classification_className_tuple in data_dict["classification_className_tuple_list"]:
+        data_dict["class_grades"][classification_className_tuple[1]] = [x.note for x in Grades.objects.filter(
+            matiere=classification_className_tuple[1])]
+
+
+    data = JsonResponse(data_dict, safe=False)
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)
+
 
 def ajax_search_student(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -236,7 +269,9 @@ def student_detail_view_2(request, pk):
         intervenant = User.objects.get(id=request.user.id)
         # staff = User.objects.get(username=request.user.get_username())
         student = Student.objects.get(id=pk)
-
+        evaluation_qs = Evaluation.objects.filter(etudiant=student, competence_evaluee__matiere__matiere_de_base=True).order_by("etape", "competence_evaluee")
+        grades = get_student_grade_dict(evaluation_qs)
+        # faire arriver à la derniere evaluation. allerchercher l'étape la plus elevé en excluant 4 et 8
         pros = Professional.objects.all().order_by('speciality')
         teacher = RegularTeacher.objects.filter(group__id=student.groupe_repere.id)
         direction = User.objects.filter(id=student.groupe_repere.classification.owner.id)
@@ -277,7 +312,7 @@ def student_detail_view_2(request, pk):
         # print("******************** today's records", older_record_qs.filter(student=student, creator=intervenant, creation_date=dt.today().date()).text)
 
         context = {'student': student, 
-                    # 'staff': staff, 
+                    'grades': grades, 
                     'intervenant': intervenant,
                     'problematiques': problematiques, 
                     'statusaction': statusaction, 
