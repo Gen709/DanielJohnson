@@ -63,15 +63,19 @@
 				{% include "student/detail_3_intervenants.html"%}
 			</div>
 		</div>
-		<!-- Section Profile academique	-->
-		<div class="row mt-5">
-			{% include "student/detail_3_profile_academique.html"%}
-		</div>
+		
 
-		<!-- Section bulletin	-->
-		<div class="row mt-5">
-			{% include "student/detail_3_grades.html"%}
-		</div>
+		
+		{% if grades %}
+			<!-- Section Profile academique	-->
+			<div class="row mt-5">
+				{% include "student/detail_3_profile_academique.html"%}
+			</div>
+			<!-- Section bulletin	-->
+			<div class="row mt-5">
+				{% include "student/detail_3_grades.html"%}
+			</div>
+		{% endif %}
 
 		<!-- Section etat de la situation -->
 		<div class="row mt-5">
