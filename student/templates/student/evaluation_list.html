@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block js %}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        {% for eval in evaluation_list %}
+            <div class="row">
+                {{forloop.counter }} {{eval}}
+            </div>
+        {% endfor %}
+    </div>
+    
+
+    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+        {% if evaluation_list.has_previous %}
+          <div class="btn-group me-2" role="group" aria-label="First group">
+            <button type="button" class="btn btn-primary" onclick="window.location='?page=1'">&laquo; first</button>
+            <button type="button" class="btn btn-primary" onclick="window.location='?page={{ evaluation_list.previous_page_number }}'">previous</button>
+          </div>
+        {% endif %}
+      
+        {% for page_num in evaluation_list.paginator.page_range %}
+          {% if page_num == evaluation_list.number %}
+            <div class="btn-group me-2" role="group" aria-label="Group {{ page_num }}">
+              <button type="button" class="btn btn-primary">{{ page_num }}</button>
+            </div>
+          {% elif page_num|add:'2' >= evaluation_list.number >= page_num|add:'-2' %}
+            <div class="btn-group me-2" role="group" aria-label="Group {{ page_num }}">
+              <button type="button" class="btn btn-secondary" onclick="window.location='?page={{ page_num }}'">{{ page_num }}</button>
+            </div>
+          {% endif %}
+        {% endfor %}
+      
+        {% if evaluation_list.has_next %}
+          <div class="btn-group" role="group" aria-label="Last group">
+            <button type="button" class="btn btn-primary" onclick="window.location='?page={{ evaluation_list.next_page_number }}'">next</button>
+            <button type="button" class="btn btn-primary" onclick="window.location='?page={{ evaluation_list.paginator.num_pages }}'">last &raquo;</button>
+          </div>
+        {% endif %}
+      </div>
+      
+    {% endblock %}

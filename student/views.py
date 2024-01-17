@@ -4,21 +4,25 @@ from urllib.parse import unquote
 from django.http.response import JsonResponse, HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
+
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
-
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.core.paginator import Paginator
 from django.core.mail import send_mail, EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
-from .models import Student, StatusAction, Problematique, StatusProblematique, Action, ActionSuggestion, CodeEtudiant, Grades, EtatDeLaSituation, Evaluation
+from .models import Student, StatusAction, Problematique, StatusProblematique, Action,\
+    ActionSuggestion, CodeEtudiant, Grades, EtatDeLaSituation, Evaluation
 from problematiques.models import Item
 from school.models import Group
 from teacher.models import Professional, RegularTeacher
 from .forms import CSVUploadForm, EtatDeLaSituationForm
 from .util import ExtractStudent, get_student_grade_dict
 from datetime import datetime as dt, timedelta
+
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill, Border, Side, Alignment, Font, NamedStyle, Color, Fill
 from openpyxl.worksheet.dimensions import ColumnDimension
@@ -27,6 +31,23 @@ from openpyxl.utils import get_column_letter
 import re
 
 # Create your views here.
+
+class EvaluationViewList(ListView):
+    model=Evaluation
+    context_object_name = 'evaluation_list'
+    template_name = 'student/evaluation_list.html'
+    paginate_by = 25
+
+    def get_queryset(self):
+        return Evaluation.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        paginator = Paginator(self.get_queryset(), self.paginate_by)
+        page = self.request.GET.get('page')
+        context['evaluation_list'] = paginator.get_page(page)
+        return context
+
 
 def test_eta_de_la_situation(request, id):
     if request.user.is_authenticated:
