@@ -15,6 +15,7 @@
     <div class="col">Catégorie</div>
     <div class="col">Visible aux parents/élèves</div>
     <div class="col">Mat 2ième</div>
+    <div class="col">Matiere de Base</div>
   </div>
   {% for item in matiere_list %}
     <!-- Your code to display each item -->
@@ -37,6 +38,9 @@
       <div class="col">
         {{item.mat_2nd}}
       </div>  
+      <div class="col">
+        {{item.matiere_de_base}}
+      </div> 
     </div>
   {% endfor %}
 
