@@ -17,12 +17,9 @@
 					</div>
 
 					<div class="carousel-inner bg-secondary rounded">
-						{% for semester in semester_set %}
+						{% for semester, subject_competence_grades in grades.items %}
 							{% if semester == latest_semester %}
 								<div class="carousel-item active">
-							{% else %}
-								<div class="carousel-item">
-							{% endif %}
 									<div class="row justify-content-center align-items-center pt-5 pb-5">
 										<div class="col-7">
 											<div class="row text-light" id="semester_number" value={{semester}}>
@@ -31,27 +28,67 @@
 											<div class="row mt-2">
 												<div class="col-2"></div>
 												<div class="col">
-													{% for evaluation in evaluation_qs %}
-														{% if evaluation.etape == semester %}
-															<div class="row text-light border-bottom border-ligth mt-3 pb-3 ">
-																<div class="col-4">
-																	{{evaluation.competence_evaluee.matiere.description}}
-																</div>
-																<div class="col">
-																	{{evaluation.competence_evaluee.competence.nom}}
-																</div>
-																<div class="col">
-																	{{evaluation.note}}
-																</div>
-				
+													{% for subject, competence_grades in subject_competence_grades.items %}
+														<div class="row text-light border-bottom border-ligth mt-3 pb-3 ">
+															<div class="col-4">
+																{{subject}}
 															</div>
-														{% endif %}
+															<div class="col">
+																{% for competence, grades in competence_grades.items%}
+																	<div class="row">
+																		<div class="col">
+																			{{competence}}
+																		</div>
+																		<div class="col text-end">
+																			{{grades}}
+																		</div>
+																	</div>
+																{% endfor %}
+															</div>
+														</div>
 													{% endfor %}
 												</div>
 											</div>
 										</div>
 									</div>
 								</div>
+							{% elif semester != 4 %}
+								<div class="carousel-item">
+									<div class="row justify-content-center align-items-center pt-5 pb-5">
+										<div class="col-6">
+											<div class="row text-light" id="semester_number" value={{semester}}>
+												<h3> Étape {{semester}} </h3>
+											</div>
+											<div class="row mt-2">
+												<div class="col-2"></div>
+												<div class="col">
+													{% for subject, competence_grades in subject_competence_grades.items %}
+														<div class="row text-light border-bottom border-ligth mt-3 pb-3 ">
+															<div class="col-4">
+																{{subject}}
+															</div>
+															<div class="col">
+																{% for competence, grades in competence_grades.items%}
+																	<div class="row">
+																		<div class="col">
+																			{{competence}}
+																		</div>
+																		<div class="col text-end">
+																			{{grades}}
+																		</div>
+																	</div>
+																{% endfor %}
+															</div>
+														</div>
+													{% endfor %}
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							{% endif %}
+							
+
 						{% endfor%}
 					</div>
 						

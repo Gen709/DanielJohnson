@@ -17,7 +17,7 @@ from django.utils.html import strip_tags
 from .models import Student, StatusAction, Problematique, StatusProblematique, Action,\
     ActionSuggestion, CodeEtudiant, Grades, EtatDeLaSituation, Evaluation
 from problematiques.models import Item
-from school.models import Group
+from school.models import Group, CompetencesEvaluees, Matiere, Competence
 from teacher.models import Professional, RegularTeacher
 from .forms import CSVUploadForm, EtatDeLaSituationForm
 from .util import ExtractStudent, get_student_grade_dict
@@ -215,31 +215,19 @@ def ajax_note_student(request):
 @csrf_exempt
 def ajax_note_student_2(request):
     student_id = request.POST.get("student_id")
+    semester = int(request.POST.get("semester"))
     data_dict = {}
-    # etudiant
+    data_dict["semester"] = semester
     s = Student.objects.get(id=student_id)
-    fiche = s.fiche
-    # niveau de l'étudiant
-    niveau = s.groupe_repere.classification # s.group.classification
-    data_dict["niveau"] = niveau.nom
-    # notes de l'année en cour
-    # n = Grades.objects.filter(student_id=student_id)
-    # n = Grades.objects.filter(no_fiche=fiche)
-    n = Evaluation.objects.filter(etudiant=s)
-    # liste des notes de l'élève
-    grades_list = [x.note for x in n]
-    data_dict["grade_list"] = grades_list
-    # liste des cours de l'élève
-    class_name_list = [x.matiere for x in n]
-    classification_className_tuple_list = [(x.classification, x.matiere) for x in n]
-    data_dict["class_name_list"] = class_name_list
-    data_dict["classification_className_tuple_list"] = classification_className_tuple_list
-    # Notes de groupe
-    data_dict["class_grades"] = {}
-    for classification_className_tuple in data_dict["classification_className_tuple_list"]:
-        data_dict["class_grades"][classification_className_tuple[1]] = [x.note for x in Grades.objects.filter(
-            matiere=classification_className_tuple[1])]
+    classe = s.groupe_repere
+    evaluation_qs = Evaluation.objects.filter(etudiant=s, competence_evaluee__matiere__matiere_de_base=True, etape=semester).order_by("competence_evaluee__matiere__subject_code", "competence_evaluee__competence__nom")
+    data_dict["grade_list"] = [evaluation.note for evaluation in evaluation_qs if evaluation.etape == semester]
+    data_dict["class_name_list"] = [evaluation.competence_evaluee.matiere.description + " " +  evaluation.competence_evaluee.competence.nom 
+                                    for evaluation in evaluation_qs if evaluation.etape == semester]
 
+    data_dict["class_grades"] = {evaluation.competence_evaluee.matiere.description + " " + evaluation.competence_evaluee.competence.nom: [x.note for x in Evaluation.objects.filter(competence_evaluee = evaluation.competence_evaluee, 
+                                                                                                                                                                                    etudiant__groupe_repere = classe,
+                                                                                                                                                                                    etape=semester)] for evaluation in evaluation_qs}
 
     data = JsonResponse(data_dict, safe=False)
     mimetype = 'application/json'
@@ -290,8 +278,10 @@ def student_detail_view_2(request, pk):
         intervenant = User.objects.get(id=request.user.id)
         # staff = User.objects.get(username=request.user.get_username())
         student = Student.objects.get(id=pk)
-        evaluation_qs = Evaluation.objects.filter(etudiant=student, competence_evaluee__matiere__matiere_de_base=True).order_by("etape", "competence_evaluee")
+        evaluation_qs = Evaluation.objects.filter(etudiant=student, competence_evaluee__matiere__matiere_de_base=True).order_by("competence_evaluee__matiere__subject_code", "competence_evaluee__competence__nom")
         grades = get_student_grade_dict(evaluation_qs)
+        semester_set = {evaluation.etape for evaluation in evaluation_qs}
+        latest_semester = max(semester_set)
         # faire arriver à la derniere evaluation. allerchercher l'étape la plus elevé en excluant 4 et 8
         pros = Professional.objects.all().order_by('speciality')
         teacher = RegularTeacher.objects.filter(group__id=student.groupe_repere.id)
@@ -334,6 +324,9 @@ def student_detail_view_2(request, pk):
 
         context = {'student': student, 
                     'grades': grades, 
+                    'latest_semester': latest_semester,
+                    'semester_set':semester_set,
+                    'evaluation_qs':evaluation_qs,
                     'intervenant': intervenant,
                     'problematiques': problematiques, 
                     'statusaction': statusaction, 
