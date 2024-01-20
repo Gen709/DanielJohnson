@@ -281,7 +281,8 @@ def student_detail_view_2(request, pk):
         evaluation_qs = Evaluation.objects.filter(etudiant=student, competence_evaluee__matiere__matiere_de_base=True).order_by("competence_evaluee__matiere__subject_code", "competence_evaluee__competence__nom")
         grades = get_student_grade_dict(evaluation_qs)
         semester_set = {evaluation.etape for evaluation in evaluation_qs}
-        latest_semester = max(semester_set)
+        
+        latest_semester = max(semester_set) if semester_set else 1
         # faire arriver à la derniere evaluation. allerchercher l'étape la plus elevé en excluant 4 et 8
         pros = Professional.objects.all().order_by('speciality')
         teacher = RegularTeacher.objects.filter(group__id=student.groupe_repere.id)
