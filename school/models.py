@@ -24,9 +24,16 @@ class Classification(models.Model):
         return "Nom: " + self.nom + " - Resp: " + str(self.owner)
     
 class Local(models.Model):
-    nom = models.CharField(max_length=15, unique=True, primary_key=True)
-    capacity = models.SmallIntegerField(null=True, blank=True)
-    
+    local = models.CharField(max_length=15, unique=True, primary_key=True)
+    description = models.CharField(max_length=100, null=True, blank=True)
+    champ_01 = models.CharField(max_length=100, null=True, blank=True)
+    champ_02 = models.CharField(max_length=100, null=True, blank=True)
+    capacity = models.SmallIntegerField(default=0)
+    remarque = models.CharField(max_length=100, null=True, blank=True)
+    date_maj_hor_cal = models.DateField(null=True, blank=True)
+    date_maj_hor_cyc = models.DateField(null=True, blank=True)
+    conflit_accepte = models.BooleanField(default=False)
+    loc_hors_Eco = models.BooleanField(default=False)
 
 class Matiere(models.Model):
     school_code = models.CharField(max_length=6)
