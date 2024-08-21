@@ -24,8 +24,9 @@ class Classification(models.Model):
         return "Nom: " + self.nom + " - Resp: " + str(self.owner)
     
 class Local(models.Model):
-    nom = models.CharField(max_length=15, unique=True)
+    nom = models.CharField(max_length=15, unique=True, primary_key=True)
     capacity = models.SmallIntegerField(null=True, blank=True)
+    
 
 class Matiere(models.Model):
     school_code = models.CharField(max_length=6)
