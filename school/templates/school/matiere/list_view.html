@@ -5,43 +5,135 @@
 
 {% block title %}Matieres liste{% endblock %}
 
-{% block content %}
-  <h2>Matieres List</h2>
-  <!-- Your content here -->
-  <div class="row">
-    <div class="col">École</div>
-    <div class="col">Matière</div>
-    <div class="col">Description</div>
-    <div class="col">Catégorie</div>
-    <div class="col">Visible aux parents/élèves</div>
-    <div class="col">Mat 2ième</div>
-    <div class="col">Matiere de Base</div>
-  </div>
-  {% for item in matiere_list %}
-    <!-- Your code to display each item -->
-    <div class="row">
-      <div class="col">
-        {{item.school_code}}
-      </div>  
-      <div class="col">
-        {{item.subject_code}}
-      </div>  
-      <div class="col">
-        {{item.description}}
-      </div>  
-      <div class="col">
-        {{item.category}}
-      </div>  
-      <div class="col">
-        {{item.visible_to_parents}}
-      </div>  
-      <div class="col">
-        {{item.mat_2nd}}
-      </div>  
-      <div class="col">
-        {{item.matiere_de_base}}
-      </div> 
-    </div>
-  {% endfor %}
+{% block js %}
+  <script>
+    $(document).ready(function() {
+      $('.form-check-input').change(function() {
+        var coursId = $(this).attr('id').replace('IsActif_', '');
+        var isActive = $(this).is(':checked');
+        var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
+        console.log(coursId, isActive)
+        $.ajax({
+          url: 'is_active/',  // Replace with your URL
+          type: 'POST',
+          data: {
+              cours_id: coursId,
+              is_active: isActive,
+              csrfmiddlewaretoken: csrftoken
+          },
+            success: function(response) {
+              if (response.success) {
+                  // Handle successful update (e.g., show a message)
+                  console.log('Cours is_active updated successfully');
 
+                  // Find the element to be updated based on coursId
+                  var elementToUpdate = $('#element_' + coursId);
+
+                  // Update the element's tab based on the new is_active value
+                  if (isActive) {
+                      elementToUpdate.appendTo('#Actif');  // Move to active tab
+                  } else {
+                      elementToUpdate.appendTo('#Inactif');  // Move to inactive tab
+                  }
+              } else {
+                  // Handle error (e.g., show an error message)
+                  console.error('Error updating Cours is_active');
+              }
+          },
+          error: function() {
+              // Handle AJAX error
+              console.error('AJAX error');
+            }
+        });
+      });
+    });
+  </script>
+
+  <script>
+    document.getElementById('selectView').addEventListener('change', function() {
+      const niveau = this.value;
+      const url = "{% url 'matiere_list' %}?niveau=" + niveau;
+
+      fetch(url, {
+          headers: {
+              'X-Requested-With': 'XMLHttpRequest'
+          }
+      })
+      .then(response => response.text())
+      .then(data => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(data, 'text/html');
+          
+          // Update the active courses section
+          const activeCourses = doc.querySelector('#cours-actifs').innerHTML;
+          document.querySelector('#cours-actifs').innerHTML = activeCourses;
+
+          // Update the inactive courses section
+          const inactiveCourses = doc.querySelector('#cours-inactifs').innerHTML;
+          document.querySelector('#cours-inactifs').innerHTML = inactiveCourses;
+      })
+      .catch(error => console.log('Error:', error));
+    });
+  </script>
+{% endblock %}
+
+{% block content %}
+  
+  <h2>Liste de toutes les matières</h2>
+  <!-- Your content here -->
+  <div class="row mb-5">
+    <form>
+      {% csrf_token %}
+      <div class="row mt-5 mb-4">
+        <label for="selectView" class="col-sm-2 col-form-label">Choisir une vue</label>
+        <div class="col-lg-3">
+          <select class="form-select" aria-label="Default select example" id="selectView">
+            <option selected value="">Tout les cours</option>
+              <option value="1">Sec. 1</option>
+              <option value="2">Sec. 2</option>
+              <option value="3">Sec. 3</option>
+              <option value="4">Sec. 4</option>
+              <option value="5">Sec. 5</option>
+              <option value="DIM">DIM</option>
+              <option value="TSA">TSA</option>
+              <option value="000">Acceuil</option>
+              <option value="diff">Différence</option>
+          </select>
+        </div>
+      </div>
+
+      <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="Actif-tab" data-bs-toggle="tab" data-bs-target="#Actif" type="button" role="tab" aria-controls="Actif" aria-selected="true">Actif</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="Inactif-tab" data-bs-toggle="tab" data-bs-target="#Inactif" type="button" role="tab" aria-controls="Inactif" aria-selected="false">Inactif</button>
+        </li>
+      </ul>
+
+      <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="Actif" role="tabpanel" aria-labelledby="Actif-tab">
+          <div class="row mt-5 mx-3">
+            <div class="col">
+            {% comment %} {% include 'school/matiere/cours_entete.html' %} {% endcomment %}
+            <div id="cours-actifs">
+              {% include template_actifs %}
+            </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="Inactif" role="tabpanel" aria-labelledby="Inactif-tab">
+          <div class="row mt-5 mx-3">
+            <div class="col">
+            {% comment %} {% include 'school/matiere/cours_entete.html' %} {% endcomment %}
+            <div id="cours-inactifs">
+              {% include template_inactifs %}
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+
+    </form>
+  </div>
 {% endblock %}

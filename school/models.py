@@ -35,6 +35,18 @@ class Local(models.Model):
     conflit_accepte = models.BooleanField(default=False)
     loc_hors_Eco = models.BooleanField(default=False)
 
+    @property
+    def attribute_list(self):
+        return ", ".join([str(attribute.name) for attribute in self.attribute_set.all()])
+
+class Attribute(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
+
+class ClassroomAttribute(models.Model):
+    local = models.ForeignKey(Local, on_delete=models.CASCADE)
+    attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
+
 class Matiere(models.Model):
     school_code = models.CharField(max_length=6)
     subject_code = models.CharField(max_length=8)
@@ -76,3 +88,36 @@ class Group(models.Model):
         else:
             b="Unknown"
         return "Nom: " + self.nom + ' Classification: ' + b
+    
+class Cours(models.Model):
+    Cours = models.CharField(max_length=6, unique=True, primary_key=True)
+    Description = models.CharField(max_length=250, blank=True, null=True)
+    Grille = models.CharField(max_length=25, blank=True, null=True)
+    Type = models.CharField(max_length=10, blank=True, null=True)
+    Grp_prév = models.CharField(max_length=25, blank=True, null=True)
+    matiere = models.CharField(max_length=100, blank=True, null=True)
+    code_matiere = models.CharField(max_length=3, blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    is_optional = models.BooleanField(default=False)
+    @property
+    def code(self):
+        return self.Cours[:3]
+    @property
+    def niveau(self):
+        if self.Cours[-3:] == "DIM":
+            return "DIM"
+        elif self.Cours[-3:] == "TSA":
+            return "TSA"
+        elif self.Cours[-3:] == "000":
+            return "Acceuil"
+        else:
+            return self.Cours[3:4]
+    @property
+    def nombre_periode(self):
+        try:
+            nb_periode = int(self.Cours[-1])
+        except:
+            nb_periode = "TBD"
+        if nb_periode == 0:
+            nb_periode = 4
+        return nb_periode

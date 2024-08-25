@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import LocalListView, LocalDetailView, LocalCreateView, LocalUpdateView, LocalDeleteView, upload_matiere_file,\
-MatiereListView
+MatiereListView, update_cours_is_active
 
 urlpatterns = [
     path('local/list', LocalListView.as_view(), name='local_list'),
@@ -10,4 +10,7 @@ urlpatterns = [
     path('local/<int:pk>/delete/', LocalDeleteView.as_view(), name='local_delete'),
     path('matiere/uplaod', upload_matiere_file, name='upload_matiere_excel'),
     path('matiere/list', MatiereListView.as_view(), name='matiere_list'),
+    path('matiere/is_active/', update_cours_is_active, name='update_cours_is_active'),
 ]
+
+

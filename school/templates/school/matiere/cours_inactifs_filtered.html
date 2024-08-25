@@ -1,0 +1,44 @@
+
+    {% for item in inactive_courses %}
+        {% if item.is_active is False %}
+          <!-- Your code to display each item -->
+          <div class="row" id="element_{{ item.Cours }}">
+            <div class="col-lg-1 border d-flex justify-content-center">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="IsActif_{{item.Cours}}">
+                </div>
+            </div> 
+            <div class="col-lg-1 border">
+              {{item.Cours}}
+            </div>  
+            <div class="col">
+              {{item.Description}}
+            </div>  
+            {% comment %} <div class="col">
+              {{item.Grille}}
+            </div>   {% endcomment %}
+            <div class="col-lg-1 border">
+              {{item.Type}}
+            </div>  
+            {% comment %} <div class="col">
+              {{item.Grp_prév}}
+            </div>   {% endcomment %}
+            <div class="col-lg-1 border">
+              {{item.code}}
+            </div> 
+            <div class="col-lg-1 border">
+              {{item.niveau}}
+            </div> 
+            <div class="col-lg-1 border">
+              {{item.nombre_periode}}
+            </div> 
+            <div class="col-lg-3 border">
+              {{item.matiere}}
+            </div> 
+            <div class="col-lg-1 border">
+              {{item.is_optional}}
+            </div> 
+          </div>
+      {% endif %}
+    {% endfor %}
+

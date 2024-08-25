@@ -8,6 +8,8 @@ import io
 
 matiere_headings_list = ["École", "Matière", "Description", "Catégorie", "Visible aux parents/élèves", "Mat 2ième", None, None ]
 objectif_matiere_headings_list = ["Fiche", "Nom de l'élève", "Classe", "Matière", "Grp", "Obj. - Matière", "No", "Description", "Obj. - Résultat final", "Pond", "[1]", "[2]", "[3]", "[4]", "[5]", "[6]", "[7]", "[8]", "Remarque", None, None]
+local_heading_list = ["École",	"Local",	"Description	Champ 01",	'Champ 02',	'Capacité',	'Contenu',	"Remarque",	"Date maj. hor-cal", "Date maj. hor-cyc", "Conflit accepté", "Loc hors Eco"]
+cours_heading_list = ["École", "Cours",	"Description", "Grille", "Type", "Grp.prév."]
 
 def get_headings(file_path):
      # Load the Excel workbook

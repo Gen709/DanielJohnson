@@ -8,4 +8,9 @@
 {% block content %}
   <h2>Local List</h2>
   <!-- Your content here -->
+    {% for local in object_list %}
+    <div class="row">
+      {{ local }}     
+    </div>
+  {% endfor %}
 {% endblock %}
