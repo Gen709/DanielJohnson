@@ -15,7 +15,7 @@ class Emplois(models.Model):
     description = models.CharField(max_length=100, null=True, default=None)
 
     def __str__(self):
-        return self.description
+        return self.description if self.description else ""
 
 class Classification(models.Model):
     nom = models.CharField(max_length=5)
